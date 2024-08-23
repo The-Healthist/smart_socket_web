@@ -1,5 +1,5 @@
 import { useDarkModeStoreHook } from "@/store/modules/darkMode";
-
+// 主题切换
 export function useDarkMode() {
   return useDarkModeStoreHook().darkMode;
 }

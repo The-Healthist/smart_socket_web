@@ -1,3 +1,167 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.theme-orange {
+  /* 主色 */
+  --color-primary: 255 165 0; /* 橙色 */
+
+  /* 次色 */
+  --color-secondary: 165 165 0; /* 橄榄色 */
+
+  /* 主背景色 */
+  --color-background: 255 165 0; /* 橙色 */
+
+  /* 次背景色（例如，渐变背景、悬停状态） */
+  --color-background-secondary: 165 165 0; /* 橄榄色 */
+
+  /* 卡片背景色 */
+  --color-card-background: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-primary: 255 165 0; /* 橙色 */
+
+  /* 次文本颜色（例如，用于次要文本） */
+  --color-text-secondary: 165 165 0; /* 橄榄色 */
+
+  /* 边框颜色 */
+  --color-border: 165 165 0; /* 橄榄色 */
+
+  /* 链接颜色 */
+  --color-link: 255 165 0; /* 橙色 */
+
+  /* 链接悬停颜色 */
+  --color-link-hover: 255 140 0; /* 深橙色 */
+
+  /* 错误颜色 */
+  --color-error: 255 99 71; /* 番茄红 */
+
+  /* 成功颜色 */
+  --color-success: 50 205 50; /* 石灰绿 */
+
+  /* 分隔线颜色 */
+  --color-separator: 88 110 117; /* 深灰蓝色 */
+}
+
+.theme-green {
+  /* 主色 */
+  --color-primary: 34 193 34; /* 草绿色 */
+
+  /* 次色 */
+  --color-secondary: 18 140 18; /* 深绿 */
+
+  /* 主背景色 */
+  --color-background: 34 193 34; /* 草绿色 */
+
+  /* 次背景色（例如，渐变背景、悬停状态） */
+  --color-background-secondary: 18 140 18; /* 深绿 */
+
+  /* 卡片背景色 */
+  --color-card-background: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-primary: 34 193 34; /* 草绿色 */
+
+  /* 次文本颜色（例如，用于次要文本） */
+  --color-text-secondary: 18 140 18; /* 深绿 */
+
+  /* 边框颜色 */
+  --color-border: 18 140 18; /* 深绿 */
+
+  /* 链接颜色 */
+  --color-link: 34 193 34; /* 草绿色 */
+
+  /* 链接悬停颜色 */
+  --color-link-hover: 28 167 28; /* 明亮绿色 */
+
+  /* 错误颜色 */
+  --color-error: 255 69 58; /* 番茄红 */
+
+  /* 成功颜色 */
+  --color-success: 50 205 50; /* 石灰绿 */
+
+  /* 分隔线颜色 */
+  --color-separator: 120 144 156; /* 灰蓝色 */
+}
+
+.theme-red {
+  /* 主色 */
+  --color-primary: 255 0 0; /* 红色 */
+
+  /* 次色 */
+  --color-secondary: 139 0 0; /* 深红 */
+
+  /* 主背景色 */
+  --color-background: 255 0 0; /* 红色 */
+
+  /* 次背景色（例如，渐变背景、悬停状态） */
+  --color-background-secondary: 139 0 0; /* 深红 */
+
+  /* 卡片背景色 */
+  --color-card-background: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-primary: 255 0 0; /* 红色 */
+
+  /* 次文本颜色（例如，用于次要文本） */
+  --color-text-secondary: 139 0 0; /* 深红 */
+
+  /* 边框颜色 */
+  --color-border: 139 0 0; /* 深红 */
+
+  /* 链接颜色 */
+  --color-link: 255 0 0; /* 红色 */
+
+  /* 链接悬停颜色 */
+  --color-link-hover: 255 69 0; /* 橙红色 */
+
+  /* 错误颜色 */
+  --color-error: 255 0 0; /* 红色 */
+
+  /* 成功颜色 */
+  --color-success: 50 205 50; /* 石灰绿 */
+
+  /* 分隔线颜色 */
+  --color-separator: 128 0 0; /* 深红棕色 */
+}
+
+.theme-white {
+  /* 主色 */
+  --color-primary: 255 255 255; /* 白色 */
+
+  /* 次色 */
+  --color-secondary: 200 200 200; /* 浅灰 */
+
+  /* 主背景色 */
+  --color-background: 255 255 255; /* 白色 */
+
+  /* 次背景色（例如，渐变背景、悬停状态） */
+  --color-background-secondary: 200 200 200; /* 浅灰 */
+
+  /* 卡片背景色 */
+  --color-card-background: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-primary: 0 0 0; /* 黑色 */
+
+  /* 次文本颜色（例如，用于次要文本） */
+  --color-text-secondary: 100 100 100; /* 灰色 */
+
+  /* 边框颜色 */
+  --color-border: 200 200 200; /* 浅灰 */
+
+  /* 链接颜色 */
+  --color-link: 0 0 255; /* 蓝色 */
+
+  /* 链接悬停颜色 */
+  --color-link-hover: 0 0 200; /* 深蓝色 */
+
+  /* 错误颜色 */
+  --color-error: 255 69 58; /* 番茄红 */
+
+  /* 成功颜色 */
+  --color-success: 50 205 50; /* 石灰绿 */
+
+  /* 分隔线颜色 */
+  --color-separator: 200 200 200; /* 浅灰 */
+}

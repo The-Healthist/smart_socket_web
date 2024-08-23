@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import tabbar from "@/components/Tabbar/index.vue";
+import Tabbar from "@/components/Tabbar/index.vue";
 import NavBar from "@/components/NavBar/index.vue";
 import { useCachedViewStoreHook } from "@/store/modules/cachedView";
 import { useDarkMode } from "@/hooks/useToggleDarkMode";
@@ -9,7 +9,7 @@ const cachedViews = computed(() => {
   return useCachedViewStoreHook().cachedViewList;
 });
 </script>
-
+<!-- 主题切换 -->
 <template>
   <div class="app-wrapper">
     <van-config-provider :theme="useDarkMode() ? 'dark' : 'light'">
@@ -19,7 +19,7 @@ const cachedViews = computed(() => {
           <component :is="Component" />
         </keep-alive>
       </router-view>
-      <tabbar />
+      <div class="w-full flex justify-center items-center"><Tabbar /></div>
     </van-config-provider>
   </div>
 </template>

@@ -5,7 +5,7 @@ const onClickRight = (event: TouchEvent | MouseEvent) => {
   useToggleDarkMode(event);
 };
 </script>
-
+<!-- 主题切换 -->
 <template>
   <van-nav-bar fixed placeholder @click-right="onClickRight">
     <template #right>

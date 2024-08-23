@@ -1,41 +1,39 @@
 <template>
-  <van-tabbar v-model="active" :placeholder="true" :route="true" fixed>
-    <van-tabbar-item
-      v-for="(item, index) in tabbarData"
-      :key="index"
-      :icon="item.icon"
-      :to="item.to"
+  <div :class="`theme-${theme}`">
+    <div
+      class="bg-card h-[55px] px-5 py-[5px] rounded-[20px] fixed bottom-2 gap-3 flex justify-between items-center shadow"
     >
-      {{ item.title }}
-    </van-tabbar-item>
-  </van-tabbar>
+      <router-link
+        to="/"
+        class="w-[59px] flex-col justify-center items-center gap-1 flex"
+      >
+        <i-icon icon="ion:home-outline" class="text-primary text-[24px]" />
+        <div>首頁</div>
+      </router-link>
+      <router-link
+        to="/order"
+        class="w-[59px] flex-col justify-center items-center gap-1 flex"
+      >
+        <i-icon icon="cil:list" class="text-primary text-[24px]" />
+        <div>訂單</div>
+      </router-link>
+      <router-link
+        to="/auth"
+        class="w-[59px] flex-col justify-center items-center gap-1 flex"
+      >
+        <i-icon icon="ion:person-outline" class="text-primary text-[24px]" />
+        <div>我的</div>
+      </router-link>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useThemeStore } from "@/store/theme/themeStore";
 
-const active = ref(0);
-const tabbarData = reactive([
-  {
-    icon: "wap-home-o",
-    title: "主页",
-    to: {
-      name: "Demo"
-    }
-  },
-  {
-    icon: "gem-o",
-    title: "工具",
-    to: {
-      name: "Tools"
-    }
-  },
-  {
-    icon: "user-o",
-    title: "关于",
-    to: {
-      name: "About"
-    }
-  }
-]);
+const themeStore = useThemeStore();
+const theme = computed(() => themeStore.getTheme);
+const router = useRouter();
 </script>

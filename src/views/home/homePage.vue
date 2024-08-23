@@ -38,6 +38,7 @@ const contentList = reactive([
         <svg-icon class="text-[12px] ml-[5px]" name="link" />
       </a>
     </div>
+    <!-- 主题颜色背景 -->
     <div
       class="text-[14px] py-[2px] px-[10px] rounded-[4px] bg-[var(--color-block-background)] mt-[14px]"
     >
