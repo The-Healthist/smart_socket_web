@@ -11,7 +11,7 @@ const cachedViews = computed(() => {
 </script>
 <!-- 主题切换 -->
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrapper flex flex-col h-full w-full">
     <van-config-provider :theme="useDarkMode() ? 'dark' : 'light'">
       <nav-bar />
       <router-view v-slot="{ Component }">
@@ -19,7 +19,7 @@ const cachedViews = computed(() => {
           <component :is="Component" />
         </keep-alive>
       </router-view>
-      <div class="w-full flex justify-center items-center"><Tabbar /></div>
+      <div class="flex ml-[20%]"><Tabbar /></div>
     </van-config-provider>
   </div>
 </template>

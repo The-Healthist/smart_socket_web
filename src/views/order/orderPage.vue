@@ -1,92 +1,7 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
-import { useThemeStore, Theme } from "@/store/theme/themeStore";
-import { getListApi, getListApiError } from "@/api/mock";
-import { showFailToast, showSuccessToast } from "vant";
-import "vant/es/toast/style";
-import Fa6SolidAddressBook from "@iconify-icons/fa6-solid/address-book";
-import Fa6SolidAppleWhole from "@iconify-icons/fa6-solid/apple-whole";
-import Fa6SolidBaby from "@iconify-icons/fa6-solid/baby";
-import Fa6SolidBasketball from "@iconify-icons/fa6-solid/basketball";
-import Fa6SolidBurger from "@iconify-icons/fa6-solid/burger";
-import Fa6SolidChessKnight from "@iconify-icons/fa6-solid/chess-knight";
-
-const themeStore = useThemeStore();
-const showList: string[] = [];
-
-const handleSuccessReq = async () => {
-  const { list } = await getListApi();
-  showSuccessToast("请求成功");
-  showList.push(...list);
-};
-
-const handleErrorReq = () => {
-  getListApiError().then(
-    () => {},
-    err => {
-      console.log(err);
-      showFailToast("请求有误");
-    }
-  );
-};
-
-const iconOnlineList = [
-  "material-symbols:admin-panel-settings-outline",
-  "jam:android",
-  "lucide:badge-check",
-  "pixelarticons:heart",
-  "fxemoji:alienmonster",
-  "meteocons:thunderstorms-day-overcast-fill"
-];
-
-const iconOfflineList = [
-  Fa6SolidAddressBook,
-  Fa6SolidAppleWhole,
-  Fa6SolidBaby,
-  Fa6SolidBasketball,
-  Fa6SolidBurger,
-  Fa6SolidChessKnight
-];
-
-const modules = import.meta.glob("../../icons/svg/*.svg", { eager: true });
-const svgIconLocalList = Object.keys(modules).map(key =>
-  key.replace("../../icons/svg/", "").replace(".svg", "")
-);
-
-const themes = themeStore.themes;
-const currentTheme = computed(() => themeStore.getTheme);
-
-const switchTheme = (theme: string) => {
-  console.log(themeStore.getTheme);
-  themeStore.setTheme(theme as Theme);
-};
-
-// 颜色调色板
-const colorPalette = [
-  { name: "Primary", varName: "--color-primary" },
-  { name: "Secondary", varName: "--color-secondary" },
-  { name: "Background", varName: "--color-background" },
-  { name: "Background Secondary", varName: "--color-background-secondary" },
-  { name: "Card Background", varName: "--color-card-background" },
-  { name: "Separator", varName: "--color-separator" },
-  { name: "Text Primary", varName: "--color-text-primary" },
-  { name: "Text Secondary", varName: "--color-text-secondary" },
-  { name: "Border", varName: "--color-border" },
-  { name: "Link", varName: "--color-link" },
-  { name: "Link Hover", varName: "--color-link-hover" },
-  { name: "Error", varName: "--color-error" },
-  { name: "Success", varName: "--color-success" }
-];
-</script>
-
 <template>
   <div :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme}`">
     <!-- Mock -->
 
-    <!-- Icon -->
-    <div class="pl-[12px] border-l-[3px] border-primary mt-[24px] mb-[12px]">
-      <h3 class="font-bold text-[18px] my-[4px]">Iconify Icon</h3>
-    </div>
     <!-- online iconify icon -->
     <div>
       <i-icon
@@ -96,18 +11,7 @@ const colorPalette = [
         class="inline-block text-[24px] mr-3 text-primary"
       />
     </div>
-    <!-- offline iconify icon -->
-    <div class="mt-2">
-      <i-icon
-        v-for="(item, idx) in iconOfflineList"
-        :key="idx"
-        :icon="item"
-        class="inline-block text-[24px] mr-3 text-primary"
-      />
-    </div>
-    <div class="pl-[12px] border-l-[3px] text-primary mt-[24px] mb-[12px]">
-      <h3 class="font-bold text-[18px] my-[4px]">Svg Icon</h3>
-    </div>
+
     <!-- local svg file icon -->
     <div>
       <svg-icon
@@ -117,6 +21,7 @@ const colorPalette = [
         class="inline-block text-[24px] mr-3 text-primary"
       />
     </div>
+
     <!-- Theme switcher -->
     <div class="mt-10">
       <span class="text-primary/[0.5]">点击下方按钮切换主题</span>
@@ -154,5 +59,76 @@ const colorPalette = [
         </div>
       </div>
     </div>
+
+    <!-- Primary Button -->
+    <div class="mt-10 flex flex-row gap-2.5">
+      <InvertedButton>
+        <template #default>
+          <div
+            class="text-primary w-[80px] h-[22px] flex flex-row justify-center items-center"
+          >
+            <span class="font-bold font-['Inter'] text-center"> 遠程啓動 </span>
+          </div>
+        </template>
+      </InvertedButton>
+      <PrimaryButton>
+        <template #default>
+          <div
+            class="text-inverted w-[234px] h-[22px] flex flex-row justify-center items-center gap-2"
+          >
+            <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+            <span class="text-xl font-bold font-['Inter'] tracking-wide"
+              >扫码租用</span
+            >
+          </div>
+        </template>
+      </PrimaryButton>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { useThemeStore, Theme } from "@/store/theme/themeStore";
+import "vant/es/toast/style";
+import PrimaryButton from "@/components/Button/PrimaryButton.vue";
+import InvertedButton from "@/components/Button/InvertedButton.vue";
+
+const iconOnlineList = [
+  "material-symbols:admin-panel-settings-outline",
+  "jam:android",
+  "lucide:badge-check",
+  "pixelarticons:heart",
+  "fxemoji:alienmonster",
+  "meteocons:thunderstorms-day-overcast-fill",
+  "mdi:electricity-outline"
+];
+
+const modules = import.meta.glob("../../icons/svg/*.svg", { eager: true });
+const svgIconLocalList = Object.keys(modules).map(key =>
+  key.replace("../../icons/svg/", "").replace(".svg", "")
+);
+const themeStore = useThemeStore();
+const themes = themeStore.themes;
+const currentTheme = computed(() => themeStore.getTheme);
+const switchTheme = (theme: string) => {
+  themeStore.setTheme(theme as Theme);
+};
+
+// 颜色调色板
+const colorPalette = [
+  { name: "Primary", varName: "--color-primary" },
+  { name: "Secondary", varName: "--color-secondary" },
+  { name: "Background", varName: "--color-background" },
+  { name: "Background Secondary", varName: "--color-background-secondary" },
+  { name: "Card Background", varName: "--color-card-background" },
+  { name: "Separator", varName: "--color-separator" },
+  { name: "Text Primary", varName: "--color-text-primary" },
+  { name: "Text Secondary", varName: "--color-text-secondary" },
+  { name: "Border", varName: "--color-border" },
+  { name: "Link", varName: "--color-link" },
+  { name: "Link Hover", varName: "--color-link-hover" },
+  { name: "Error", varName: "--color-error" },
+  { name: "Success", varName: "--color-success" }
+];
+</script>
