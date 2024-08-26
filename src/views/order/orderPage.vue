@@ -1,5 +1,7 @@
 <template>
-  <div :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme}`">
+  <div
+    :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme} rounded-${rounded}`"
+  >
     <!-- Mock -->
 
     <!-- online iconify icon -->
@@ -30,7 +32,36 @@
           v-for="t in themes"
           :key="t"
           class="border rounded p-2 mr-5 bg-secondary text-primary"
-          @click="switchTheme(t)"
+          @click="themeStore.setTheme(t)"
+        >
+          {{ t }}
+        </button>
+      </div>
+    </div>
+    <!-- Roundness Switcher -->
+    <div :class="`rounded-${rounded} mt-10`">
+      <span class="text-inverted/[0.5]">点击下方按钮切换圆角</span>
+      <div class="mt-5">
+        <button
+          v-for="r in roundeds"
+          :key="r"
+          class="border rounded p-2 mr-5 bg-secondary text-inverted"
+          @click="roundedStore.setRounded(r)"
+        >
+          {{ r }}
+        </button>
+      </div>
+    </div>
+
+    <!-- text switcher -->
+    <div :class="`font-${text} mt-10`">
+      <span class="text-primary/[0.5]">点击下方按钮切换字体</span>
+      <div class="mt-5">
+        <button
+          v-for="t in texts"
+          :key="t"
+          class="border rounded p-2 mr-5 bg-secondary text-inverted"
+          @click="textStore.setText(t)"
         >
           {{ t }}
         </button>
@@ -40,7 +71,7 @@
     <!-- Color Palette -->
     <div class="mt-10">
       <h3 class="font-bold text-[18px] my-[4px]">Color Palette</h3>
-      <div class="grid grid-cols-3 gap-4 mt-5">
+      <div class="grid grid-cols-6 gap-4 mt-5">
         <div
           v-for="color in colorPalette"
           :key="color.varName"
@@ -61,13 +92,15 @@
     </div>
 
     <!-- Primary Button -->
-    <div class="mt-10 flex flex-row gap-2.5">
+    <div :class="`rounded-${rounded} mt-10 flex flex-row gap-2.5 `">
       <InvertedButton>
         <template #default>
           <div
             class="text-primary w-[80px] h-[22px] flex flex-row justify-center items-center"
           >
-            <span class="font-bold font-['Inter'] text-center"> 遠程啓動 </span>
+            <span class="font-bold font-CactusClassicalSerifHK text-center">
+              遠程啓動
+            </span>
           </div>
         </template>
       </InvertedButton>
@@ -77,22 +110,36 @@
             class="text-inverted w-[234px] h-[22px] flex flex-row justify-center items-center gap-2"
           >
             <i-icon icon="mingcute:flash-line" class="text-[20px]" />
-            <span class="text-xl font-bold font-['Inter'] tracking-wide"
+            <span class="font-NotoSansHK text-xl font-bold tracking-wide"
               >扫码租用</span
             >
           </div>
         </template>
       </PrimaryButton>
     </div>
+    <PrimaryButton>
+      <template #default>
+        <div
+          class="text-inverted w-[234px] h-[22px] flex flex-row justify-center items-center gap-2"
+        >
+          <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+          <span class="font-NotoSerifHK text-xl font-bold tracking-wide"
+            >扫码租用</span
+          >
+        </div>
+      </template>
+    </PrimaryButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useThemeStore, Theme } from "@/store/theme/themeStore";
+import { useThemeStore, ThemeColor } from "@/store/theme/themeStore";
 import "vant/es/toast/style";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
+import { useTextStore } from "@/store/theme/textStore";
+import { useRoundedStore } from "@/store/theme/roundStore";
 
 const iconOnlineList = [
   "material-symbols:admin-panel-settings-outline",
@@ -111,8 +158,14 @@ const svgIconLocalList = Object.keys(modules).map(key =>
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
+const textStore = useTextStore();
+const text = computed(() => textStore.getText);
+const texts = computed(() => textStore.getTexts);
+const roundedStore = useRoundedStore();
+const rounded = computed(() => roundedStore.getRounded);
+const roundeds = computed(() => roundedStore.getRoundeds);
 const switchTheme = (theme: string) => {
-  themeStore.setTheme(theme as Theme);
+  themeStore.setTheme(theme as ThemeColor);
 };
 
 // 颜色调色板

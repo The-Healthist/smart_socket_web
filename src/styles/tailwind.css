@@ -1,7 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=Chocolate+Classical+Sans&family=LXGW+WenKai+Mono+TC&family=LXGW+WenKai+TC&family=Noto+Sans+HK:wght@100..900&family=Noto+Serif+HK:wght@200..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 圆角rounded */
+.theme-rounded-base {
+  --rounded--base: 0px;
+  --rounded--card: 12px;
+  --rounded--button: 8px;
+  --rounded--option: 5px;
+  --rounded--bar: 20px;
+}
+.theme-rounded-muted {
+  --rounded--base: 0px;
+  --rounded--card: 8px;
+  --rounded--button: 4px;
+  --rounded--option: 3px;
+  --rounded--bar: 12px;
+}
 /* 橙色主题 */
 .theme-orange {
   /* 主色 */

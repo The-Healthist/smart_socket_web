@@ -27,6 +27,19 @@ export default {
           DEFAULT: "rgb(var(--color-link) / <alpha-value>)", // 默认链接颜色，带有透明度
           hover: "rgb(var(--color-link-hover) / <alpha-value>)" // 链接悬停颜色，带有透明度
         }
+      },
+      fontFamily: {
+        NotoSansHK: ["Noto Sans HK", "sans-serif"],
+        NotoSerifHK: ["Noto Serif HK", "serif"],
+        CactusClassicalSerifHK: ["Cactus Classical Serif", "serif"],
+        LXGWWenKaiMonoTCHK: ["LXGW WenKai Mono TC", "monospace"]
+      },
+      rounded: {
+        base: "var(--rounded--base)",
+        card: "var(--rounded--card)",
+        button: "var(--rounded--button)",
+        option: "var(--rounded--option)",
+        bar: "var(--rounded--bar)"
       }
     }
   },
