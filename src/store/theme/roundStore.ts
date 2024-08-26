@@ -14,7 +14,8 @@ export const useRoundedStore = defineStore({
   },
   actions: {
     setRounded(theme: ThemeRounded) {
-      this.activeTheme = theme;
+      console.log("setRounded", theme);
+      this.rounded = theme;
     }
   }
 });

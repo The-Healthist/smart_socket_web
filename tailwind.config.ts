@@ -34,7 +34,7 @@ export default {
         CactusClassicalSerifHK: ["Cactus Classical Serif", "serif"],
         LXGWWenKaiMonoTCHK: ["LXGW WenKai Mono TC", "monospace"]
       },
-      rounded: {
+      borderRadius: {
         base: "var(--rounded--base)",
         card: "var(--rounded--card)",
         button: "var(--rounded--button)",

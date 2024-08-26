@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme} rounded-${rounded}`"
+    :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme} theme-rounded-${rounded}`"
   >
     <!-- Mock -->
 
@@ -31,7 +31,7 @@
         <button
           v-for="t in themes"
           :key="t"
-          class="border rounded p-2 mr-5 bg-secondary text-primary"
+          class="border rounded-button p-2 mr-5 bg-secondary text-primary"
           @click="themeStore.setTheme(t)"
         >
           {{ t }}
@@ -39,13 +39,13 @@
       </div>
     </div>
     <!-- Roundness Switcher -->
-    <div :class="`rounded-${rounded} mt-10`">
+    <div :class="`theme-rounded-${rounded} mt-10`">
       <span class="text-inverted/[0.5]">点击下方按钮切换圆角</span>
       <div class="mt-5">
         <button
           v-for="r in roundeds"
           :key="r"
-          class="border rounded p-2 mr-5 bg-secondary text-inverted"
+          class="border rounded-button p-2 mr-5 bg-secondary text-inverted"
           @click="roundedStore.setRounded(r)"
         >
           {{ r }}
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Primary Button -->
-    <div :class="`rounded-${rounded} mt-10 flex flex-row gap-2.5 `">
+    <div :class="`theme-rounded-${rounded} mt-10 flex flex-row gap-2.5 `">
       <InvertedButton>
         <template #default>
           <div
