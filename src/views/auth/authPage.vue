@@ -28,7 +28,8 @@
           </div>
           <div>
             <button
-              class="text-inverted w-[6vw] h-full flex justify-center items-center"
+              class="text-inverted hover:text-primary w-[6vw] h-full flex justify-center items-center"
+              @click="navigateToSetting"
             >
               <i-icon icon="uil:setting" class="text-[22px]" />
             </button>
@@ -69,6 +70,7 @@ import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
+import { useRouter } from "vue-router";
 
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
@@ -80,4 +82,10 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
+const router = useRouter();
+
+const navigateToSetting = () => {
+  console.log("Navigating to Setting");
+  router.push({ name: "Setting" }).catch(err => console.error(err));
+};
 </script>

@@ -35,6 +35,16 @@
         <i-icon icon="ion:person-outline" class="text-[24px]" />
         <div>我的</div>
       </router-link>
+      <router-link
+        to="/setting"
+        :class="[
+          'hover:text-primary focus:text-primary w-[59px]  flex-col justify-center items-center gap-1 flex',
+          isActive('/setting') ? 'text-primary' : 'text-muted'
+        ]"
+      >
+        <i-icon icon="uil:setting" class="text-[24px]" />
+        <div>设置</div>
+      </router-link>
     </div>
   </div>
 </template>

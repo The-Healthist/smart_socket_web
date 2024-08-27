@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Home",
         component: Home,
         meta: {
-          title: "主页"
+          title: "首页"
         }
       },
       {
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Order",
         component: () => import("@/views/order/orderPage.vue"),
         meta: {
-          title: "工具"
+          title: "订单"
         }
       },
       {
@@ -30,8 +30,16 @@ const routes: Array<RouteRecordRaw> = [
         name: "Auth",
         component: () => import("@/views/auth/authPage.vue"),
         meta: {
-          title: "关于",
+          title: "我的",
           noCache: true
+        }
+      },
+      {
+        path: "setting",
+        name: "Setting",
+        component: () => import("@/views/setting/settingPage.vue"),
+        meta: {
+          title: "设置"
         }
       }
     ]

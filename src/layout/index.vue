@@ -19,7 +19,7 @@ const cachedViews = computed(() => {
           <component :is="Component" />
         </keep-alive>
       </router-view>
-      <div class="flex ml-[20%]"><Tabbar /></div>
+      <div class="flex ml-[10%]"><Tabbar /></div>
     </van-config-provider>
   </div>
 </template>
