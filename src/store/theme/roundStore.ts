@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 
-export type ThemeRounded = "base" | "muted";
+export type ThemeRounded = "base" | "muted" | "small";
 
 export const useRoundedStore = defineStore({
   id: "themeRounded",
   state: () => ({
-    roundeds: ["base", "muted"] as ThemeRounded[],
+    roundeds: ["base", "muted", "small"] as ThemeRounded[],
     rounded: "base" as ThemeRounded
   }),
   getters: {
@@ -14,7 +14,6 @@ export const useRoundedStore = defineStore({
   },
   actions: {
     setRounded(theme: ThemeRounded) {
-      console.log("setRounded", theme);
       this.rounded = theme;
     }
   }

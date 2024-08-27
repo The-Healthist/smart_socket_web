@@ -1,7 +1,9 @@
 <template>
-  <div :class="`theme-${theme}`">
+  <div
+    :class="`theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} `"
+  >
     <div
-      class="bg-base/80 h-[55px] px-5 py-[5px] rounded-[20px] fixed bottom-2 gap-3 flex justify-between items-center shadow"
+      class="bg-base/90 rounded-bar text-muted px-5 py-[5px] fixed bottom-2 gap-3 flex justify-between items-center shadow"
     >
       <router-link
         to="/home"
@@ -40,11 +42,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { useThemeStore } from "@/store/theme/themeStore";
-
-// Access the theme store
+import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
+import { useRoundedStore } from "@/store/theme/roundStore";
+import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 const themeStore = useThemeStore();
-const theme = computed(() => themeStore.getTheme);
+const themes = themeStore.themes;
+const currentTheme = computed(() => themeStore.getTheme);
+const roundedStore = useRoundedStore();
+const currrentRounded = computed(() => roundedStore.getRounded);
+const fontsizeStore = useFontSizeStore();
+const currentFontSize = computed(() => fontsizeStore.getFontSize);
 
 // Access the current route
 const route = useRoute();

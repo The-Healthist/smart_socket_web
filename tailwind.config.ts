@@ -34,6 +34,14 @@ export default {
         CactusClassicalSerifHK: ["Cactus Classical Serif", "serif"],
         LXGWWenKaiMonoTCHK: ["LXGW WenKai Mono TC", "monospace"]
       },
+      fontSize: {
+        small: ["var(--fontsize-xs)", "var(--line-height--xxs)"],
+        muted: ["var(--fontsize-sm)", "var(--line-height--sm)"],
+        base: ["var(--fontsize-base)", "var(--line-height--base)"],
+        large: ["var(--fontsize-lg)", "var(--line-height--lg)"],
+        larger: ["var(--fontsize-xl)", "var(--line-height--xl)"],
+        largest: ["var(--fontsize-2xl)", "var(--line-height--2xl)"]
+      },
       borderRadius: {
         base: "var(--rounded--base)",
         card: "var(--rounded--card)",

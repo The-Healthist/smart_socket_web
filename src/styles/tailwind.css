@@ -18,9 +18,40 @@
   --rounded--option: 3px;
   --rounded--bar: 12px;
 }
-
-/* 橙色主题 */
-.theme-orange {
+.theme-rounded-small {
+  --rounded--base: 0px;
+  --rounded--card: 6px;
+  --rounded--button: 2px;
+  --rounded--option: 1px;
+  --rounded--bar: 10px;
+}
+/* 字号大小 */
+.theme-fontsize-base {
+  --fontsize-xs: 12px;
+  --fontsize-sm: 14px;
+  --fontsize-base: 16px;
+  --fontsize-lg: 18px;
+  --fontsize-xl: 20px;
+  --fontsize-2xl: 24px;
+}
+.theme-fontsize-muted {
+  --fontsize-xs: 10px;
+  --fontsize-sm: 12px;
+  --fontsize-base: 14px;
+  --fontsize-lg: 16px;
+  --fontsize-xl: 18px;
+  --fontsize-2xl: 20px;
+}
+.theme-fontsize-large {
+  --fontsize-xs: 14px;
+  --fontsize-sm: 16px;
+  --fontsize-base: 18px;
+  --fontsize-lg: 20px;
+  --fontsize-xl: 22px;
+  --fontsize-2xl: 24px;
+}
+/* 颜色主题 */
+.theme-color-orange {
   /* 主色 */
   --color-primary: 255 165 0; /* 橙色 */
   --color-secondary: 255 140 0; /* 深橙色 */
@@ -59,9 +90,7 @@
   --color-success: 50 205 50; /* 石灰绿 */
   --color-separator: 88 110 117; /* 深灰蓝色 */
 }
-
-/* 绿色主题 */
-.theme-green {
+.theme-color-green {
   /* 主色 */
   --color-primary: 34 193 34; /* 草绿色 */
   --color-secondary: 18 140 18; /* 深绿 */
@@ -100,9 +129,7 @@
   --color-success: 50 205 50; /* 石灰绿 */
   --color-separator: 120 144 156; /* 灰蓝色 */
 }
-
-/* 红色主题 */
-.theme-red {
+.theme-color-red {
   /* 主色 */
   --color-primary: 255 0 0; /* 红色 */
   --color-secondary: 139 0 0; /* 深红 */
@@ -141,9 +168,7 @@
   --color-success: 50 205 50; /* 石灰绿 */
   --color-separator: 128 0 0; /* 深红棕色 */
 }
-
-/* 白色主题 */
-.theme-white {
+.theme-color-white {
   /* 主色 */
   --color-primary: 255 255 255; /* 白色 */
   --color-secondary: 200 200 200; /* 浅灰 */

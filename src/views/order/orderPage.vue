@@ -1,29 +1,7 @@
 <template>
   <div
-    :class="`tools-content pt-[20px] px-[12px] theme-${currentTheme} theme-rounded-${rounded}`"
+    :class="`tools-content pt-[20px] px-[12px] theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
   >
-    <!-- Mock -->
-
-    <!-- online iconify icon -->
-    <div>
-      <i-icon
-        v-for="item in iconOnlineList"
-        :key="item"
-        :icon="item"
-        class="inline-block text-[24px] mr-3 text-primary"
-      />
-    </div>
-
-    <!-- local svg file icon -->
-    <div>
-      <svg-icon
-        v-for="item in svgIconLocalList"
-        :key="item"
-        :name="item"
-        class="inline-block text-[24px] mr-3 text-primary"
-      />
-    </div>
-
     <!-- Theme switcher -->
     <div class="mt-10">
       <span class="text-primary/[0.5]">点击下方按钮切换主题</span>
@@ -53,10 +31,25 @@
       </div>
     </div>
 
+    <!-- Font Size Switcher -->
+    <div :class="`text-base mt-10`">
+      <span class="text-primary/[0.5]">点击下方按钮切换字体大小</span>
+      <div class="mt-5">
+        <button
+          v-for="size in currentFontSizes"
+          :key="size"
+          class="border rounded p-2 mr-5 bg-secondary text-inverted"
+          @click="fontsizeStore.setFontSize(size)"
+        >
+          {{ size }}
+        </button>
+      </div>
+    </div>
+
     <!-- text switcher -->
     <div :class="`font-${text} mt-10`">
       <span class="text-primary/[0.5]">点击下方按钮切换字体</span>
-      <div class="mt-5">
+      <div class="mt-5 grid grid-cols-4">
         <button
           v-for="t in texts"
           :key="t"
@@ -140,21 +133,8 @@ import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
+import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 
-const iconOnlineList = [
-  "material-symbols:admin-panel-settings-outline",
-  "jam:android",
-  "lucide:badge-check",
-  "pixelarticons:heart",
-  "fxemoji:alienmonster",
-  "meteocons:thunderstorms-day-overcast-fill",
-  "mdi:electricity-outline"
-];
-
-const modules = import.meta.glob("../../icons/svg/*.svg", { eager: true });
-const svgIconLocalList = Object.keys(modules).map(key =>
-  key.replace("../../icons/svg/", "").replace(".svg", "")
-);
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
@@ -164,9 +144,9 @@ const texts = computed(() => textStore.getTexts);
 const roundedStore = useRoundedStore();
 const rounded = computed(() => roundedStore.getRounded);
 const roundeds = computed(() => roundedStore.getRoundeds);
-const switchTheme = (theme: string) => {
-  themeStore.setTheme(theme as ThemeColor);
-};
+const fontsizeStore = useFontSizeStore();
+const currentFontSize = computed(() => fontsizeStore.getFontSize);
+const currentFontSizes = computed(() => fontsizeStore.getFontSizes);
 
 // 颜色调色板
 const colorPalette = [
