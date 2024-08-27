@@ -6,13 +6,13 @@
     <div>
       <div class="flex flex-col w-full gap-[10px] p-2.5 mt-[100px] absolute">
         <div class="flex flex-row gap-2.5 w-full h-[100px]">
-          <div class="rounded-card w-[50vw] h-[100px] bg-slate-300" />
-          <div class="rounded-card w-[50vw] h-[100px] bg-slate-300" />
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
         </div>
-        <div class="rounded-card w-full h-[128px] bg-slate-300" />
+        <div class="rounded-card w-full h-[128px] bg-base/90" />
         <!-- buttons -->
         <div
-          class="rounded-card flex flex-row justify-between gap-2.5 w-full h-[77px] bg-slate-200 px-5 py-2.5"
+          class="rounded-card bg-base/90 text-mutedC flex flex-row justify-between gap-2.5 w-full h-[77px] px-5 py-2.5"
         >
           <div class="flex flex-col gap-[4px] justify-center items-center">
             <i-icon icon="mdi:power-socket-uk" class="text-[36px]" />
@@ -67,7 +67,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="Demo">
+<script setup lang="ts" name="Home">
 import { reactive, computed } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";

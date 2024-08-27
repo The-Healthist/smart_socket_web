@@ -13,17 +13,17 @@
 }
 .theme-rounded-muted {
   --rounded--base: 0px;
-  --rounded--card: 8px;
+  --rounded--card: 6px;
   --rounded--button: 4px;
   --rounded--option: 3px;
   --rounded--bar: 12px;
 }
 .theme-rounded-small {
   --rounded--base: 0px;
-  --rounded--card: 6px;
-  --rounded--button: 2px;
+  --rounded--card: 4px;
+  --rounded--button: 4px;
   --rounded--option: 1px;
-  --rounded--bar: 10px;
+  --rounded--bar: 8px;
 }
 /* 字号大小 */
 .theme-fontsize-base {
@@ -60,7 +60,6 @@
   --color-background-base: 255 255 255; /* 白色 */
   --color-background-primary: 255 165 0; /* 橙色 */
   --color-background-secondary: 136 136 136;
-
   /* 按钮 */
   --color-button-primary: 255 165 0; /* 橙色 */
   --color-button-background-base: 255 255 255; /* 白色 */

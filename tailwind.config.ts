@@ -10,8 +10,8 @@ export default {
         base: "rgb(var(--color-background-base) / <alpha-value>)" // 通用背景颜色，带有透明度
       },
       textColor: {
-        base: "rgb(var(--color-text-base) / <alpha-value>)", // 通用文本颜色，带有透明度
-        muted: "rgb(var(--color-text-muted) / <alpha-value>)", // 辅助文本颜色，带有透明度
+        baseC: "rgb(var(--color-text-base) / <alpha-value>)", // 通用文本颜色，带有透明度
+        mutedC: "rgb(var(--color-text-muted) / <alpha-value>)", // 辅助文本颜色，带有透明度
         inverted: "rgb(var(--color-text-inverted) / <alpha-value>)", // 插入文本颜色，带有透明度
         primary: "rgb(var(--color-text-primary) / <alpha-value>)", // 主要文本颜色，带有透明度
         secondary: "rgb(var(--color-text-secondary) / <alpha-value>)" // 次要文本颜色，带有透明度
