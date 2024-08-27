@@ -48,6 +48,14 @@ export default {
         button: "var(--rounded--button)",
         option: "var(--rounded--option)",
         bar: "var(--rounded--bar)"
+      },
+      gradientColorStops: {
+        skin: {
+          primary: "rgb(var(--color-background-primary) / <alpha-value>)",
+          secondary: "rgb(var(--color-background-secondary) / <alpha-value>)",
+          tertiary: "rgb(var(--color-gradient-tertiary) / <alpha-value>)",
+          quaternary: "rgb(var(--color-gradient-quaternary) / <alpha-value>)"
+        }
       }
     }
   },

@@ -54,12 +54,12 @@
 .theme-color-orange {
   /* 主色 */
   --color-primary: 255 165 0; /* 橙色 */
-  --color-secondary: 255 140 0; /* 深橙色 */
+  --color-secondary: 136 136 136; /* 深橙色 */
 
   /* 背景色 */
   --color-background-base: 255 255 255; /* 白色 */
   --color-background-primary: 255 165 0; /* 橙色 */
-  --color-background-secondary: 255 140 0; /* 深橙色 */
+  --color-background-secondary: 136 136 136;
 
   /* 按钮 */
   --color-button-primary: 255 165 0; /* 橙色 */

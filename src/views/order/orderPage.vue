@@ -83,45 +83,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Primary Button -->
-    <div :class="`theme-rounded-${rounded} mt-10 flex flex-row gap-2.5 `">
-      <InvertedButton>
-        <template #default>
-          <div
-            class="text-primary w-[80px] h-[22px] flex flex-row justify-center items-center"
-          >
-            <span class="font-bold font-CactusClassicalSerifHK text-center">
-              遠程啓動
-            </span>
-          </div>
-        </template>
-      </InvertedButton>
-      <PrimaryButton>
-        <template #default>
-          <div
-            class="text-inverted w-[234px] h-[22px] flex flex-row justify-center items-center gap-2"
-          >
-            <i-icon icon="mingcute:flash-line" class="text-[20px]" />
-            <span class="font-NotoSansHK text-xl font-bold tracking-wide"
-              >扫码租用</span
-            >
-          </div>
-        </template>
-      </PrimaryButton>
-    </div>
-    <PrimaryButton>
-      <template #default>
-        <div
-          class="text-inverted w-[234px] h-[22px] flex flex-row justify-center items-center gap-2"
-        >
-          <i-icon icon="mingcute:flash-line" class="text-[20px]" />
-          <span class="font-NotoSerifHK text-xl font-bold tracking-wide"
-            >扫码租用</span
-          >
-        </div>
-      </template>
-    </PrimaryButton>
   </div>
 </template>
 
