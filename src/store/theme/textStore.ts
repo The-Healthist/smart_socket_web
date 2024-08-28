@@ -4,6 +4,8 @@ export type ThemeText =
   | "NotoSansHK"
   | "NotoSerifHK"
   | "CactusClassicalSerifHK"
+  | "NotoSansTC"
+  | "NotoSerifTC"
   | "LXGWWenKaiMonoTCHK";
 
 export const useTextStore = defineStore({
@@ -13,7 +15,9 @@ export const useTextStore = defineStore({
       "NotoSansHK",
       "NotoSerifHK",
       "CactusClassicalSerifHK",
-      "LXGWWenKaiMonoTCHK"
+      "LXGWWenKaiMonoTCHK",
+      "NotoSansTC",
+      "NotoSerifTC"
     ] as ThemeText[],
     activeText: "NotoSansHK" as ThemeText
   }),

@@ -1,10 +1,10 @@
 <template>
   <div
-    :class="`theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
+    :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[140vh]"
   >
     <div>
-      <div class="flex flex-col w-full gap-[10px] p-2.5 mt-[100px] absolute">
+      <div class="flex flex-col w-full gap-[10px] p-2.5 absolute">
         <div class="flex flex-row gap-2.5 w-full h-[100px]">
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
@@ -48,14 +48,14 @@
                 </div>
               </template>
             </InvertedButton>
-            <PrimaryButton>
+            <PrimaryButton class="grow">
               <template #default>
                 <div
-                  class="w-[57vw] h-[22px] flex flex-row justify-center items-center gap-2"
+                  class="h-[22px] flex flex-row justify-center items-center gap-2"
                 >
                   <i-icon icon="mingcute:flash-line" class="text-[20px]" />
                   <span
-                    class="text-larger text-inverted font-NotoSansHK font-bold tracking-wide"
+                    class="text-larger text-inverted font-bold tracking-wide"
                     >扫码租用</span
                   >
                 </div>

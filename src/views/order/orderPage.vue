@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text}`"
+    :class="` font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text}`"
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-primary/10 h-[140vh]"
   >
     <div
@@ -66,7 +66,7 @@
               <div class="flex flex-col gap-2.5">
                 <!-- 第一行 -->
                 <div class="flex justify-between items-center">
-                  <span class="h-text-small text-baseC font-normal truncate">
+                  <span class="text-small text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
                   <div class="text-large">{{ order.name }}</div>
@@ -96,7 +96,7 @@
 
               <!-- button -->
               <div>
-                <div class="flex flex-row justify-between gap-2.5 w-full">
+                <div class="flex flex-row gap-2.5 w-full">
                   <InvertedButton>
                     <template #default>
                       <div
@@ -110,17 +110,17 @@
                       </div>
                     </template>
                   </InvertedButton>
-                  <PrimaryButton>
+                  <PrimaryButton class="grow">
                     <template #default>
                       <div
-                        class="w-[57vw] h-[22px] flex flex-row justify-center items-center gap-2"
+                        class="grow h-[22px] flex flex-row justify-center items-center gap-2"
                       >
                         <i-icon
                           icon="mingcute:flash-line"
                           class="text-[20px]"
                         />
                         <span
-                          class="text-larger text-inverted font-NotoSansHK font-bold tracking-wide"
+                          class="text-larger text-inverted font-bold tracking-wide"
                           >充值續費</span
                         >
                       </div>
@@ -130,7 +130,7 @@
               </div>
               <!-- seperator -->
               <div
-                class="bg-separator/50 flex flex-row justify-center w-full mt-[10px] h-[1px]"
+                class="bg-separator/30 flex flex-row justify-center w-full h-[1px]"
               />
             </div>
           </div>
@@ -141,21 +141,18 @@
               class="w-[95vw] p-2.5 flex flex-col gap-2"
             >
               <div class="flex flex-col gap-2.5">
-                <!-- 第一行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
                   <div class="text-large">{{ order.name }}</div>
                 </div>
-                <!-- 第二行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     插座地址 :
                   </span>
                   <div class="text-large">{{ order.address }}</div>
                 </div>
-                <!-- 第三行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     購買電量 :
@@ -164,7 +161,6 @@
                     {{ order.powerPurchased }}
                   </div>
                 </div>
-                <!-- 第四行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     支付金額 :
@@ -173,7 +169,6 @@
                     {{ order.amountPaid }}
                   </div>
                 </div>
-                <!-- 第五行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     訂單編號 :
@@ -182,7 +177,6 @@
                     {{ order.orderNumber }}
                   </div>
                 </div>
-                <!-- 第六行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     付款方式 :
@@ -191,7 +185,6 @@
                     {{ order.paymentMethod }}
                   </div>
                 </div>
-                <!-- 第七行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     交易編號 :
@@ -201,7 +194,6 @@
                   </div>
                 </div>
               </div>
-              <!-- button -->
               <div>
                 <div
                   class="flex flex-row justify-center items-center gap-2.5 w-full"

@@ -1,10 +1,10 @@
 <template>
   <div
-    :class="`theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
-    class="text-muted bg-gradient-to-b from-skin-secondary to-skin-primary h-[140vh]"
+    :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
+    class="text-muted bg-gradient-to-b from-skin-primary/20 to-skin-primary h-[140vh]"
   >
     <div>
-      <div class="flex flex-col w-full gap-[10px] p-2.5 mt-[100px] absolute">
+      <div class="flex flex-col w-full gap-[10px] p-2.5 absolute">
         <div class="rounded-card w-full h-[128px] bg-base/90" />
         <div class="flex flex-row gap-2.5 w-full h-[100px]">
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />

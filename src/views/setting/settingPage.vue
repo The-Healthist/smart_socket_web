@@ -1,15 +1,15 @@
 <template>
   <div
-    :class="`tools-content pt-[20px] px-[12px] theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
+    :class="`tools-content pt-[20px] px-[12px] h-[135vh] font-${text} theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
   >
     <!-- Theme switcher -->
-    <div class="mt-10">
-      <span class="text-primary">点击下方按钮切换主题</span>
+    <div class="mt-0">
+      <span class="text-primary">主题颜色</span>
       <div class="mt-5">
         <button
           v-for="t in themes"
           :key="t"
-          class="border rounded-button p-2 mr-5 bg-primary text-primary"
+          class="border rounded-button p-2 mr-5 bg-primary text-inverted"
           @click="themeStore.setTheme(t)"
         >
           {{ t }}
@@ -18,7 +18,7 @@
     </div>
     <!-- Roundness Switcher -->
     <div :class="`theme-rounded-${rounded} mt-10`">
-      <span class="text-primary">点击下方按钮切换圆角</span>
+      <span class="text-primary">圆角大小</span>
       <div class="mt-5">
         <button
           v-for="r in roundeds"
@@ -33,7 +33,7 @@
 
     <!-- Font Size Switcher -->
     <div :class="`text-base mt-10`">
-      <span class="text-primary">点击下方按钮切换字体大小</span>
+      <span class="text-primary">字体大小</span>
       <div class="mt-5">
         <button
           v-for="size in currentFontSizes"
@@ -47,16 +47,55 @@
     </div>
 
     <!-- text switcher -->
-    <div :class="`font-${text} mt-10`">
-      <span class="text-primary/[0.5]">点击下方按钮切换字体</span>
-      <div class="mt-5 grid grid-cols-4">
+    <div class="mt-10">
+      <span class="text-primary">字体选择</span>
+      <div class="mt-5 grid grid-cols-3 gap-4">
+        <!-- NotoSansHK -->
         <button
-          v-for="t in texts"
-          :key="t"
-          class="border rounded p-2 mr-5 bg-primary text-inverted"
-          @click="textStore.setText(t)"
+          class="font-NotoSansHK border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('NotoSansHK')"
         >
-          {{ t }}
+          NotoSansHK
+        </button>
+
+        <!-- NotoSerifHK -->
+        <button
+          class="font-NotoSerifHK border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('NotoSerifHK')"
+        >
+          NotoSerifHK
+        </button>
+
+        <!-- CactusClassicalSerifHK -->
+        <button
+          class="font-CactusClassicalSerifHK border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('CactusClassicalSerifHK')"
+        >
+          CactusClassicalSerifHK
+        </button>
+
+        <!-- NotoSansTC -->
+        <button
+          class="font-NotoSansTC border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('NotoSansTC')"
+        >
+          NotoSansTC
+        </button>
+
+        <!-- NotoSerifTC -->
+        <button
+          class="font-NotoSerifTC border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('NotoSerifTC')"
+        >
+          NotoSerifTC
+        </button>
+
+        <!-- LXGWWenKaiMonoTCHK -->
+        <button
+          class="font-LXGWWenKaiMonoTCHK border rounded p-2 bg-primary text-inverted"
+          @click="textStore.setText('LXGWWenKaiMonoTCHK')"
+        >
+          LXGWWenKaiMonoTCHK
         </button>
       </div>
     </div>

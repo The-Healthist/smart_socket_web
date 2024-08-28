@@ -31,9 +31,12 @@ export default {
       },
       fontFamily: {
         NotoSansHK: ["Noto Sans HK", "sans-serif"],
+        LXGWWenKaiMonoTCHK: ["LXGW WenKai Mono TC", "monospace"],
         NotoSerifHK: ["Noto Serif HK", "serif"],
         CactusClassicalSerifHK: ["Cactus Classical Serif", "serif"],
-        LXGWWenKaiMonoTCHK: ["LXGW WenKai Mono TC", "monospace"]
+        NotoSerifTC: ["Noto Serif TC", "serif"],
+        NotoSansTC: ["Noto Sans TC", "sans-serif"],
+        ZhiMangXing: ["Zhi Mang Xing", "cursive"]
       },
       fontSize: {
         small: ["var(--fontsize-xs)", "var(--line-height--xxs)"],
