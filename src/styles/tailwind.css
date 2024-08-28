@@ -87,7 +87,7 @@
   /* 状态色 */
   --color-error: 255 99 71; /* 番茄红 */
   --color-success: 50 205 50; /* 石灰绿 */
-  --color-separator: 88 110 117; /* 深灰蓝色 */
+  --color-separator: 0 0 0; /* 深灰蓝色 */
 }
 .theme-color-green {
   /* 主色 */

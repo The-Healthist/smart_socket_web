@@ -7,7 +7,8 @@ export default {
       backgroundColor: {
         primary: "rgb(var(--color-background-primary) / <alpha-value>)", // 主要背景颜色，带有透明度
         secondary: "rgb(var(--color-background-secondary) / <alpha-value>)", // 次要背景颜色，带有透明度
-        base: "rgb(var(--color-background-base) / <alpha-value>)" // 通用背景颜色，带有透明度
+        base: "rgb(var(--color-background-base) / <alpha-value>)",
+        separator: "rgb(var(--color-separator) / <alpha-value>)" // 通用背景颜色，带有透明度
       },
       textColor: {
         baseC: "rgb(var(--color-text-base) / <alpha-value>)", // 通用文本颜色，带有透明度
