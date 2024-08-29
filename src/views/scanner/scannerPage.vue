@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div id="reader" />
+    <div id="reader" class="border-primary" />
   </div>
 </template>
 
@@ -44,38 +44,40 @@ const getCameras = () => {
       console.log("获取设备信息失败", err); // 获取设备信息失败
     });
 };
+const isValidUrl = (string: string): boolean => {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
 const start = () => {
   html5QrCode.value = new Html5Qrcode("reader");
   html5QrCode.value
     .start(
-      cameraId.value, // retreived in the previous step.
+      cameraId.value,
       {
-        fps: 10, // 设置每秒多少帧
-        qrbox: { width: 250, height: 250 } // 设置取景范围
-        // scannable, rest shaded.
+        fps: 10,
+        qrbox: { width: 240, height: 240 }
       },
       (decodedText: string, decodedResult: Html5QrcodeResult) => {
-        // do something when code is read. For example:
-        // if (qrCodeMessage) {
-        //   getCode(qrCodeMessage);
-        //   stop();
-        // }
+        // Check if decodedText is a URL
+        if (isValidUrl(decodedText)) {
+          router.push(decodedText);
+        }
         console.log("扫描的结果", decodedText, decodedResult);
-        // if (decodedText) {
-        //   router.push('order');
-        // }
       },
       (errorMessage: any) => {
-        // parse error, ideally ignore it. For example:
-        // console.log(`QR Code no longer in front of camera.`);
-        console.log("暂无额扫描结果", errorMessage);
+        console.log("暂无扫描结果", errorMessage);
       }
     )
     .catch((err: any) => {
-      // Start failed, handle it. For example,
       console.log(`Unable to start scanning, error: ${err}`);
     });
 };
+
 const stop = () => {
   html5QrCode.value
     .stop()
@@ -101,5 +103,9 @@ const stop = () => {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
+}
+.qr-shaded-region {
+  width: 100vw;
+  height: 100vh;
 }
 </style>

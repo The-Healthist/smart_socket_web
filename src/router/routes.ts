@@ -41,16 +41,31 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: "设置"
         }
-      },
-      {
-        path: "scanner",
-        name: "Scanner",
-        component: () => import("@/views/scanner/scannerPage.vue"),
-        meta: {
-          title: "扫码"
-        }
       }
     ]
+  },
+  {
+    path: "/scanner",
+    name: "Scanner",
+    component: () => import("@/views/scanner/scannerPage.vue"),
+    meta: {
+      title: "扫码"
+    }
+  },
+  {
+    path: "/paydetail",
+    name: "Daydetail",
+    component: () => import("@/views/pay/payDetail.vue")
+  },
+  {
+    path: "/payedAfter",
+    name: "PayedAfter",
+    component: () => import("@/views/pay/payedAfter.vue")
+  },
+  {
+    path: "/orderConfime",
+    name: "OrderConfime",
+    component: () => import("@/views/pay/orderConfime.vue")
   }
 ];
 
