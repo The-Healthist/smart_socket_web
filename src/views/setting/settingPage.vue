@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`tools-content pt-[20px] px-[12px] h-[135vh] font-${text} theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
+    :class="`bg-gradient-to-b from-skin-primary/30 to-skin-primary/10 tools-content pt-[20px] px-[12px] h-[135vh] font-${text} theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
   >
     <!-- Theme switcher -->
     <div class="mt-0">
