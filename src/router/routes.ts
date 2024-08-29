@@ -41,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: "设置"
         }
+      },
+      {
+        path: "scanner",
+        name: "Scanner",
+        component: () => import("@/views/scanner/scannerPage.vue"),
+        meta: {
+          title: "扫码"
+        }
       }
     ]
   }

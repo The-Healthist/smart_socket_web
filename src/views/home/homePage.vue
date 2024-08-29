@@ -48,7 +48,10 @@
                 </div>
               </template>
             </InvertedButton>
-            <PrimaryButton class="grow">
+            <PrimaryButton
+              class="grow"
+              @click="router.push({ name: 'Scanner' })"
+            >
               <template #default>
                 <div
                   class="h-[22px] flex flex-row justify-center items-center gap-2"
@@ -75,6 +78,7 @@ import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
+import { useRouter } from "vue-router";
 
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
@@ -86,4 +90,5 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
+const router = useRouter();
 </script>
