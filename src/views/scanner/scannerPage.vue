@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="container">
     <div id="reader" class="border-primary" />
   </div>
@@ -107,5 +107,87 @@ const stop = () => {
 .qr-shaded-region {
   width: 100vw;
   height: 100vh;
+}
+</style> -->
+
+<template>
+  <div class="scan">
+    <!-- <div class="nav">
+      <a class="close" @click="() => $router.go(-1)" />
+      <p class="title">Scan QRcode</p>
+    </div> -->
+    <div class="scroll-container">
+      <Scaner
+        :stop-on-scanned="true"
+        :draw-on-found="true"
+        :responsive="false"
+        v-on:code-scanned="codeScanned"
+        v-on:error-captured="errorCaptured"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import Scaner from "@/components/Scanner/Scanner.vue";
+
+export default {
+  name: "Scan",
+  components: {
+    Scaner
+  },
+  data() {
+    return {
+      errorMessage: "",
+      scanned: ""
+    };
+  },
+  mounted() {
+    var str = navigator.userAgent.toLowerCase();
+    var ver = str.match(/cpu iphone os (.*?) like mac os/);
+    if (ver && ver[1].replace(/_/g, ".") < "10.3.3") {
+      alert("相机调用失败");
+    }
+  },
+  methods: {
+    codeScanned(code) {
+      this.scanned = code;
+      setTimeout(() => {
+        alert(`扫码解析成功: ${code}`);
+      }, 200);
+    },
+    errorCaptured(error) {
+      switch (error.name) {
+        case "NotAllowedError":
+          this.errorMessage = "Camera permission denied.";
+          break;
+        case "NotFoundError":
+          this.errorMessage = "There is no connected camera.";
+          break;
+        case "NotSupportedError":
+          this.errorMessage =
+            "Seems like this page is served in non-secure context.";
+          break;
+        case "NotReadableError":
+          this.errorMessage =
+            "Couldn't access your camera. Is it already in use?";
+          break;
+        case "OverconstrainedError":
+          this.errorMessage = "Constraints don't match any installed camera.";
+          break;
+        default:
+          this.errorMessage = "UNKNOWN ERROR: " + error.message;
+      }
+      console.error(this.errorMessage);
+      alert("相机调用失败");
+    }
+  }
+};
+</script>
+
+<style lang="css" scoped>
+.scan {
+  height: 100%;
+  width: 100%;
 }
 </style>
