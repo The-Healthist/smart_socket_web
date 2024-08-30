@@ -4,36 +4,69 @@
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[100vh] relative flex justify-center items-center"
   >
     <div
-      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[469px] mt-[30vh] absolute"
+      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[33vh] mt-[27vh] absolute"
     >
+      <div class="text-largest font-bold tracking-wide flex justify-center">
+        訂單確認
+      </div>
       <div class="flex flex-col gap-2.5">
         <!-- 第一行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
             插座名稱 :
           </span>
-          <div class="text-large">{{ order.name }}</div>
+          <div class="text-larger">{{ order.name }}</div>
         </div>
         <!-- 第二行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
             插座地址 :
           </span>
-          <div class="text-large">{{ order.address }}</div>
+          <div class="text-larger">{{ order.address }}</div>
         </div>
         <!-- 第三行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
             已使用 :
           </span>
-          <div class="text-large font-bold">{{ order.price }}</div>
+          <div class="text-large font-bold">{{ order.price }}kWh</div>
         </div>
         <!-- 第四行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
             剩餘 :
           </span>
-          <div class="text-large font-bold">{{ order.id }}</div>
+          <div class="text-larger font-bold">{{ order.id }}HKD</div>
+        </div>
+        <div class="flex flex-row justify-between gap-2.5 w-full">
+          <InvertedButton @click="router.push({ name: 'PayDetail' })">
+            <template #default>
+              <div
+                class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
+              >
+                <span
+                  class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
+                >
+                  返回上级
+                </span>
+              </div>
+            </template>
+          </InvertedButton>
+          <PrimaryButton
+            class="grow"
+            @click="router.push({ name: 'payAfter' })"
+          >
+            <template #default>
+              <div
+                class="h-[22px] flex flex-row justify-center items-center gap-2"
+              >
+                <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+                <span class="text-larger text-inverted font-bold tracking-wide"
+                  >即刻支付</span
+                >
+              </div>
+            </template>
+          </PrimaryButton>
         </div>
       </div>
     </div>

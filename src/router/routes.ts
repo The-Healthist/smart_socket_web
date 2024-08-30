@@ -54,7 +54,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/paydetail",
-    name: "Daydetail",
+    name: "PayDetail",
     component: () => import("@/views/pay/payDetail.vue")
   },
   {

@@ -4,7 +4,7 @@
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[100vh] relative flex justify-center items-center"
   >
     <div
-      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[469px] mt-[30vh] absolute"
+      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[56vh] mt-[4vh] absolute"
     >
       <!-- 图片 -->
       <div
