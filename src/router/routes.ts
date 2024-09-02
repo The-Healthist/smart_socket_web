@@ -67,6 +67,17 @@ const routes: Array<RouteRecordRaw> = [
     path: "/orderConfime",
     name: "OrderConfime",
     component: () => import("@/views/pay/orderConfime.vue")
+  },
+  {
+    // 登录
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/auth/login.vue")
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("@/views/auth/register.vue")
   }
 ];
 
