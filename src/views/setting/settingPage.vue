@@ -2,6 +2,16 @@
   <div
     :class="`bg-gradient-to-b from-skin-primary/30 to-skin-primary/10 tools-content pt-[20px] px-[12px] h-[135vh] font-${text} theme-color-${currentTheme} theme-rounded-${rounded} theme-fontsize-${currentFontSize}`"
   >
+    <!-- Login Button -->
+    <div class="flex justify-start mb-4">
+      <button
+        class="bg-primary text-white px-4 py-2 rounded shadow-md hover:bg-primary-dark transition"
+        @click="router.push('login')"
+      >
+        登录
+      </button>
+    </div>
+
     <!-- Theme switcher -->
     <div class="mt-0">
       <span class="text-primary">主题颜色</span>
@@ -46,7 +56,7 @@
       </div>
     </div>
 
-    <!-- text switcher -->
+    <!-- Text Switcher -->
     <div class="mt-10">
       <span class="text-primary">字体选择</span>
       <div class="mt-5 grid grid-cols-3 gap-4">
@@ -127,20 +137,18 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useThemeStore, ThemeColor } from "@/store/theme/themeStore";
-import "vant/es/toast/style";
-import PrimaryButton from "@/components/Button/PrimaryButton.vue";
-import InvertedButton from "@/components/Button/InvertedButton.vue";
+import { useThemeStore } from "@/store/theme/themeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
-const texts = computed(() => textStore.getTexts);
 const roundedStore = useRoundedStore();
 const rounded = computed(() => roundedStore.getRounded);
 const roundeds = computed(() => roundedStore.getRoundeds);
@@ -148,7 +156,7 @@ const fontsizeStore = useFontSizeStore();
 const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const currentFontSizes = computed(() => fontsizeStore.getFontSizes);
 
-// 颜色调色板
+// Color Palette
 const colorPalette = [
   { name: "Primary", varName: "--color-primary" },
   { name: "Secondary", varName: "--color-secondary" },
@@ -164,4 +172,9 @@ const colorPalette = [
   { name: "Error", varName: "--color-error" },
   { name: "Success", varName: "--color-success" }
 ];
+
+function handleLoginClick() {
+  // Implement your login logic here, such as redirecting to a login page or opening a login modal
+  alert("Login button clicked");
+}
 </script>

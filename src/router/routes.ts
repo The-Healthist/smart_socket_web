@@ -25,6 +25,12 @@ const routes: Array<RouteRecordRaw> = [
           title: "订单"
         }
       },
+      //订单详情
+      {
+        path: "orderDetail",
+        name: "OrderDetail",
+        component: () => import("@/views/order/orderDetail.vue")
+      },
       {
         path: "auth",
         name: "Auth",

@@ -62,8 +62,11 @@
               v-for="order in displayedOrders"
               :key="order.id"
               class="w-[95vw] p-2.5 flex flex-col gap-2"
+              @click="
+                router.push({ name: 'OrderDetail', query: { id: order.id } })
+              "
             >
-              <div class="flex flex-col gap-2.5">
+              <div class="flex flex-col gap-2.5 hover:bg-primary/10">
                 <!-- 第一行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
@@ -222,7 +225,9 @@ import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
