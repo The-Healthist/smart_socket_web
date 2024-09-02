@@ -53,7 +53,8 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/paydetail",
+    // 可选后面添加id
+    path: "/payDetail/:id",
     name: "PayDetail",
     component: () => import("@/views/pay/payDetail.vue")
   },

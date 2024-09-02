@@ -80,7 +80,7 @@ export default {
     useBackCamera: { type: Boolean, default: true },
     stopOnScaned: { type: Boolean, default: true },
     drawOnfound: { type: Boolean, default: true },
-    lineColor: { type: String, default: "bg-primary" },
+    lineColor: { type: String, default: "#ffa500" },
     lineWidth: { type: Number, default: 2 },
     videoWidth: {
       type: Number,
@@ -170,13 +170,14 @@ export default {
         this.drawLine(location.bottomLeftCorner, location.topLeftCorner);
       }
     },
+    // 扫描的宽度画布
     tick() {
       if (
         this.$refs.video &&
         this.$refs.video.readyState === this.$refs.video.HAVE_ENOUGH_DATA
       ) {
         this.$refs.canvas.height = this.videoWH.height;
-        this.$refs.canvas.width = this.videoWH.width * 2;
+        this.$refs.canvas.width = this.videoWH.width * 1.6;
         this.canvas.drawImage(
           this.$refs.video,
           0,
@@ -287,7 +288,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(1, 0, 5, 0); /* 遮罩层颜色 */
+  background: rgba(1, 0, 5, 0);
   z-index: 1;
 }
 

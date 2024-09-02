@@ -66,7 +66,7 @@
           <button
             :class="
               optionsValue == 1
-                ? 'border-primary rounded-option border-solid border-[1px]'
+                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10'
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="w-[50%] flex flex-row justify-center items-center"
@@ -89,7 +89,7 @@
           <button
             :class="
               optionsValue == 2
-                ? 'border-primary rounded-option border-solid border-[1px]'
+                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10'
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="w-[50%] flex flex-row justify-center items-center"
@@ -118,7 +118,7 @@
           <div
             :class="
               optionsValue == 3
-                ? 'border-primary rounded-option border-solid border-[1px]'
+                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10 '
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="flex flex-row w-full justify-center items-center p-2.5"
@@ -137,7 +137,7 @@
             </div>
             <div class="flex flex-col justify-end items-end w-[25%]">
               <span class="text-red-500 text-base font-bold"
-                >{{ allPrice }}HKD</span
+                >{{ allPriceInput }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
                 >Avg: 0.25 HKD</span
@@ -146,6 +146,7 @@
           </div>
         </div>
       </div>
+      <!-- TODO:修改支付成功逻辑 -->
       <PrimaryButton
         class="grow-x-1"
         @click="
@@ -155,7 +156,8 @@
               address: 'XX路xxx號仁英大廈01A',
               name: '仁英大廈01A 空調插座',
               id: optionsValue,
-              price: allPrice
+              price: allPrice,
+              powers: allPower
             }
           })
         "
@@ -197,13 +199,26 @@ const router = useRouter();
 const isByTime = ref(true);
 const optionsValue = ref(0);
 const inputValue = ref(160);
+const allPriceInput = computed(() => {
+  if (inputValue.value < 0) return 0;
+  else return inputValue.value * 0.25;
+});
 const allPrice = computed(() => {
-  if (optionsValue.value == 1) {
-    return 10;
-  } else if (optionsValue.value == 2) {
-    return 40;
-  } else {
-    return inputValue.value * 0.25;
-  }
+  return optionsValue.value == 0
+    ? 10
+    : optionsValue.value == 1
+      ? 20
+      : optionsValue.value == 2
+        ? 40
+        : inputValue.value * 0.25;
+});
+const allPower = computed(() => {
+  return optionsValue.value == 0
+    ? 10
+    : optionsValue.value == 1
+      ? 20
+      : optionsValue.value == 2
+        ? 40
+        : inputValue.value;
 });
 </script>

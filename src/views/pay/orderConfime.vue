@@ -27,19 +27,19 @@
         <!-- 第三行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
-            已使用 :
+            购买电量 :
           </span>
           <div class="text-large font-bold">{{ order.price }}kWh</div>
         </div>
         <!-- 第四行 -->
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate">
-            剩餘 :
+            支付金额 :
           </span>
-          <div class="text-larger font-bold">{{ order.id }}HKD</div>
+          <div class="text-larger font-bold">{{ order.powers }}HKD</div>
         </div>
         <div class="flex flex-row justify-between gap-2.5 w-full">
-          <InvertedButton @click="router.push({ name: 'PayDetail' })">
+          <InvertedButton @click="router.go(-1)">
             <template #default>
               <div
                 class="w-[22vw] h-[22px] flex flex-row justify-center items-center"

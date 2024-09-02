@@ -152,9 +152,20 @@ export default {
   methods: {
     codeScanned(code) {
       this.scanned = code;
-      setTimeout(() => {
-        alert(`扫码解析成功: ${code}`);
-      }, 200);
+      console.log("code", code);
+      //判断是不是url
+      if (/^(http|https):\/\/[^ "]+$/.test(code)) {
+        window.location.href = code;
+      }
+      if (code.indexOf("http") !== 0) {
+        alert("请输入正确的网址");
+        return;
+      }
+      //
+
+      // setTimeout(() => {
+      //   alert(`扫码解析成功: ${code}`);
+      // }, 1000);
     },
     errorCaptured(error) {
       switch (error.name) {
