@@ -1,76 +1,123 @@
 <template>
-  <div ref="scaner" class="scaner">
-    <!-- <div v-if="showBanner" class="banner">
-      <i class="close_icon" @click="() => (showBanner = false)" />
-      <p class="text">若当前浏览器无法扫码，请切换其他浏览器尝试</p>
-    </div> -->
-    <div class="cover">
-      <p class="line" />
-      <span class="square top left" />
-      <span class="square top right" />
-      <span class="square bottom right" />
-      <span class="square bottom left" />
-      <p class="tips">将二维码放入框内，即可自动扫描</p>
+  <div
+    :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
+  >
+    <div class="scaner">
+      <div class="cover">
+        <div class="box">
+          <p
+            class="line absolute top-1/2 left-1/2 w-48 h-0.5 bg-gradient-to-r from-skin-primary/40 via-skin-primary/90 via-50% to-skin-primary/40 to-100% transform -translate-x-1/2 -translate-y-1/2 animate-scan"
+          />
+
+          <!-- 扫码框的四个角 -->
+          <span
+            class="absolute top-0 left-0 border-t-[3px] border-l-[3px] border-primary w-8 h-8"
+          />
+          <span
+            class="absolute top-0 right-0 border-t-[3px] border-r-[3px] border-primary w-8 h-8"
+          />
+          <span
+            class="absolute bottom-0 left-0 border-b-[3px] border-l-[3px] border-primary w-8 h-8"
+          />
+          <span
+            class="absolute bottom-0 right-0 border-b-[3px] border-r-[3px] border-primary w-8 h-8"
+          />
+
+          <!-- 扫码框的边 -->
+          <span
+            class="absolute top-1/2 left-0 border-l-[3px] border-primary w-12 h-12 transform -translate-y-1/2"
+          />
+          <span
+            class="absolute top-0 left-1/2 border-t-[3px] border-primary w-12 h-12 transform -translate-x-1/2"
+          />
+          <span
+            class="absolute bottom-1/2 right-0 border-r-[3px] border-primary w-12 h-12 transform translate-y-1/2"
+          />
+          <span
+            class="absolute bottom-0 right-1/2 border-b-[3px] border-primary w-12 h-12 transform translate-x-1/2"
+          />
+        </div>
+      </div>
+      <div
+        class="top-[60%] absolute w-full h-[42px] flex justify-center items-center"
+      >
+        <span
+          class="w-[187px] text-large rounded-button bg-primary opacity- text-inverted text-center p-2.5 z-10"
+          >掃不到?手動輸入</span
+        >
+      </div>
+      <!-- 视频播放元素 -->
+      <video
+        v-show="showPlay"
+        ref="video"
+        class="source"
+        :width="videoWH.width"
+        :height="videoWH.height"
+        controls
+      />
+      <!-- 画布元素 -->
+      <canvas v-show="!showPlay" ref="canvas" />
+
+      <!-- 开始扫描按钮 -->
+      <!-- <button v-show="showPlay" @click="run">开始</button> -->
     </div>
-    <video
-      v-show="showPlay"
-      ref="video"
-      class="source"
-      :width="videoWH.width"
-      :height="videoWH.height"
-      controls
-    />
-    <canvas v-show="!showPlay" ref="canvas" />
-    <button v-show="showPlay" @click="run">开始</button>
   </div>
 </template>
 
 <script>
-import adapter from "webrtc-adapter";
-import jsQR from "jsqr";
+import { computed } from "vue";
+import adapter from "webrtc-adapter"; // WebRTC 适配器
+import jsQR from "jsqr"; // QR 码解析库
+import { useThemeStore } from "@/store/theme/themeStore";
+import { useRoundedStore } from "@/store/theme/roundStore";
+import { useFontSizeStore } from "@/store/theme/fontsizeStore";
+import { useTextStore } from "@/store/theme/textStore";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Scaner",
   props: {
-    // 使用后置相机
-    useBackCamera: {
-      type: Boolean,
-      default: true
-    },
-    // 扫描识别后停止
-    stopOnScaned: {
-      type: Boolean,
-      default: true
-    },
-    drawOnfound: {
-      type: Boolean,
-      default: true
-    },
-    // 线条颜色
-    lineColor: {
-      type: String,
-      default: "bg-primary"
-    },
-    // 线条宽度
-    lineWidth: {
-      type: Number,
-      default: 2
-    },
-    // 视频宽度
+    useBackCamera: { type: Boolean, default: true },
+    stopOnScaned: { type: Boolean, default: true },
+    drawOnfound: { type: Boolean, default: true },
+    lineColor: { type: String, default: "bg-primary" },
+    lineWidth: { type: Number, default: 2 },
     videoWidth: {
       type: Number,
       default: document.documentElement.clientWidth || document.body.clientWidth
     },
-    // 视频高度
     videoHeight: {
       type: Number,
       default:
         document.documentElement.clientHeight || document.body.clientHeight
     },
-    responsive: {
-      type: Boolean,
-      default: false
-    }
+    responsive: { type: Boolean, default: false }
+  },
+  setup() {
+    const themeStore = useThemeStore();
+    const roundedStore = useRoundedStore();
+    const fontsizeStore = useFontSizeStore();
+    const textStore = useTextStore();
+    const router = useRouter();
+
+    const currentTheme = computed(() => themeStore.getTheme);
+    const currrentRounded = computed(() => roundedStore.getRounded);
+    const currentFontSize = computed(() => fontsizeStore.getFontSize);
+    const text = computed(() => textStore.getText);
+    const texts = computed(() => textStore.getTexts);
+
+    return {
+      themeStore,
+      roundedStore,
+      fontsizeStore,
+      textStore,
+      router,
+      currentTheme,
+      currrentRounded,
+      currentFontSize,
+      text,
+      texts
+    };
   },
   data() {
     return {
@@ -107,7 +154,6 @@ export default {
     this.fullStop();
   },
   methods: {
-    // 画线
     drawLine(begin, end) {
       this.canvas.beginPath();
       this.canvas.moveTo(begin.x, begin.y);
@@ -116,7 +162,6 @@ export default {
       this.canvas.strokeStyle = this.lineColor;
       this.canvas.stroke();
     },
-    // 画框
     drawBox(location) {
       if (this.drawOnfound) {
         this.drawLine(location.topLeftCorner, location.topRightCorner);
@@ -131,7 +176,7 @@ export default {
         this.$refs.video.readyState === this.$refs.video.HAVE_ENOUGH_DATA
       ) {
         this.$refs.canvas.height = this.videoWH.height;
-        this.$refs.canvas.width = this.videoWH.width;
+        this.$refs.canvas.width = this.videoWH.width * 2;
         this.canvas.drawImage(
           this.$refs.video,
           0,
@@ -158,7 +203,6 @@ export default {
       }
       this.run();
     },
-    // 初始化
     setup() {
       if (this.responsive) {
         this.$nextTick(() => {
@@ -215,12 +259,11 @@ export default {
         this.parity += 1;
       }
       if (this.parity > 2) {
-        this.active = this.stopOnScanned ? false : true;
+        this.active = this.stopOnScaned ? false : true;
         this.parity = 0;
         this.$emit("code-scanned", code);
       }
     },
-    // 完全停止
     fullStop() {
       if (this.$refs.video && this.$refs.video.srcObject) {
         this.$refs.video.srcObject.getTracks().forEach(t => t.stop());
@@ -232,81 +275,46 @@ export default {
 
 <style lang="css" scoped>
 .scaner {
-  background: #000000;
-  position: fixed;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* 遮罩层 */
+.scaner .cover {
+  position: absolute;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  height: -webkit-calc(100% - 48px);
-  height: -moz-calc(100% - 48px);
-  height: -ms-calc(100% - 48px);
-  height: -o-calc(100% - 48px);
-  height: calc(100% - 48px);
+  background: rgba(1, 0, 5, 0); /* 遮罩层颜色 */
+  z-index: 1;
 }
-.scaner .banner {
-  width: 340px;
+
+/* 创建不遮罩区域 */
+.scaner .cover .box {
+  content: "";
   position: absolute;
-  top: 16px;
+  top: 34%;
   left: 50%;
-  margin-left: -170px;
-  background: #fa74a2;
-  border-radius: 8px;
-  box-sizing: border-box;
-  padding: 12px;
-  opacity: 0.9;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-}
-.scaner .banner .text {
-  padding: 0;
-  margin: 0;
-  color: #ffffff;
-  font-size: 12px;
-  text-align: justify;
-  text-align-last: left;
-}
-.scaner .banner .close_icon {
-  display: inline-block;
-  height: 24px;
-  width: 24px;
-  background: url("../assets/close.png") no-repeat center;
-  background-size: auto 100%;
-  position: absolute;
-  right: 8px;
-  top: 8px;
-}
-.scaner .cover {
-  height: 220px;
-  width: 220px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  border: 0.5px solid #999999;
-  z-index: 1111;
+  width: 220px;
+  height: 220px;
+  background: rgba(1, 16, 1, 0);
+  z-index: 2;
+  border: 1px solid transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
 }
-.scaner .cover .line {
-  width: 200px;
-  height: 1px;
-  margin-left: 10px;
-  background: #5f68e8;
-  background: linear-gradient(
-    to right,
-    transparent,
-    #5f68e8,
-    #0165ff,
-    #5f68e8,
-    transparent
-  );
-  position: absolute;
+span {
+  border-radius: 3px;
+}
+
+.line {
   -webkit-animation: scan 1.75s infinite linear;
   -moz-animation: scan 1.75s infinite linear;
   -ms-animation: scan 1.75s infinite linear;
   -o-animation: scan 1.75s infinite linear;
-  animation: scan 1.75s infinite linear;
+  animation: scan 1.75s infinite linear; /* 扫码线动画 */
   -webkit-animation-fill-mode: both;
   -moz-animation-fill-mode: both;
   -ms-animation-fill-mode: both;
@@ -316,34 +324,22 @@ export default {
 }
 .scaner .cover .square {
   display: inline-block;
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 30px;
   position: absolute;
 }
-.scaner .cover .square.top {
-  top: 0;
-  border-top: 1px solid #5f68e8;
-}
-.scaner .cover .square.left {
-  left: 0;
-  border-left: 2px solid #5f68e8;
-}
-.scaner .cover .square.bottom {
-  bottom: 0;
-  border-bottom: 2px solid #5f68e8;
-}
-.scaner .cover .square.right {
-  right: 0;
-  border-right: px solid #5f68e8;
-}
+
+/* 提示信息样式 */
 .scaner .cover .tips {
   position: absolute;
-  bottom: -48px;
+  bottom: -78px;
   width: 100%;
+  background: var(--color-background-primary);
   font-size: 14px;
-  color: #ffffff;
   opacity: 0.8;
 }
+
+/* 扫码线动画效果 */
 @-webkit-keyframes scan {
   0% {
     top: 0;

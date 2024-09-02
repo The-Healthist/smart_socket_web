@@ -40,9 +40,7 @@
                 <div
                   class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
                 >
-                  <span
-                    class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
-                  >
+                  <span class="text-base text-primary font-bold text-center">
                     遠程啓動
                   </span>
                 </div>
