@@ -25,15 +25,15 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate"
-            >购买电量 :</span
+            >租用時間 :</span
           >
-          <div class="text-large font-bold">{{ order.price }}kWh</div>
+          <div class="text-large font-bold">{{ order.duration }}kWh</div>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-small text-baseC font-normal truncate"
             >支付金额 :</span
           >
-          <div class="text-larger font-bold">{{ order.powers }}HKD</div>
+          <div class="text-larger font-bold">{{ order.duration }}HKD</div>
         </div>
 
         <!-- Payment Details -->
@@ -178,6 +178,7 @@ import { useRouter, useRoute } from "vue-router";
 
 const route = useRoute();
 const order = route.query;
+console.log(order);
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);

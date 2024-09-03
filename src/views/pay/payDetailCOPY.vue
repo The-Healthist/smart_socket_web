@@ -18,22 +18,35 @@
 
       <div class="flex flex-col w-full">
         <!-- 按量付費/按时间付費切换 -->
-        <!-- <div class="flex flex-row gap-0 w-full">
-         
+        <div class="flex flex-row gap-0 w-full">
           <div
-            class="grow h-[42px] flex justify-center items-center relative overflow-hidden"
-            :class="
-              !isByTime
-                ? 'bg-primary rounded-t-button rounded-tr-button '
-                : 'bg-base  rounded-t-button rounded-tr-button'
-            "
+            class="w-[47.5vw] h-[42px] flex justify-center items-center relative overflow-hidden"
+            :class="isByTime ? ' bg-primary rounded-tl-bar' : 'bg-base'"
+          >
+            <button
+              class="w-full h-full flex flex-row gap-2.5 justify-center items-center relative z-10"
+              :class="
+                isByTime
+                  ? 'text-primary bg-base rounded-t-bar border-primary border-solid border-t-[1px] border-l-[1px]'
+                  : 'text-inverted bg-primary rounded-br-bar rounded-tl-card border-l-[1px] border-t-[1px] border-primary'
+              "
+              @click="isByTime = true"
+            >
+              <span class="text-large">按量付費</span>
+              <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+            </button>
+          </div>
+          <!-- 历史订单 -->
+          <div
+            class="w-[47.5vw] h-[42px] flex justify-center items-center relative overflow-hidden"
+            :class="!isByTime ? 'bg-primary rounded-tr-bar ' : 'bg-base '"
           >
             <button
               class="w-full h-full flex flex-row gap-2.5 justify-center items-center relative z-10"
               :class="
                 !isByTime
-                  ? 'text-primary bg-base rounded-t-buttonrounded-tr-button  border-primary border-solid border-t-[1px] border-r-[1px]'
-                  : 'text-inverted bg-primary rounded-tr-button'
+                  ? 'text-primary bg-base rounded-t-bar  border-primary border-solid border-t-[1px] border-r-[1px]'
+                  : 'text-inverted bg-primary rounded-bl-bar rounded-tr-bar'
               "
               @click="isByTime = false"
             >
@@ -41,11 +54,11 @@
               <span class="text-base">按鐘付費</span>
             </button>
           </div>
-        </div> -->
+        </div>
 
         <!--10/20 选项 -->
         <div
-          class="border-primary rounded-t-button border-solid border-l-[1px] border-t-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 px-2.5 pt-2.5"
+          class="border-primary border-solid border-l-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 px-2.5 pt-2.5"
         >
           <button
             :class="
@@ -57,9 +70,9 @@
             @click="optionsValue = 1"
           >
             <div class="flex flex-row w-full justify-between p-1.5">
-              <div class="flex flex-col items-end">
+              <div class="flex flex-col">
                 <span class="text-baseC text-small font-bold tracking-wide"
-                  >1H</span
+                  >1h</span
                 >
                 <span class="text-small font-normal text-baseC/50"
                   >Avg: 1HKD/H</span
@@ -80,9 +93,9 @@
             @click="optionsValue = 2"
           >
             <div class="flex flex-row w-full justify-between p-1.5">
-              <div class="flex flex-col justify-start items-end">
+              <div class="flex flex-col">
                 <span class="text-baseC text-small font-bold tracking-wide"
-                  >2H</span
+                  >2h</span
                 >
                 <span class="text-small font-normal text-baseC/50"
                   >Avg: 1HKD/H</span
@@ -117,14 +130,14 @@
             <div
               class="text-baseC text-small font-bold w-[15%] flex flex-row justify-center items-center"
             >
-              H
+              kWh
             </div>
             <div class="flex flex-col justify-end items-end w-[25%]">
               <span class="text-red-500 text-base font-bold"
                 >{{ allPriceInput }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
-                >Avg: 0.8 HKD</span
+                >Avg: 0.25 HKD</span
               >
             </div>
           </div>
@@ -136,18 +149,17 @@
         @click="
           router.push({
             name: 'OrderConfime',
-            query: {
-              ...info,
-              duration: duration
+            params: {
+              ...info
             }
           })
         "
       >
         <template #default>
-          <div class="h-[24px] flex flex-row justify-center items-center gap-2">
+          <div class="h-[px] flex flex-row justify-center items-center gap-2">
             <i-icon icon="mingcute:flash-line" class="text-[20px]" />
             <span class="text-larger text-inverted font-bold tracking-wide"
-              >即刻支付</span
+              >即可支付</span
             >
           </div>
         </template>
@@ -191,7 +203,7 @@ onBeforeMount(async () => {
   }
 
   axios.get("/api/socket/1").then(res => {
-    console.log("axios res", res.data.result);
+    console.log("axios res", res.data.result); // 比较这与 await 的输出
   });
 });
 
@@ -207,20 +219,20 @@ const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
 
 const isByTime = ref(true);
-const optionsValue = ref(1);
-const inputValue = ref(4);
+const optionsValue = ref(0);
+const inputValue = ref(160);
 const allPriceInput = computed(() => {
   if (inputValue.value < 0) return 0;
-  else return inputValue.value * 0.8;
+  else return inputValue.value * 0.25;
 });
-const duration = computed(() => {
+const allPrice = computed(() => {
   return optionsValue.value == 0
-    ? 0
+    ? 10
     : optionsValue.value == 1
-      ? 1
+      ? 20
       : optionsValue.value == 2
-        ? 2
-        : inputValue.value * 0.8;
+        ? 40
+        : inputValue.value * 0.25;
 });
 const allPower = computed(() => {
   return optionsValue.value == 0

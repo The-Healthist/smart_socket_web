@@ -3,7 +3,7 @@ import Mock from "mockjs";
 
 export default defineMock([
   {
-    url: "/dev-api/list/get",
+    url: "/api/list/get",
     delay: 1000,
     body: {
       code: 0,
@@ -18,12 +18,27 @@ export default defineMock([
     }
   },
   {
-    url: "/dev-api/list/error",
+    url: "/api/list/error",
     delay: 1000,
     body: {
       code: 1,
       message: "ERROR",
       result: null
+    }
+  },
+  {
+    url: "/api/socket/:id",
+    delay: 1000,
+    body: {
+      code: 0,
+      message: "SUCCESS",
+      result: Mock.mock({
+        address: "XX路xxx號仁英大廈01A",
+        name: "仁英大廈01A 空調插座",
+        id: 1,
+        imgUrl:
+          "https://images.pexels.com/photos/27547456/pexels-photo-27547456.jpeg/"
+      })
     }
   }
 ]);

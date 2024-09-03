@@ -12,7 +12,7 @@ type formDataResigister = {
 };
 export function Login(body: formDataLogin) {
   return http.request({
-    url: "/auth/login",
+    url: "/api/auth/login",
     method: "post",
     data: body
   });
@@ -20,7 +20,7 @@ export function Login(body: formDataLogin) {
 
 export function Register(body: formDataResigister) {
   return http.request({
-    url: "/auth/register",
+    url: "/api/auth/register",
     method: "post",
     data: body
   });
@@ -28,7 +28,7 @@ export function Register(body: formDataResigister) {
 
 export function guestUserLogin() {
   return http.request({
-    url: "/auth/guest",
+    url: "/api/auth/guest",
     method: "post"
   });
 }
