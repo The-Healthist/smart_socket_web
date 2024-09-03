@@ -1,0 +1,211 @@
+@import url("https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=LXGW+WenKai+Mono+TC&family=Ma+Shan+Zheng&family=Noto+Sans+HK:wght@100..900&family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+HK:wght@200..900&family=Noto+Serif+TC:wght@200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@200..900&family=Zhi+Mang+Xing&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 圆角rounded */
+.theme-rounded-base {
+  --rounded--base: 0px;
+  --rounded--card: 12px;
+  --rounded--button: 8px;
+  --rounded--option: 5px;
+  --rounded--bar: 20px;
+}
+.theme-rounded-muted {
+  --rounded--base: 0px;
+  --rounded--card: 6px;
+  --rounded--button: 4px;
+  --rounded--option: 3px;
+  --rounded--bar: 12px;
+}
+.theme-rounded-small {
+  --rounded--base: 0px;
+  --rounded--card: 4px;
+  --rounded--button: 4px;
+  --rounded--option: 1px;
+  --rounded--bar: 8px;
+}
+/* 字号大小 */
+.theme-fontsize-base {
+  --fontsize-xs: 12px;
+  --fontsize-sm: 14px;
+  --fontsize-base: 16px;
+  --fontsize-lg: 18px;
+  --fontsize-xl: 20px;
+  --fontsize-2xl: 24px;
+}
+.theme-fontsize-muted {
+  --fontsize-xs: 10px;
+  --fontsize-sm: 12px;
+  --fontsize-base: 14px;
+  --fontsize-lg: 16px;
+  --fontsize-xl: 18px;
+  --fontsize-2xl: 20px;
+}
+.theme-fontsize-large {
+  --fontsize-xs: 14px;
+  --fontsize-sm: 16px;
+  --fontsize-base: 18px;
+  --fontsize-lg: 20px;
+  --fontsize-xl: 22px;
+  --fontsize-2xl: 24px;
+}
+/* 颜色主题 */
+.theme-color-orange {
+  /* 主色 */
+  --color-primary: 255 165 0; /* 橙色 */
+  --color-secondary: 136 136 136; /* 深橙色 */
+
+  /* 背景色 */
+  --color-background-base: 255 255 255; /* 白色 */
+  --color-background-primary: 255 165 0; /* 橙色 */
+  --color-background-secondary: 136 136 136;
+  /* 按钮 */
+  --color-button-primary: 255 165 0; /* 橙色 */
+  --color-button-background-base: 255 255 255; /* 白色 */
+  --color-button-background-primary: 255 165 0; /* 橙色 */
+  --color-button-text-primary: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-base: 0 0 0; /* 黑色 */
+  --color-text-muted: 136 136 136; /* 中灰色 */
+  --color-text-inverted: 255 255 255; /* 白色 */
+  --color-text-primary: 255 165 0; /* 橙色 */
+  --color-text-secondary: 136 136 136; /* 中灰色 */
+
+  /* 边框颜色 */
+  --color-border-base: 0 0 0; /* 黑色 */
+  --color-border-primary: 255 165 0; /* 橙色 */
+  --color-border-secondary: 255 140 0; /* 深橙色 */
+  --color-border-muted: 136 136 136; /* 中灰色 */
+  --color-border-inverted: 255 255 255; /* 白色 */
+
+  /* 链接颜色 */
+  --color-link: 255 165 0; /* 橙色 */
+  --color-link-hover: 255 140 0; /* 深橙色 */
+
+  /* 状态色 */
+  --color-error: 255 99 71; /* 番茄红 */
+  --color-success: 50 205 50; /* 石灰绿 */
+  --color-separator: 0 0 0; /* 深灰蓝色 */
+}
+.theme-color-green {
+  /* 主色 */
+  --color-primary: 34 193 34; /* 草绿色 */
+  --color-secondary: 193 234 211; /* 森林绿 */
+
+  /* 背景色 */
+  --color-background-base: 255 255 255; /* 白色 */
+  --color-background-primary: 34 193 34; /* 草绿色 */
+  --color-background-secondary: 193 234 211; /* 森林绿 */
+
+  /* 按钮 */
+  --color-button-primary: 34 193 34; /* 草绿色 */
+  --color-button-background-base: 255 255 255; /* 白色 */
+  --color-button-background-primary: 34 193 34; /* 草绿色 */
+  --color-button-text-primary: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-base: 0 0 0; /* 黑色 */
+  --color-text-muted: 105 105 105; /* 灰色 */
+  --color-text-inverted: 255 255 255; /* 白色 */
+  --color-text-primary: 34 193 34; /* 草绿色 */
+  --color-text-secondary: 0 100 0; /* 森林绿 */
+
+  /* 边框颜色 */
+  --color-border-base: 0 100 0; /* 森林绿 */
+  --color-border-primary: 34 193 34; /* 草绿色 */
+  --color-border-secondary: 0 100 0; /* 森林绿 */
+  --color-border-muted: 105 105 105; /* 灰色 */
+  --color-border-inverted: 255 255 255; /* 白色 */
+
+  /* 链接颜色 */
+  --color-link: 34 193 34; /* 草绿色 */
+  --color-link-hover: 28 167 28; /* 明亮绿色 */
+
+  /* 状态色 */
+  --color-error: 255 69 58; /* 番茄红 */
+  --color-success: 50 205 50; /* 石灰绿 */
+  --color-separator: 0 100 0; /* 森林绿 */
+}
+
+.theme-color-red {
+  /* 主色 */
+  --color-primary: 255 0 0; /* 红色 */
+  --color-secondary: 222 184 184; /* 深红 */
+
+  /* 背景色 */
+  --color-background-base: 255 255 255; /* 白色 */
+  --color-background-primary: 255 0 0; /* 红色 */
+  --color-background-secondary: 222 184 184; /* 深红 */
+
+  /* 按钮 */
+  --color-button-primary: 255 0 0; /* 红色 */
+  --color-button-background-base: 255 255 255; /* 白色 */
+  --color-button-background-primary: 255 0 0; /* 红色 */
+  --color-button-text-primary: 255 255 255; /* 白色 */
+
+  /* 主文本颜色 */
+  --color-text-base: 0 0 0; /* 黑色 */
+  --color-text-muted: 105 105 105; /* 灰色 */
+  --color-text-inverted: 255 255 255; /* 白色 */
+  --color-text-primary: 255 0 0; /* 红色 */
+  --color-text-secondary: 139 0 0; /* 深红 */
+
+  /* 边框颜色 */
+  --color-border-base: 139 0 0; /* 深红 */
+  --color-border-primary: 255 0 0; /* 红色 */
+  --color-border-secondary: 139 0 0; /* 深红 */
+  --color-border-muted: 105 105 105; /* 灰色 */
+  --color-border-inverted: 255 255 255; /* 白色 */
+
+  /* 链接颜色 */
+  --color-link: 255 0 0; /* 红色 */
+  --color-link-hover: 255 69 0; /* 橙红色 */
+
+  /* 状态色 */
+  --color-error: 255 0 0; /* 红色 */
+  --color-success: 50 205 50; /* 石灰绿 */
+  --color-separator: 139 0 0; /* 深红 */
+}
+
+.theme-color-white {
+  /* 主色 */
+  --color-primary: 255 255 255; /* 白色 */
+  --color-secondary: 169 169 169; /* 暗灰色 */
+
+  /* 背景色 */
+  --color-background-base: 255 255 255; /* 白色 */
+  --color-background-primary: 240 240 240; /* 淡灰色 */
+  --color-background-secondary: 169 169 169; /* 暗灰色 */
+
+  /* 按钮 */
+  --color-button-primary: 240 240 240; /* 淡灰色 */
+  --color-button-background-base: 255 255 255; /* 白色 */
+  --color-button-background-primary: 240 240 240; /* 淡灰色 */
+  --color-button-text-primary: 0 0 0; /* 黑色 */
+
+  /* 主文本颜色 */
+  --color-text-base: 0 0 0; /* 黑色 */
+  --color-text-muted: 105 105 105; /* 灰色 */
+  --color-text-inverted: 255 255 255; /* 白色 */
+  --color-text-primary: 0 0 0; /* 黑色 */
+  --color-text-secondary: 169 169 169; /* 暗灰色 */
+
+  /* 边框颜色 */
+  --color-border-base: 169 169 169; /* 暗灰色 */
+  --color-border-primary: 169 169 169; /* 暗灰色 */
+  --color-border-secondary: 169 169 169; /* 暗灰色 */
+  --color-border-muted: 105 105 105; /* 灰色 */
+  --color-border-inverted: 255 255 255; /* 白色 */
+
+  /* 链接颜色 */
+  --color-link: 0 0 255; /* 蓝色 */
+  --color-link-hover: 0 0 200; /* 深蓝色 */
+
+  /* 状态色 */
+  --color-error: 255 69 58; /* 番茄红 */
+  --color-success: 50 205 50; /* 石灰绿 */
+  --color-separator: 169 169 169; /* 暗灰色 */
+}
