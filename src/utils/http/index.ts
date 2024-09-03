@@ -1,35 +1,35 @@
 import Axios, {
-  type AxiosInstance,
-  type AxiosError,
-  type AxiosResponse,
-  type AxiosRequestConfig
+  type AxiosInstance, // 引入 Axios 实例类型
+  type AxiosError, // 引入 Axios 错误类型
+  type AxiosResponse, // 引入 Axios 响应类型
+  type AxiosRequestConfig // 引入 Axios 请求配置类型
 } from "axios";
-import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum";
-import NProgress from "../progress";
-import { showFailToast } from "vant";
-import "vant/es/toast/style";
+import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
+import NProgress from "../progress"; // 引入进度条插件
+import { showFailToast } from "vant"; // 引入 Vant 库中的提示函数
+import "vant/es/toast/style"; // 引入 Vant 库中的提示样式
 
 // 默认 axios 实例请求配置
 const configDefault = {
   headers: {
-    "Content-Type": ContentTypeEnum.FORM_URLENCODED
+    "Content-Type": ContentTypeEnum.FORM_URLENCODED // 设置默认的请求头 Content-Type
   },
-  timeout: 0,
-  baseURL: import.meta.env.VITE_BASE_API,
-  data: {}
+  timeout: 5000, // 请求超时时间，0 表示不超时
+  baseURL: import.meta.env.VITE_BASE_API, // 基础 URL，通过环境变量配置
+  data: {} // 默认请求数据
 };
 
 class Http {
   // 当前实例
-  private static axiosInstance: AxiosInstance;
+  private static axiosInstance: AxiosInstance; // Axios 实例
   // 请求配置
-  private static axiosConfigDefault: AxiosRequestConfig;
+  private static axiosConfigDefault: AxiosRequestConfig; // 默认请求配置
 
   // 请求拦截
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
       config => {
-        NProgress.start();
+        NProgress.start(); // 开始进度条
         // 发送请求前，可在此携带 token
         // if (token) {
         //   config.headers['token'] = token
@@ -37,8 +37,8 @@ class Http {
         return config;
       },
       (error: AxiosError) => {
-        showFailToast(error.message);
-        return Promise.reject(error);
+        showFailToast(error.message); // 显示错误提示
+        return Promise.reject(error); // 返回拒绝的 Promise
       }
     );
   }
@@ -47,7 +47,7 @@ class Http {
   private httpInterceptorsResponse(): void {
     Http.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => {
-        NProgress.done();
+        NProgress.done(); // 结束进度条
         // 与后端协定的返回字段
         const { code, result } = response.data;
         // const { message } = response.data;
@@ -57,15 +57,15 @@ class Http {
           Reflect.has(response.data, "code") &&
           code === ResultEnum.SUCCESS;
         if (isSuccess) {
-          return result;
+          return result; // 返回成功结果
         } else {
           // 处理请求错误
           // showFailToast(message);
-          return Promise.reject(response.data);
+          return Promise.reject(response.data); // 返回拒绝的 Promise
         }
       },
       (error: AxiosError) => {
-        NProgress.done();
+        NProgress.done(); // 结束进度条
         // 处理 HTTP 网络错误
         let message = "";
         // HTTP 状态码
@@ -108,33 +108,33 @@ class Http {
             message = "网络连接故障";
         }
 
-        showFailToast(message);
-        return Promise.reject(error);
+        showFailToast(message); // 显示错误提示
+        return Promise.reject(error); // 返回拒绝的 Promise
       }
     );
   }
 
   constructor(config: AxiosRequestConfig) {
-    Http.axiosConfigDefault = config;
-    Http.axiosInstance = Axios.create(config);
-    this.httpInterceptorsRequest();
-    this.httpInterceptorsResponse();
+    Http.axiosConfigDefault = config; // 设置默认请求配置
+    Http.axiosInstance = Axios.create(config); // 创建 Axios 实例
+    this.httpInterceptorsRequest(); // 配置请求拦截器
+    this.httpInterceptorsResponse(); // 配置响应拦截器
   }
 
   // 通用请求函数
   public request<T>(paramConfig: AxiosRequestConfig): Promise<T> {
-    const config = { ...Http.axiosConfigDefault, ...paramConfig };
+    const config = { ...Http.axiosConfigDefault, ...paramConfig }; // 合并默认配置和传入配置
     return new Promise((resolve, reject) => {
       Http.axiosInstance
-        .request(config)
+        .request(config) // 发送请求
         .then((response: any) => {
-          resolve(response);
+          resolve(response); // 请求成功，返回结果
         })
         .catch(error => {
-          reject(error);
+          reject(error); // 请求失败，返回错误
         });
     });
   }
 }
 
-export const http = new Http(configDefault);
+export const http = new Http(configDefault); // 创建 Http 实例并导出
