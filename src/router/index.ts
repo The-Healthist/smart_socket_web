@@ -28,7 +28,6 @@ router.beforeEach((to: toRouteType, from, next) => {
   setPageTitle(to.meta.title);
   next();
 });
-
 router.afterEach(() => {
   NProgress.done();
 });

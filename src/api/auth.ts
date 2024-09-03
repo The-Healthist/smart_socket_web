@@ -26,9 +26,10 @@ export function Register(body: formDataResigister) {
   });
 }
 
-export function guestUserLogin() {
+export function guestUserLogin(body: any) {
   return http.request({
-    url: "/api/auth/guest",
-    method: "post"
+    url: "/api/auth/login_guest",
+    method: "post",
+    data: body
   });
 }

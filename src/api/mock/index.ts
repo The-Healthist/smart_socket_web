@@ -49,7 +49,7 @@ export function Register(body: formDataResigister) {
 
 export function guestUserLogin() {
   return http.request({
-    url: "/api/auth/guest",
+    url: "/api/auth/login_guest",
     method: "post"
   });
 }

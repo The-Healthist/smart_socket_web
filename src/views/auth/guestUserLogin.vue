@@ -7,7 +7,7 @@
       class="rounded-card bg-base flex flex-col pr-2.5 py-2.5 w-[95vw] h-[auto] mt-[20vh] absolute"
     >
       <div class="text-largest font-bold tracking-wide flex justify-center">
-        登录账号
+        游客登陸
       </div>
 
       <!-- 登录表单 -->
@@ -35,33 +35,17 @@
             placeholder="手机号码"
             class="p-2 border rounded w-full"
           />
-          <div class="flex h-2.5">
-            <span
-              v-if="!isValidPhone && isShowPhoneSpan"
-              class="text-red-500 text-sm"
-              >手机号码不能位空且为6~12位数字</span
-            >
-          </div>
         </div>
-        <div class="relative mt-2.5 flex flex-row justify-center items-center">
-          <!-- 添加一個紅色星號 -->
-          <span class="text-red-500 text-sm text-center w-2.5">*</span>
-          <input
-            v-model="formData.password"
-            type="password"
-            placeholder="密码"
-            class="p-2 border rounded w-full"
-          />
-          <div class="flex h-2.5">
-            <span
-              v-if="!isValidPassword && isShowPasswordSpan"
-              class="text-red-500 text-sm"
-              >密码不能为空且必须是6~16位</span
-            >
-          </div>
+        <div class="flex h-2.5 ml-2.5">
+          <span
+            v-if="!isValidPhone && isShowPhoneSpan"
+            class="text-red-500 text-sm"
+            >手机号码不能位空且为6~12位数字</span
+          >
         </div>
+
         <div class="flex justify-center items-center ml-2.5 gap-2.5 p-2.4 mt-3">
-          <InvertedButton @click="router.push({ name: 'GuestUserLogin' })">
+          <InvertedButton @click="router.push({ name: 'Login' })">
             <template #default>
               <div
                 class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
@@ -69,7 +53,7 @@
                 <span
                   class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
                 >
-                  游客登陸
+                  密碼登錄
                 </span>
               </div>
             </template>
@@ -108,6 +92,7 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
+import { guestUserLogin } from "@/api/auth";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -123,28 +108,52 @@ const isShowPhoneSpan = ref(false);
 const isShowEmailSpan = ref(false);
 const formData = reactive({
   email: "",
-  phone: "",
-  password: ""
+  phone: ""
 });
 
+// uuid: 1,
+//         type: "游客",
+//         token: "12345634sdfsdfsdfsdfsdfsdf"
+type LoginAfter = {
+  uuid: string;
+  type: string;
+  token: string;
+};
+const loginAfter = ref<any>();
 const isValidEmail = computed(() =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
 );
-const isValidPhone = computed(() => /^\d{6,12}$/.test(formData.phone));
-const isValidPassword = computed(() => /^.{6,16}$/.test(formData.password));
+const isValidPhone = computed(() => {
+  return (
+    formData.phone.length >= 6 &&
+    formData.phone.length <= 12 &&
+    /^\d+$/.test(formData.phone)
+  );
+});
 
-function handleLogin() {
-  isShowPhoneSpan.value = !isValidPhone.value && !formData.phone;
-  isShowPasswordSpan.value = !isValidPassword.value && !formData.password;
+async function handleLogin() {
+  isShowPhoneSpan.value = !isValidPhone.value || !formData.phone;
   isShowEmailSpan.value = !isValidEmail.value && !formData.email;
 
-  if (!isValidEmail.value || !isValidPhone.value || !isValidPassword.value) {
+  if (!isValidPhone.value || !formData.phone) {
     console.error("Please fill all required fields correctly!");
     return;
   }
+  guestUserLogin({ mobile: formData.phone })
+    .then(res => {
+      console.log("res", res);
+      loginAfter.value = res;
+
+      localStorage.setItem("token", loginAfter.value.token);
+    })
+    .catch(err => {
+      console.log("err", err);
+    })
+    .finally(() => {
+      router.push({ name: "Home" });
+    });
 
   console.log("Email:", formData.email);
   console.log("Phone:", formData.phone);
-  console.log("Password:", formData.password);
 }
 </script>

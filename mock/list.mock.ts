@@ -40,5 +40,19 @@ export default defineMock([
           "https://images.pexels.com/photos/27547456/pexels-photo-27547456.jpeg/"
       })
     }
+  },
+  // 游客登录接口
+  {
+    url: "/api/auth/login_guest",
+    delay: 1000,
+    body: {
+      code: 0,
+      message: "SUCCESS",
+      result: Mock.mock({
+        uuid: "324",
+        type: "游客",
+        token: "12345634sdfsdfsdfsdfsdfsdf"
+      })
+    }
   }
 ]);
