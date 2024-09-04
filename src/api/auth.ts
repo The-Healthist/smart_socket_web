@@ -7,7 +7,7 @@ type formDataLogin = {
 type formDataResigister = {
   mobile: string;
   password: string;
-  email: string;
+  email?: string;
   formData: string;
 };
 export function Login(body: formDataLogin) {

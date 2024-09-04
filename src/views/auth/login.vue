@@ -12,36 +12,21 @@
 
       <!-- 登录表单 -->
       <form class="flex flex-col" @submit.prevent="handleLogin">
-        <div class="relative mt-2.5 ml-2.5">
-          <input
-            v-model="formData.email"
-            type="email"
-            placeholder="邮箱/选填"
-            class="p-2 border rounded w-full"
-          />
-          <div class="flex h-2.5">
-            <span
-              v-if="isValidEmail && isShowEmailSpan"
-              class="text-red-500 text-sm"
-              >邮箱格式不正确</span
-            >
-          </div>
-        </div>
         <div class="relative mt-2.5 flex flex-row justify-center items-center">
           <span class="text-red-500 text-sm text-center w-2.5">*</span>
           <input
-            v-model="formData.phone"
-            type="tel"
+            v-model="formData.mobile"
+            type="number"
             placeholder="手机号码"
             class="p-2 border rounded w-full"
           />
-          <div class="flex h-2.5">
-            <span
-              v-if="!isValidPhone && isShowPhoneSpan"
-              class="text-red-500 text-sm"
-              >手机号码不能位空且为6~12位数字</span
-            >
-          </div>
+        </div>
+        <div class="flex h-2.5 ml-2.5">
+          <span
+            v-if="!isValidPhone && isShowPhoneSpan"
+            class="text-red-500 text-sm"
+            >手机号码不能位空且为6~12位数字</span
+          >
         </div>
         <div class="relative mt-2.5 flex flex-row justify-center items-center">
           <!-- 添加一個紅色星號 -->
@@ -52,13 +37,13 @@
             placeholder="密码"
             class="p-2 border rounded w-full"
           />
-          <div class="flex h-2.5">
-            <span
-              v-if="!isValidPassword && isShowPasswordSpan"
-              class="text-red-500 text-sm"
-              >密码不能为空且必须是6~16位</span
-            >
-          </div>
+        </div>
+        <div class="flex h-2.5 ml-2.5">
+          <span
+            v-if="!isValidPassword && isShowPasswordSpan"
+            class="text-red-500 text-sm"
+            >密码不能为空且必须是6~16位</span
+          >
         </div>
         <div class="flex justify-center items-center ml-2.5 gap-2.5 p-2.4 mt-3">
           <InvertedButton @click="router.push({ name: 'GuestUserLogin' })">
@@ -108,6 +93,9 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
+import { showFailToast, showSuccessToast } from "vant";
+import { validateField } from "@/typings/data";
+import { Login } from "@/api/mock";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -118,33 +106,43 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
-const isShowPasswordSpan = ref(false);
-const isShowPhoneSpan = ref(false);
-const isShowEmailSpan = ref(false);
+
 const formData = reactive({
-  email: "",
-  phone: "",
+  mobile: "",
   password: ""
 });
 
-const isValidEmail = computed(() =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+const isValidPhone = computed(() => validateField("mobile", formData.mobile));
+const isValidPassword = computed(() =>
+  validateField("password", formData.password)
 );
-const isValidPhone = computed(() => /^\d{6,12}$/.test(formData.phone));
-const isValidPassword = computed(() => /^.{6,16}$/.test(formData.password));
+const isShowEmailSpan = ref(false);
+const isShowPhoneSpan = ref(false);
+const isShowPasswordSpan = ref(false);
+const loginAfter = ref<any>();
 
 function handleLogin() {
-  isShowPhoneSpan.value = !isValidPhone.value && !formData.phone;
-  isShowPasswordSpan.value = !isValidPassword.value && !formData.password;
-  isShowEmailSpan.value = !isValidEmail.value && !formData.email;
+  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
+  isShowPasswordSpan.value = !formData.password || !isValidPassword.value;
 
-  if (!isValidEmail.value || !isValidPhone.value || !isValidPassword.value) {
+  if (isShowPhoneSpan.value || isShowPasswordSpan.value) {
     console.error("Please fill all required fields correctly!");
     return;
   }
-
-  console.log("Email:", formData.email);
-  console.log("Phone:", formData.phone);
-  console.log("Password:", formData.password);
+  Login(formData)
+    .then(res => {
+      loginAfter.value = res;
+      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("mobile", formData.mobile);
+      localStorage.setItem("password", formData.password);
+      localStorage.setItem("uuid", loginAfter.value.uuid);
+      showSuccessToast("登录成功");
+    })
+    .catch(err => {
+      showFailToast("登录失败");
+    })
+    .finally(() => {
+      router.push({ name: "Home" });
+    });
 }
 </script>

@@ -54,5 +54,34 @@ export default defineMock([
         token: "12345634sdfsdfsdfsdfsdfsdf"
       })
     }
+  },
+  // LOGIN
+  {
+    url: "/api/auth/login",
+    delay: 1000,
+    body: {
+      code: 0,
+      message: "SUCCESS",
+      result: Mock.mock({
+        uuid: "3214234",
+        type: "用户",
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjMuMTIzIiwiaXNBZG1pbiI6dHJ1ZSwiZXhwIjoxNzI0MzA5OTgxLCJpYXQiOjE3MjQxMzcxODEsImlzcyI6IkNsZXZlckRyZWFtIn0.z0bFUtuqKesT-trxVJnd2VZlPqwVjRFT844ESghGFIo"
+      })
+    }
+  },
+  // 注册接口
+  {
+    url: "/api/auth/register",
+    delay: 1000,
+    body: {
+      code: 0,
+      message: "SUCCESS",
+      result: Mock.mock({
+        uuid: "321234",
+        type: "用户",
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjM"
+      })
+    }
   }
 ]);

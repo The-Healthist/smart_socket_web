@@ -30,8 +30,8 @@
         <div class="relative mt-2.5 flex flex-row justify-center items-center">
           <span class="text-red-500 text-sm text-center w-2.5">*</span>
           <input
-            v-model="formData.phone"
-            type="tel"
+            v-model="formData.mobile"
+            type="number"
             placeholder="手机号码"
             class="p-2 border rounded w-full"
           />
@@ -83,7 +83,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="GuestUserLogin">
 import { reactive, computed, ref } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -93,6 +93,8 @@ import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { guestUserLogin } from "@/api/auth";
+import { showSuccessToast } from "vant";
+import { decodeFormData, encodeFormData, validateField } from "@/typings/data";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -108,52 +110,37 @@ const isShowPhoneSpan = ref(false);
 const isShowEmailSpan = ref(false);
 const formData = reactive({
   email: "",
-  phone: ""
+  mobile: ""
 });
 
-// uuid: 1,
-//         type: "游客",
-//         token: "12345634sdfsdfsdfsdfsdfsdf"
-type LoginAfter = {
-  uuid: string;
-  type: string;
-  token: string;
-};
 const loginAfter = ref<any>();
-const isValidEmail = computed(() =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-);
-const isValidPhone = computed(() => {
-  return (
-    formData.phone.length >= 6 &&
-    formData.phone.length <= 12 &&
-    /^\d+$/.test(formData.phone)
-  );
-});
+const isValidEmail = computed(() => validateField("email", formData.email));
+const isValidPhone = computed(() => validateField("mobile", formData.mobile));
+// 输出调试
 
 async function handleLogin() {
-  isShowPhoneSpan.value = !isValidPhone.value || !formData.phone;
-  isShowEmailSpan.value = !isValidEmail.value && !formData.email;
+  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
+  isShowEmailSpan.value = formData.email && !isValidEmail.value;
 
-  if (!isValidPhone.value || !formData.phone) {
+  if (isShowPhoneSpan.value || isShowEmailSpan.value) {
+    console.log("Please fill all required fields correctly!");
     console.error("Please fill all required fields correctly!");
     return;
   }
-  guestUserLogin({ mobile: formData.phone })
+  guestUserLogin({ mobile: formData.mobile })
     .then(res => {
-      console.log("res", res);
       loginAfter.value = res;
-
       localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("mobile", formData.mobile);
+      localStorage.setItem("uuid", loginAfter.value.uuid);
+      showSuccessToast("登录成功");
     })
     .catch(err => {
       console.log("err", err);
+      showSuccessToast("登录失败");
     })
     .finally(() => {
       router.push({ name: "Home" });
     });
-
-  console.log("Email:", formData.email);
-  console.log("Phone:", formData.phone);
 }
 </script>
