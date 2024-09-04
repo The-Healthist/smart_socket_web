@@ -50,33 +50,36 @@
           />
         </div>
         <div class="flex h-2.5">
-          <span
-            v-if="!isValidEmail && isShowEmailSpan"
-            class="text-red-500 text-sm"
+          <span v-if="isShowEmailSpan" class="text-red-500 text-sm"
             >邮箱格式不正确</span
           >
         </div>
-        <div class="flex flex-row gap-2.5 justify-between mt-2.5 items-center">
-          <label for="phone" class="w-[20vw] text-small text-baseC font-normal"
-            >支付手机号 :</label
+        <div
+          class="flex flex-row gap-2.5 justify-between mt-2.5 ml-[-10px] items-center"
+        >
+          <label
+            for="phone"
+            class="w-[20vw] text-small text-baseC font-normal flex flex-row justify-center items-center"
+          >
+            <span class="text-red-500 text-sm text-center w-2.5">*</span
+            >支付手机号:</label
           >
           <input
             id="phone"
-            v-model="formData.phone"
+            v-model="formData.mobile"
             type="tel"
             placeholder="请输入手机号/不可为空"
-            class="border rounded p-1 grow"
+            class="border rounded p-1 grow ml-2.5"
           />
         </div>
         <div class="flex h-2.5">
-          <span
-            v-if="!isValidPhone && isShowPhoneSpan"
-            class="text-red-500 text-sm"
+          <span v-if="isShowPhoneSpan" class="text-red-500 text-sm"
             >手机号码不能位空且为6~12位数字</span
           >
         </div>
 
         <!-- One-Click Register Checkbox -->
+        <!-- <div v-if="noToken" class="flex items-center mt-4"> -->
         <div class="flex items-center mt-4">
           <input
             id="register-checkbox"
@@ -95,35 +98,35 @@
         <!-- Conditional Password Inputs -->
         <div
           v-if="isRegistering"
-          class="flex flex-row gap-2.5 mt-2.5 justify-between items-center"
+          class="flex flex-row gap-2.5 ml-[-10px] mt-2.5 justify-between items-center"
         >
           <label
             for="password"
             class="text-small text-baseC font-normal w-[20vw]"
-            >密码 :</label
+            ><span class="text-red-500 text-sm text-center w-2.5">*</span>密码
+            :</label
           >
           <input
             id="password"
             v-model="formData.password"
             type="password"
             placeholder="请输入密码"
-            class="border rounded p-1 grow"
+            class="border rounded p-1 grow ml-2.5"
           />
         </div>
         <div class="flex h-2.5">
-          <span
-            v-if="!isValidPassword && isShowPasswordSpan"
-            class="text-red-500 text-sm"
+          <span v-if="isShowPasswordSpan" class="text-red-500 text-sm"
             >密码不能为空且必须是6~16位</span
           >
         </div>
         <div
           v-if="isRegistering"
-          class="flex flex-row gap-2.5 mt-2.5 justify-between items-center"
+          class="flex flex-row gap-2.5 ml-[-10px] mt-2.5 justify-between items-center"
         >
           <label
             for="confirm-password"
             class="text-small text-baseC font-normal w-[20vw]"
+            ><span class="text-red-500 text-sm text-center w-2.5">*</span
             >确认密码 :</label
           >
           <input
@@ -131,7 +134,7 @@
             v-model="formData.confirmPassword"
             type="password"
             placeholder="请确认密码"
-            class="border rounded p-1 grow"
+            class="border rounded p-1 grow ml-2.5"
           />
         </div>
 
@@ -167,7 +170,7 @@
   </div>
 </template>
 <script setup lang="ts" name="Home">
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
 import { useThemeStore } from "@/store/theme/themeStore";
@@ -175,6 +178,15 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter, useRoute } from "vue-router";
+import { createOrder, Register } from "@/api/mock";
+import { showSuccessToast, showFailToast } from "vant";
+import {
+  decodeFormData,
+  decodeOrderData,
+  encodeFormData,
+  encodeOrderData,
+  validateField
+} from "@/typings/data";
 
 const route = useRoute();
 const order = route.query;
@@ -189,53 +201,134 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
+const noToken = ref(true);
 
-const isRegistering = ref(false);
-
+//注册相关
 const formData = reactive({
   email: "",
-  phone: "",
+  mobile: "",
   password: "",
   confirmPassword: ""
 });
-
-const isValidEmail = computed(() =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+// const isRegistering = computed(() => {
+//   if (noToken.value) return true;
+//   return false;
+// });
+const isRegistering = ref(false);
+const isValidEmail = computed(() => validateField("email", formData.email));
+const isValidPhone = computed(() => validateField("mobile", formData.mobile));
+const isValidPassword = computed(() =>
+  validateField("password", formData.password)
 );
-const isValidPhone = computed(() => /^\d{6,12}$/.test(formData.phone));
-const isValidPassword = computed(() => /^.{6,16}$/.test(formData.password));
-const isPasswordMatch = computed(
-  () => formData.password === formData.confirmPassword
-);
+// 应该返回 true 或 false 根据密码长度
 
 const isShowEmailSpan = ref(false);
 const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const isShowConfirmPasswordSpan = ref(false);
-function handleRegister() {
-  isShowPhoneSpan.value = !isValidPhone.value && !formData.phone;
-  isShowPasswordSpan.value = !isValidPassword.value && !formData.password;
+const loginAfter = ref<any>();
+interface formdata {
+  email?: string;
+  mobile: string;
+  password: string;
+  formData: string;
+}
+interface Factor {
+  email?: string;
+  mobile: string;
+  formData: string;
+}
+
+async function handleRegister() {
+  isShowEmailSpan.value = formData.email && !isValidEmail.value;
+  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
+  isShowPasswordSpan.value = !formData.password || !isValidPassword.value;
   isShowConfirmPasswordSpan.value =
-    !isPasswordMatch.value && !!formData.confirmPassword;
-  isShowEmailSpan.value = !isValidEmail.value && !!formData.email;
+    formData.password !== formData.confirmPassword;
 
   if (
-    !isValidEmail.value ||
-    !isValidPhone.value ||
-    !isValidPassword.value ||
-    !isPasswordMatch.value
+    isShowEmailSpan.value ||
+    isShowPhoneSpan.value ||
+    isShowPasswordSpan.value ||
+    isShowConfirmPasswordSpan.value
   ) {
+    showFailToast("请正确填写所有必填字段!");
     console.error("Please fill all required fields correctly!");
     return;
   }
+  //base64加密
+  let baseFormData = !!formData.email
+    ? encodeFormData(formData.mobile, formData.password, formData.email)
+    : encodeFormData(formData.mobile, formData.password);
+  let formdata: formdata = {
+    mobile: formData.mobile,
+    password: formData.password,
+    formData: baseFormData
+  };
+  if (formData.email) {
+    formdata = { ...formdata, email: formData.email };
+  }
 
-  console.log("Email:", formData.email);
-  console.log("Phone:", formData.phone);
-  console.log("Password:", formData.password);
+  Register(formdata)
+    .then(res => {
+      loginAfter.value = res;
+      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("mobile", formData.mobile);
+      localStorage.setItem("password", formData.password);
+      localStorage.setItem("uuid", loginAfter.value.uuid);
+      if (formData.email) {
+        localStorage.setItem("email", formData.email);
+      }
+      showSuccessToast("注册成功");
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("注册失败");
+    })
+    .finally(() => {
+      console.log("finally");
+    });
 }
 
+interface after {
+  url: string;
+  qrCode: string;
+}
 const handlePayment = () => {
   // Handle payment logic here
-  handleRegister();
+  if (isRegistering.value) {
+    handleRegister();
+  }
+
+  let baseFormData = encodeOrderData(order);
+  //表单数据,手机号,邮箱可选
+  let factor: Factor = {
+    mobile: formData.mobile,
+    formData: baseFormData
+  };
+  if (formData.email) {
+    factor = { ...factor, email: formData.email };
+  }
+
+  createOrder(factor).then(res => {
+    console.log(res);
+    const after: any = res;
+    router.push(after.url);
+  });
 };
+onBeforeMount(async () => {
+  // 判断本地有没有存token和mobile
+  let token = localStorage.getItem("token");
+  let mobile = localStorage.getItem("mobile");
+  let email = localStorage.getItem("email");
+  if (mobile) {
+    formData.mobile = mobile;
+  }
+  if (email) {
+    formData.email = email;
+  }
+  if (token) {
+    noToken.value = false;
+  }
+});
 </script>

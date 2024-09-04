@@ -83,5 +83,19 @@ export default defineMock([
         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjM"
       })
     }
+  },
+  // 确认订单信息
+  {
+    url: "/api/order",
+    delay: 1000,
+    body: {
+      code: 0,
+      message: "SUCCESS",
+      result: Mock.mock({
+        // 提供一个二维码和一个跳转链接
+        qrCode: "https://example.com/qrcode",
+        url: "payedafter"
+      })
+    }
   }
 ]);

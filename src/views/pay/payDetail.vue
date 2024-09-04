@@ -137,7 +137,9 @@
           router.push({
             name: 'OrderConfime',
             query: {
-              ...info,
+              id: info.id,
+              name: info.name,
+              address: info.address,
               duration: duration
             }
           })
@@ -169,30 +171,22 @@ import { getSocketInfo } from "@/api/info";
 import axios from "axios";
 import { getListApi } from "@/api/mock";
 
-type socketInfo = {
-  id: string;
-  name: string;
-  address: string;
-  imgUrl: string;
-};
 const info = ref<any>();
 const router = useRouter();
 //获取网址上的一个id
 const socketId = router.currentRoute.value.params.id;
-
+// TODO:获取数据
 onBeforeMount(async () => {
   try {
     const res = await getSocketInfo({ id: `${socketId}` });
     info.value = res;
-    console.log("info.value", info.value.imgUrl);
-    console.log("await res", res);
   } catch (error) {
     console.error("Error fetching list info", error);
   }
 
-  axios.get("/api/socket/1").then(res => {
-    console.log("axios res", res.data.result);
-  });
+  // axios.get("/api/socket/1").then(res => {
+  //   console.log("axios res", res.data.result);
+  // });
 });
 
 const themeStore = useThemeStore();

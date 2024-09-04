@@ -4,7 +4,7 @@
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[100vh] relative flex justify-center items-center"
   >
     <div
-      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[20vh] mt-[40vh] absolute"
+      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[auto] mt-[40vh] absolute"
     >
       <div class="text-largest font-bold tracking-wide flex justify-center">
         訂單確認
@@ -28,7 +28,7 @@
             </div>
           </template>
         </InvertedButton>
-        <PrimaryButton class="grow" @click="router.push({ name: 'payAfter' })">
+        <PrimaryButton class="grow" @click="router.push({ name: 'Order' })">
           <template #default>
             <div
               class="h-[22px] flex flex-row justify-center items-center gap-2"

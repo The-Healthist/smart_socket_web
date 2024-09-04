@@ -16,6 +16,38 @@ export function decodeFormData(encodedData: string): any {
   const decodedData = atob(encodedData); // Base64 解码
   return JSON.parse(decodedData);
 }
+// base64 来加密下面的数据
+// {
+//   "id": "1",
+//   "name": "仁英大廈01A 空調插座",
+//   "address": "XX路xxx號仁英大廈01A",
+//   "duration": "2"
+// }
+export function encodeOrderData(data: any): string {
+  const jsonString = JSON.stringify(data);
+
+  // Convert JSON string to Uint8Array
+  const encoder = new TextEncoder();
+  const uint8Array = encoder.encode(jsonString);
+
+  // Convert Uint8Array to Base64
+  const base64String = btoa(String.fromCharCode(...uint8Array));
+  return base64String;
+}
+
+export function decodeOrderData(encodedData: string): any {
+  // Convert Base64 to Uint8Array
+  const decodedString = atob(encodedData);
+  const uint8Array = new Uint8Array(
+    [...decodedString].map(c => c.charCodeAt(0))
+  );
+
+  // Convert Uint8Array to JSON string
+  const decoder = new TextDecoder();
+  const jsonString = decoder.decode(uint8Array);
+
+  return JSON.parse(jsonString);
+}
 
 //校验规则
 export function validateField(field: string, value: string): boolean {
