@@ -64,16 +64,17 @@ export const getSocketInfo = (params: infoParams): Promise<any> => {
   });
 };
 type orderParams = {
-  id: number;
+  id: string;
 };
 type renewBody = {
-  id: number;
+  id: string;
   duration: number;
 };
-export function getOrders() {
+export function getOrders(params: any) {
   return http.request({
     url: "/api/order",
-    method: "get"
+    method: "get",
+    params: params
   });
 }
 
@@ -103,7 +104,7 @@ export function endOrder(params?: orderParams) {
 //充值
 export function renewOrder(params?: renewBody) {
   return http.request({
-    url: `/api/order/${params.id}/cancel`,
+    url: `/api/order/${params.id}/renewal`,
     method: "post",
     data: {
       duration: params.duration

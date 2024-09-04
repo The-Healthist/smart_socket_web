@@ -47,26 +47,25 @@
         </div>
         <!-- 订单列表 -->
         <div
-          class="bg-base w-[95vw] h-[83vh] flex flex-col overflow-y-scroll"
+          class="bg-base w-[95vw] h-[auto] flex flex-col overflow-y-scroll"
           :class="
             isUse
               ? 'rounded-tr-bar rounded-b-card'
               : 'rounded-tl-bar rounded-b-card'
           "
         >
-          <div
-            v-if="isUse"
-            class="flex justify-center items-center flex-col overflow-scroll mt-6"
-          >
+          <div v-if="isUse">
             <div
               v-for="order in displayedOrders"
               :key="order.id"
               class="w-[95vw] p-2.5 flex flex-col gap-2"
-              @click="
-                router.push({ name: 'OrderDetail', query: { id: order.id } })
-              "
             >
-              <div class="flex flex-col gap-2.5 hover:bg-primary/10">
+              <div
+                class="flex flex-col gap-2.5 hover:bg-primary/10"
+                @click="
+                  router.push({ name: 'OrderDetail', query: { id: order.id } })
+                "
+              >
                 <!-- 第一行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
@@ -104,6 +103,7 @@
                     <template #default>
                       <div
                         class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
+                        @click="endOrderU(order.id)"
                       >
                         <span
                           class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
@@ -113,7 +113,7 @@
                       </div>
                     </template>
                   </InvertedButton>
-                  <PrimaryButton class="grow">
+                  <PrimaryButton class="grow" @click="RenewalOrder(order.id)">
                     <template #default>
                       <div
                         class="grow h-[22px] flex flex-row justify-center items-center gap-2"
@@ -143,7 +143,12 @@
               :key="order.transactionNumber"
               class="w-[95vw] p-2.5 flex flex-col gap-2"
             >
-              <div class="flex flex-col gap-2.5">
+              <div
+                class="flex flex-col gap-2.5"
+                @click="
+                  router.push({ name: 'OrderDetail', query: { id: order.id } })
+                "
+              >
                 <div class="flex justify-between items-center">
                   <span class="text-small text-baseC font-normal truncate">
                     插座名稱 :
@@ -214,11 +219,62 @@
         </div>
       </div>
     </div>
+    <van-dialog
+      v-model:show="isShowDialog"
+      :show-cancel-button="false"
+      :showConfirmButton="false"
+    >
+      <div
+        class="flex flex-col h-[40vh] bg-gradient-to-b from-skin-primary/10 to-skin-primary/30 items-center p-2.5 gap-2.5"
+      >
+        <h1 class="text-largest test-basec">充值續費</h1>
+        <span
+          class="flex flex-row justify-start text-baseC text-base w-full ml-2.5"
+          >充值时间</span
+        >
+        <div class="flex flex-row items-center w-full -ml-2.5">
+          <span class="text-primary text-base">*</span>
+          <div
+            class="-mt-2 w-full h-[38px] p-[5px] bg-base justify-center items-center rounded-button border-solid border-[2px]"
+          >
+            <div class="flex flex-row">
+              <input
+                id="number"
+                v-model="duration"
+                type="number"
+                placeholder="请输入充值时间"
+                class="w-[60vw] h-[24px] pl-2 rounded-button"
+              />
+              <span class="text-primary text-base">/小时</span>
+            </div>
+          </div>
+        </div>
+        <span
+          v-if="isShowDurationSpan"
+          class="h-2.5 w-full -mt-2.5 text-small ml-[2px] text-red-500"
+        >
+          充值时间需要>0且为整数
+        </span>
+
+        <PrimaryButton class="w-[98%]" @click="handleRenewalOrder">
+          <template #default>
+            <div
+              class="h-[24px] flex flex-row justify-center items-center gap-2"
+            >
+              <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+              <span class="text-larger text-inverted font-bold tracking-wide"
+                >即刻支付</span
+              >
+            </div>
+          </template>
+        </PrimaryButton>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
 <script setup lang="ts" name="Home">
-import { reactive, computed, ref } from "vue";
+import { reactive, computed, ref, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
 import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
@@ -226,6 +282,10 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
+import { endOrder, getOrders, renewOrder } from "@/api/mock";
+import { status } from "nprogress";
+import { showFailToast, showSuccessToast } from "vant";
+import { validateField } from "@/typings/data";
 
 const router = useRouter();
 const themeStore = useThemeStore();
@@ -238,103 +298,65 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
-
 const isUse = ref(true);
+const orders = ref([]);
+const displayedOrders = computed(() => orders.value);
+const ordersH = ref([]);
 
-const orders = ref([
-  {
-    id: 1,
-    name: "仁英大廈01A 空調插座",
-    address: "XX路xxx號仁英大廈01A",
-    usage: "3.5kWh",
-    shenyu: "6.5kWh",
-    status: "inUse"
-  },
-  {
-    id: 2,
-    name: "仁英大廈02B 空調插座",
-    address: "XX路xxx號仁英大廈02B",
-    usage: "2.8kWh",
-    shenyu: "6.5kWh",
-    status: "inUse"
-  },
-  {
-    id: 3,
-    name: "仁英大廈03C 空調插座",
-    address: "XX路xxx號仁英大廈03C",
-    usage: "1.5kWh",
-    shenyu: "6.5kWh",
-    status: "history"
-  },
-  {
-    id: 4,
-    name: "仁英大廈04D 空調插座",
-    address: "XX路xxx號仁英大廈04D",
-    usage: "4.0kWh",
-    shenyu: "6.5kWh",
-    status: "history"
-  }
-]);
-
-const displayedOrders = computed(() =>
-  orders.value.filter(order =>
-    isUse.value ? order.status === "inUse" : order.status === "history"
-  )
+const isShowDialog = ref(false);
+const renewOrderId = ref("");
+const duration = ref();
+const isShowDurationSpan = ref(false);
+const isValidDuration = computed(() =>
+  validateField("numberM", duration.value)
 );
-const ordersH = ref([
-  {
-    name: "仁英大廈01A 空調插座",
-    address: "XX路xxx號仁英大廈01A",
-    powerPurchased: "10kWh",
-    amountPaid: "10HKD",
-    orderNumber: "827857199803457",
-    paymentMethod: "銀行卡",
-    transactionNumber: "47178858238"
-  },
-  {
-    name: "仁英大廈02B 空調插座",
-    address: "XX路xxx號仁英大廈02B",
-    powerPurchased: "5kWh",
-    amountPaid: "5HKD",
-    orderNumber: "827857199803458",
-    paymentMethod: "微信支付",
-    transactionNumber: "47178858239"
-  },
-  {
-    name: "仁英大廈03C 空調插座",
-    address: "XX路xxx號仁英大廈03C",
-    powerPurchased: "8kWh",
-    amountPaid: "8HKD",
-    orderNumber: "827857199803459",
-    paymentMethod: "支付寶",
-    transactionNumber: "47178858240"
-  },
-  {
-    name: "仁英大廈04D 空調插座",
-    address: "XX路xxx號仁英大廈04D",
-    powerPurchased: "12kWh",
-    amountPaid: "12HKD",
-    orderNumber: "827857199803460",
-    paymentMethod: "銀行卡",
-    transactionNumber: "47178858241"
-  },
-  {
-    name: "仁英大廈05E 空調插座",
-    address: "XX路xxx號仁英大廈05E",
-    powerPurchased: "6kWh",
-    amountPaid: "6HKD",
-    orderNumber: "827857199803461",
-    paymentMethod: "微信支付",
-    transactionNumber: "47178858242"
-  },
-  {
-    name: "仁英大廈06F 空調插座",
-    address: "XX路xxx號仁英大廈06F",
-    powerPurchased: "15kWh",
-    amountPaid: "15HKD",
-    orderNumber: "827857199803462",
-    paymentMethod: "支付寶",
-    transactionNumber: "47178858243"
-  }
-]);
+const endOrderU = async (id: string) => {
+  endOrder({ id: id })
+    .then(res => {
+      console.log(res);
+      let data: any = res;
+      orders.value = data;
+      console.log(orders.value);
+      showSuccessToast("訂單已取消");
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("取消訂單失敗");
+    });
+};
+const RenewalOrder = async (id: string) => {
+  renewOrderId.value = id;
+  isShowDialog.value = true;
+};
+const handleRenewalOrder = async () => {
+  if (!isValidDuration.value) isShowDurationSpan.value = true;
+  renewOrder({ id: renewOrderId.value, duration: duration.value }).then(res => {
+    console.log(res);
+    showSuccessToast("訂單已續費");
+    isShowDialog.value = false;
+  });
+};
+onBeforeMount(async () => {
+  let mobile = localStorage.getItem("mobile");
+  getOrders({ mobile: mobile, status: 1 })
+    .then(res => {
+      console.log(res);
+      const after: any = res;
+      ordersH.value = after;
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("獲取历史訂單失敗");
+    });
+  getOrders({ mobile: mobile, status: 0 })
+    .then(res => {
+      console.log(res);
+      const after: any = res;
+      orders.value = after;
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("獲取訂單失敗");
+    });
+});
 </script>

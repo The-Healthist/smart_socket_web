@@ -16,13 +16,6 @@ export function decodeFormData(encodedData: string): any {
   const decodedData = atob(encodedData); // Base64 解码
   return JSON.parse(decodedData);
 }
-// base64 来加密下面的数据
-// {
-//   "id": "1",
-//   "name": "仁英大廈01A 空調插座",
-//   "address": "XX路xxx號仁英大廈01A",
-//   "duration": "2"
-// }
 export function encodeOrderData(data: any): string {
   const jsonString = JSON.stringify(data);
 
@@ -52,6 +45,9 @@ export function decodeOrderData(encodedData: string): any {
 //校验规则
 export function validateField(field: string, value: string): boolean {
   switch (field) {
+    // 大于0的整数
+    case "numberM":
+      return /^\d+$/.test(value) && parseInt(value) > 0;
     case "email":
       // 正则表达式用于验证邮箱
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);

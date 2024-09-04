@@ -58,7 +58,7 @@
               </div>
             </template>
           </InvertedButton>
-          <PrimaryButton class="grow" type="submit">
+          <PrimaryButton class="grow" type="submit" @click="handleLogin">
             <template #default>
               <div
                 class="h-[22px] flex flex-row justify-center items-center gap-2"

@@ -93,11 +93,14 @@
 </template>
 
 <script setup lang="ts" name="OrderDetails">
-import { computed, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useThemeStore } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
+import { useRouter } from "vue-router";
+import { getOrder } from "@/api/mock/index";
+import { showFailToast } from "vant";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -107,18 +110,23 @@ const fontsizeStore = useFontSizeStore();
 const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
-
-const ordersH = ref([
-  {
-    name: "仁英大廈01A 空調插座",
-    address: "XX路xxx號仁英大廈01A",
-    powerPurchased: "10kWh",
-    amountPaid: "10HKD",
-    orderNumber: "827857199803457",
-    paymentMethod: "銀行卡",
-    transactionNumber: "47178858238",
-    creationTime: "2024-09-01 14:32"
-  }
-  // Add more orders as needed
-]);
+const router = useRouter();
+//转换成字符串
+const orderId = router.currentRoute.value.query.id;
+// console.log(orderId);
+const ordersH = ref();
+onBeforeMount(async () => {
+  if (typeof orderId === "string")
+    getOrder({ id: orderId })
+      .then(res => {
+        // console.log(res);
+        let data: any = res;
+        ordersH.value = [data];
+        // console.log(ordersH.value);
+      })
+      .catch(err => {
+        console.log(err);
+        showFailToast("獲取訂單失敗");
+      });
+});
 </script>
