@@ -68,28 +68,28 @@
               >
                 <!-- 第一行 -->
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
                   <div class="text-large">{{ order.name }}</div>
                 </div>
                 <!-- 第二行 -->
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     插座地址 :
                   </span>
                   <div class="text-large">{{ order.address }}</div>
                 </div>
                 <!-- 第三行 -->
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     已使用 :
                   </span>
                   <div class="text-large font-bold">{{ order.usage }}</div>
                 </div>
                 <!-- 第四行 -->
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     剩餘 :
                   </span>
                   <div class="text-large font-bold">{{ order.shenyu }}</div>
@@ -150,19 +150,19 @@
                 "
               >
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
                   <div class="text-large">{{ order.name }}</div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     插座地址 :
                   </span>
                   <div class="text-large">{{ order.address }}</div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     購買電量 :
                   </span>
                   <div class="text-large font-bold">
@@ -170,7 +170,7 @@
                   </div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     支付金額 :
                   </span>
                   <div class="text-large text-[#ff4400]">
@@ -178,7 +178,7 @@
                   </div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     訂單編號 :
                   </span>
                   <div class="text-base">
@@ -186,7 +186,7 @@
                   </div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     付款方式 :
                   </span>
                   <div class="text-base">
@@ -194,7 +194,7 @@
                   </div>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-small text-baseC font-normal truncate">
+                  <span class="text-base text-baseC font-normal truncate">
                     交易編號 :
                   </span>
                   <div class="text-base">
@@ -223,6 +223,7 @@
       v-model:show="isShowDialog"
       :show-cancel-button="false"
       :showConfirmButton="false"
+      :close-on-click-overlay="true"
     >
       <div
         class="flex flex-col h-[40vh] bg-gradient-to-b from-skin-primary/10 to-skin-primary/30 items-center p-2.5 gap-2.5"
@@ -245,13 +246,21 @@
                 placeholder="请输入充值时间"
                 class="w-[60vw] h-[24px] pl-2 rounded-button"
               />
-              <span class="text-primary text-base">/小时</span>
+              <span class="text-primary text-base mr-1.5">/小时</span>
             </div>
           </div>
         </div>
+        <div class="flex flex-row w-full ml-2 justify-between">
+          <span class="flex flex-row justify-start text-baseC text-base w-full">
+            总计金额</span
+          >
+          <span class="text-primary text-base mr-[26px]"
+            >{{ duration }}HKD</span
+          >
+        </div>
         <span
           v-if="isShowDurationSpan"
-          class="h-2.5 w-full -mt-2.5 text-small ml-[2px] text-red-500"
+          class="h-2.5 w-full -mt-2.5 text-base ml-[2px] text-red-500"
         >
           充值时间需要>0且为整数
         </span>
@@ -305,7 +314,7 @@ const ordersH = ref([]);
 
 const isShowDialog = ref(false);
 const renewOrderId = ref("");
-const duration = ref();
+const duration = ref(0);
 const isShowDurationSpan = ref(false);
 const isValidDuration = computed(() =>
   validateField("numberM", duration.value)

@@ -93,7 +93,6 @@ export default defineMock([
       code: 0,
       message: "SUCCESS",
       result: Mock.mock({
-        // 提供一个二维码和一个跳转链接
         qrCode: "https://example.com/qrcode",
         url: "payedafter"
       })

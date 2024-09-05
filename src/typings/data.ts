@@ -43,7 +43,7 @@ export function decodeOrderData(encodedData: string): any {
 }
 
 //校验规则
-export function validateField(field: string, value: string): boolean {
+export function validateField(field: string, value: any): boolean {
   switch (field) {
     // 大于0的整数
     case "numberM":

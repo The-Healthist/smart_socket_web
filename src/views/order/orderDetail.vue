@@ -7,6 +7,7 @@
       class="flex flex-col w-full h-full justify-center items-center px-2.5 py-5"
     >
       <div class="text-inverted text-largest flex justify-center items-center">
+        <!-- <i-icon icon="streamline:return-2" class="text-[20px] text-inverted" /> -->
         订单详情
       </div>
       <div class="w-[95vw] h-full flex flex-col">

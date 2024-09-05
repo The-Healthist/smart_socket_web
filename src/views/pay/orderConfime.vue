@@ -12,25 +12,25 @@
       <div class="flex flex-col">
         <!-- Order Details -->
         <div class="flex justify-between items-center">
-          <span class="text-small text-baseC font-normal truncate"
+          <span class="text-base text-baseC font-normal truncate"
             >插座名稱 :</span
           >
           <div class="text-larger">{{ order.name }}</div>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-small text-baseC font-normal truncate"
+          <span class="text-base text-baseC font-normal truncate"
             >插座地址 :</span
           >
           <div class="text-larger">{{ order.address }}</div>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-small text-baseC font-normal truncate"
+          <span class="text-base text-baseC font-normal truncate"
             >租用時間 :</span
           >
           <div class="text-large font-bold">{{ order.duration }}kWh</div>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-small text-baseC font-normal truncate"
+          <span class="text-base text-baseC font-normal truncate"
             >支付金额 :</span
           >
           <div class="text-larger font-bold">{{ order.duration }}HKD</div>
@@ -38,7 +38,7 @@
 
         <!-- Payment Details -->
         <div class="flex flex-row gap-2.5 mt-2.5 justify-between items-center">
-          <label for="email" class="w-[20vw] text-small text-baseC font-normal"
+          <label for="email" class="w-[20vw] text-base text-baseC font-normal"
             >邮箱地址 :</label
           >
           <input
@@ -50,7 +50,7 @@
           />
         </div>
         <div class="flex h-2.5">
-          <span v-if="isShowEmailSpan" class="text-red-500 text-sm"
+          <span v-if="isShowEmailSpan" class="text-red-500 text-base"
             >邮箱格式不正确</span
           >
         </div>
@@ -59,10 +59,10 @@
         >
           <label
             for="phone"
-            class="w-[20vw] text-small text-baseC font-normal flex flex-row justify-center items-center"
+            class="w-[20vw] text-base text-baseC font-normal flex flex-row justify-center items-center"
           >
-            <span class="text-red-500 text-sm text-center w-2.5">*</span
-            >支付手机号:</label
+            <span class="text-red-500 text-base text-center w-2.5">*</span
+            >手机号:</label
           >
           <input
             id="phone"
@@ -73,7 +73,7 @@
           />
         </div>
         <div class="flex h-2.5">
-          <span v-if="isShowPhoneSpan" class="text-red-500 text-sm"
+          <span v-if="isShowPhoneSpan" class="text-red-500 text-base"
             >手机号码不能位空且为6~12位数字</span
           >
         </div>
@@ -89,7 +89,7 @@
           />
           <label
             for="register-checkbox"
-            class="text-small text-baseC font-normal"
+            class="text-base text-baseC font-normal"
           >
             一键注册
           </label>
@@ -102,8 +102,8 @@
         >
           <label
             for="password"
-            class="text-small text-baseC font-normal w-[20vw]"
-            ><span class="text-red-500 text-sm text-center w-2.5">*</span>密码
+            class="text-base text-baseC font-normal w-[20vw]"
+            ><span class="text-red-500 text-base text-center w-2.5">*</span>密码
             :</label
           >
           <input
@@ -115,7 +115,7 @@
           />
         </div>
         <div class="flex h-2.5">
-          <span v-if="isShowPasswordSpan" class="text-red-500 text-sm"
+          <span v-if="isShowPasswordSpan" class="text-red-500 text-base"
             >密码不能为空且必须是6~16位</span
           >
         </div>
@@ -125,8 +125,8 @@
         >
           <label
             for="confirm-password"
-            class="text-small text-baseC font-normal w-[20vw]"
-            ><span class="text-red-500 text-sm text-center w-2.5">*</span
+            class="text-base text-baseC font-normal w-[20vw]"
+            ><span class="text-red-500 text-base text-center w-2.5">*</span
             >确认密码 :</label
           >
           <input
