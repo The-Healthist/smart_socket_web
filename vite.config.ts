@@ -13,6 +13,7 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import { enableCDN } from "./build/cdn";
 
 import basicSsl from "@vitejs/plugin-basic-ssl";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { plugin } from "postcss";
 
 // 当前工作目录路径
@@ -66,9 +67,12 @@ export default defineConfig(({ mode }) => {
       // 仅在 proxy 中配置的代理前缀， mock-dev-server 才会拦截并 mock
       // doc: https://github.com/pengzhanbo/vite-plugin-mock-dev-server
       proxy: {
-        "^/api": {
-          target: ""
-        }
+        "/api": {
+          target: "https://sockettest.skylinedances.com/api",
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, "")
+        },
+        secure: false
       },
       https: true
     },

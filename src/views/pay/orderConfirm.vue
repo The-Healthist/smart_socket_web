@@ -15,35 +15,39 @@
           <span class="text-base text-baseC font-normal truncate"
             >插座名稱 :</span
           >
-          <div class="text-larger">{{ order.name }}</div>
+          <div class="text-larger">{{ formDataOrder?.name }}</div>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-base text-baseC font-normal truncate"
             >插座地址 :</span
           >
-          <div class="text-larger">{{ order.address }}</div>
+          <div class="text-larger">{{ formDataOrder?.address }}</div>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-base text-baseC font-normal truncate"
             >租用時間 :</span
           >
-          <div class="text-large font-bold">{{ order.duration }}kWh</div>
+          <div class="text-large font-bold">
+            {{ formDataOrder?.quantity }}/H
+          </div>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-base text-baseC font-normal truncate"
             >支付金额 :</span
           >
-          <div class="text-larger font-bold">{{ order.duration }}HKD</div>
+          <div class="text-larger font-bold">
+            {{ formDataOrder?.quantity }}HKD
+          </div>
         </div>
 
         <!-- Payment Details -->
         <div class="flex flex-row gap-2.5 mt-2.5 justify-between items-center">
-          <label for="email" class="w-[20vw] text-base text-baseC font-normal"
+          <label for="email" class="w-[24vw] text-base text-baseC font-normal"
             >邮箱地址 :</label
           >
           <input
             id="email"
-            v-model="formData.email"
+            v-model="formDataAuth.email"
             type="email"
             placeholder="请输入邮箱地址/选填"
             class="border rounded p-1 grow"
@@ -59,14 +63,14 @@
         >
           <label
             for="phone"
-            class="w-[20vw] text-base text-baseC font-normal flex flex-row justify-center items-center"
+            class="w-[24vw] text-base text-baseC font-normal flex flex-row justify-start items-center"
           >
             <span class="text-red-500 text-base text-center w-2.5">*</span
             >手机号:</label
           >
           <input
             id="phone"
-            v-model="formData.mobile"
+            v-model="formDataAuth.mobile"
             type="tel"
             placeholder="请输入手机号/不可为空"
             class="border rounded p-1 grow ml-2.5"
@@ -80,7 +84,7 @@
 
         <!-- One-Click Register Checkbox -->
         <!-- <div v-if="noToken" class="flex items-center mt-4"> -->
-        <div class="flex items-center mt-4">
+        <div v-if="isShowRegister" class="flex items-center mt-4">
           <input
             id="register-checkbox"
             v-model="isRegistering"
@@ -102,20 +106,20 @@
         >
           <label
             for="password"
-            class="text-base text-baseC font-normal w-[20vw]"
+            class="text-base text-baseC font-normal w-[24vw]"
             ><span class="text-red-500 text-base text-center w-2.5">*</span>密码
             :</label
           >
           <input
             id="password"
-            v-model="formData.password"
+            v-model="formDataAuth.password"
             type="password"
             placeholder="请输入密码"
             class="border rounded p-1 grow ml-2.5"
           />
         </div>
         <div class="flex h-2.5">
-          <span v-if="isShowPasswordSpan" class="text-red-500 text-base"
+          <span v-if="isShowPasswordSpan" class="text-red-500 text-small"
             >密码不能为空且必须是6~16位</span
           >
         </div>
@@ -125,13 +129,13 @@
         >
           <label
             for="confirm-password"
-            class="text-base text-baseC font-normal w-[20vw]"
+            class="text-base text-baseC font-normal w-[24vw]"
             ><span class="text-red-500 text-base text-center w-2.5">*</span
             >确认密码 :</label
           >
           <input
             id="confirm-password"
-            v-model="formData.confirmPassword"
+            v-model="formDataAuth.confirmPassword"
             type="password"
             placeholder="请确认密码"
             class="border rounded p-1 grow ml-2.5"
@@ -187,11 +191,8 @@ import {
   encodeOrderData,
   validateField
 } from "@/typings/data";
-
-const route = useRoute();
-const order = route.query;
-console.log(order);
-
+import { info } from "node:console";
+import { getSocketInfo } from "@/api/socket";
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
 const roundedStore = useRoundedStore();
@@ -201,24 +202,51 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
-const noToken = ref(true);
+const device_id = ref("");
 
-//注册相关
-const formData = reactive({
+interface formdataAuth {
+  email?: string;
+  mobile: string;
+  password: string;
+}
+interface formdataOrder {
+  name: string;
+  address: string;
+  quantity: string;
+  amount?: string;
+}
+interface Factor {
+  email?: string;
+  mobile: string;
+  formDataAuth: string;
+}
+const route = useRoute();
+const orderQuery = route.query;
+const formDataOrder = ref<formdataOrder>({
+  name: "",
+  address: "",
+  quantity: "",
+  amount: ""
+});
+
+//注册
+const formDataAuth = ref({
   email: "",
   mobile: "",
   password: "",
   confirmPassword: ""
 });
-// const isRegistering = computed(() => {
-//   if (noToken.value) return true;
-//   return false;
-// });
 const isRegistering = ref(false);
-const isValidEmail = computed(() => validateField("email", formData.email));
-const isValidPhone = computed(() => validateField("mobile", formData.mobile));
+const isShowRegister = ref(false);
+//校验
+const isValidEmail = computed(() =>
+  validateField("email", formDataAuth.value.email)
+);
+const isValidPhone = computed(() =>
+  validateField("mobile", formDataAuth.value.mobile)
+);
 const isValidPassword = computed(() =>
-  validateField("password", formData.password)
+  validateField("password", formDataAuth.value.password)
 );
 // 应该返回 true 或 false 根据密码长度
 
@@ -227,24 +255,14 @@ const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const isShowConfirmPasswordSpan = ref(false);
 const loginAfter = ref<any>();
-interface formdata {
-  email?: string;
-  mobile: string;
-  password: string;
-  formData: string;
-}
-interface Factor {
-  email?: string;
-  mobile: string;
-  formData: string;
-}
 
 async function handleRegister() {
-  isShowEmailSpan.value = formData.email && !isValidEmail.value;
-  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
-  isShowPasswordSpan.value = !formData.password || !isValidPassword.value;
+  isShowEmailSpan.value = formDataAuth.value.email && !isValidEmail.value;
+  isShowPhoneSpan.value = !formDataAuth.value.mobile || !isValidPhone.value;
+  isShowPasswordSpan.value =
+    !formDataAuth.value.password || !isValidPassword.value;
   isShowConfirmPasswordSpan.value =
-    formData.password !== formData.confirmPassword;
+    formDataAuth.value.password !== formDataAuth.value.confirmPassword;
 
   if (
     isShowEmailSpan.value ||
@@ -256,28 +274,37 @@ async function handleRegister() {
     console.error("Please fill all required fields correctly!");
     return;
   }
-  //base64加密
-  let baseFormData = !!formData.email
-    ? encodeFormData(formData.mobile, formData.password, formData.email)
-    : encodeFormData(formData.mobile, formData.password);
-  let formdata: formdata = {
-    mobile: formData.mobile,
-    password: formData.password,
-    formData: baseFormData
+  // //base64加密
+  // let baseFormDataAuth = !!formDataAuth.email
+  //   ? encodeFormData(
+  //       formDataAuth.mobile,
+  //       formDataAuth.password,
+  //       formDataAuth.email
+  //     )
+  //   : encodeFormData(formDataAuth.mobile, formDataAuth.password);
+  // 将formdataOrder 的值拼接成字符串,然后base64加密
+  //mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5 拼接成这样
+
+  let queryString = new URLSearchParams(formDataOrder.value).toString();
+  console.log(queryString);
+  // 手机号,密码,邮箱可选
+  let formdataAuth: formdataAuth = {
+    mobile: formDataAuth.value.mobile,
+    password: formDataAuth.value.password
   };
-  if (formData.email) {
-    formdata = { ...formdata, email: formData.email };
+  if (formDataAuth.value.email) {
+    formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
   }
 
-  Register(formdata)
+  Register(formdataAuth)
     .then(res => {
       loginAfter.value = res;
       localStorage.setItem("token", loginAfter.value.token);
-      localStorage.setItem("mobile", formData.mobile);
-      localStorage.setItem("password", formData.password);
+      localStorage.setItem("mobile", formDataAuth.value.mobile);
+      localStorage.setItem("password", formDataAuth.value.password);
       localStorage.setItem("uuid", loginAfter.value.uuid);
-      if (formData.email) {
-        localStorage.setItem("email", formData.email);
+      if (formDataAuth.value.email) {
+        localStorage.setItem("email", formDataAuth.value.email);
       }
       showSuccessToast("注册成功");
     })
@@ -290,24 +317,20 @@ async function handleRegister() {
     });
 }
 
-interface after {
-  url: string;
-  qrCode: string;
-}
 const handlePayment = () => {
   // Handle payment logic here
   if (isRegistering.value) {
     handleRegister();
   }
 
-  let baseFormData = encodeOrderData(order);
+  let baseFormDataAuth = encodeOrderData(orderQuery);
   //表单数据,手机号,邮箱可选
   let factor: Factor = {
-    mobile: formData.mobile,
-    formData: baseFormData
+    mobile: formDataAuth.value.mobile,
+    formDataAuth: baseFormDataAuth
   };
-  if (formData.email) {
-    factor = { ...factor, email: formData.email };
+  if (formDataAuth.value.email) {
+    factor = { ...factor, email: formDataAuth.value.email };
   }
 
   createOrder(factor).then(res => {
@@ -316,19 +339,47 @@ const handlePayment = () => {
     router.push(after.url);
   });
 };
+// 1
 onBeforeMount(async () => {
-  // 判断本地有没有存token和mobile
-  let token = localStorage.getItem("token");
+  const infoQuery = route.query;
+  console.log("query", infoQuery);
+  //由链接跳转而来
+  if (infoQuery.token) {
+    console.log("token", infoQuery.token);
+    localStorage.setItem("token", infoQuery.token as string);
+    localStorage.setItem("mobile", infoQuery.mobile as string);
+    formDataAuth.value.mobile = infoQuery.mobile as string;
+    device_id.value = infoQuery.device_id as string; //设备id
+    formDataOrder.value.quantity = infoQuery.quantity as string;
+    if (infoQuery.email) {
+      localStorage.setItem("email", infoQuery.email as string);
+      formDataAuth.value.email = infoQuery.email as string;
+    }
+    getSocketInfo({ socketId: device_id.value })
+      .then((res: any) => {
+        // let data: any = res.data;
+        formDataOrder.value.address = res.data.address;
+        formDataOrder.value.name = res.data.name;
+      })
+      .catch(err => {
+        showFailToast(err);
+      });
+  }
+  // 不是链接跳转过来的
+  else {
+    device_id.value = orderQuery.device_id as string;
+    formDataOrder.value.address = orderQuery.address as string;
+    formDataOrder.value.name = orderQuery.name as string;
+    formDataOrder.value.quantity = orderQuery.quantity as string;
+  }
+
+  // 是否需要注册
   let mobile = localStorage.getItem("mobile");
   let email = localStorage.getItem("email");
-  if (mobile) {
-    formData.mobile = mobile;
-  }
-  if (email) {
-    formData.email = email;
-  }
-  if (token) {
-    noToken.value = false;
-  }
+  let isGuest = localStorage.getItem("isGuest");
+  formDataAuth.value.mobile = formDataAuth.value.mobile ? "" : mobile;
+  formDataAuth.value.email = formDataAuth.value.email ? "" : email;
+  isShowRegister.value = isGuest === "true" ? true : false;
+  // localStorage.setItem("isGuest", "true");
 });
 </script>

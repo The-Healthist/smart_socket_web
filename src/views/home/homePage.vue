@@ -10,7 +10,6 @@
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
         </div>
         <div class="rounded-card w-full h-[128px] bg-base/90" />
-        <!-- buttons -->
         <div
           class="rounded-card bg-base/90 text-mutedC flex flex-row justify-between gap-2.5 w-full h-[77px] px-5 py-2.5"
         >
@@ -32,7 +31,6 @@
           </div>
         </div>
         <div class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 h-[287px]">
-          <!-- 地图 -->
           <div class="rounded-button w-full h-[235px] bg-slate-200" />
           <div class="flex flex-row justify-between gap-2.5 w-full">
             <InvertedButton>

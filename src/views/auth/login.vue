@@ -11,7 +11,7 @@
       </div>
 
       <!-- 登录表单 -->
-      <form class="flex flex-col" @submit.prevent="handleLogin">
+      <form class="flex flex-col">
         <div class="relative mt-2.5 flex flex-row justify-center items-center">
           <span class="text-red-500 text-sm text-center w-2.5">*</span>
           <input
@@ -46,20 +46,20 @@
           >
         </div>
         <div class="flex justify-center items-center ml-2.5 gap-2.5 p-2.4 mt-3">
-          <InvertedButton @click="router.push({ name: 'GuestUserLogin' })">
+          <InvertedButton @click="handleLoginGuest()">
             <template #default>
               <div
-                class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
+                class="w-[30vw] h-[22px] flex flex-row justify-center items-center"
               >
                 <span
-                  class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
+                  class="text-large text-primary font-bold font-CactusClassicalSerifHK text-center"
                 >
-                  游客登陸
+                  使用游客登陸
                 </span>
               </div>
             </template>
           </InvertedButton>
-          <PrimaryButton class="grow" type="submit">
+          <PrimaryButton class="grow" @click="handleLogin()">
             <template #default>
               <div
                 class="h-[22px] flex flex-row justify-center items-center gap-2"
@@ -73,6 +73,7 @@
           </PrimaryButton>
         </div>
       </form>
+
       <div class="flex justify-center items-center p-2.4 mt-2.5">
         <span
           class="text-primary/80 text-small hover:text-primary cursor-pointer"
@@ -96,6 +97,7 @@ import { useRouter } from "vue-router";
 import { showFailToast, showSuccessToast } from "vant";
 import { validateField } from "@/typings/data";
 import { Login } from "@/api/mock";
+import { guestUserLogin } from "@/api/auth";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -107,35 +109,54 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
 
-const formData = reactive({
-  mobile: "",
-  password: ""
+const formData = ref({
+  mobile: "13583325035",
+  password: "test1234"
 });
 
-const isValidPhone = computed(() => validateField("mobile", formData.mobile));
-const isValidPassword = computed(() =>
-  validateField("password", formData.password)
+const isValidPhone = computed(() =>
+  validateField("mobile", formData.value.mobile)
 );
-const isShowEmailSpan = ref(false);
+const isValidPassword = computed(() =>
+  validateField("password", formData.value.password)
+);
 const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const loginAfter = ref<any>();
 
 function handleLogin() {
-  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
-  isShowPasswordSpan.value = !formData.password || !isValidPassword.value;
+  isShowPhoneSpan.value = !formData.value.mobile || !isValidPhone.value;
+  isShowPasswordSpan.value = !formData.value.password || !isValidPassword.value;
 
   if (isShowPhoneSpan.value || isShowPasswordSpan.value) {
     console.error("Please fill all required fields correctly!");
     return;
   }
-  Login(formData)
+  Login(formData.value)
+    .then(res => {
+      loginAfter.value = res;
+      console.log(res);
+      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("mobile", formData.value.mobile);
+      localStorage.setItem("password", formData.value.password);
+      localStorage.setItem("isGuest", "false");
+      showSuccessToast("登录成功");
+      router.push({ name: "Home" });
+    })
+    .catch(err => {
+      showFailToast("登录失败");
+    });
+}
+
+async function handleLoginGuest() {
+  isShowPhoneSpan.value = false;
+  isShowPasswordSpan.value = false;
+  guestUserLogin()
     .then(res => {
       loginAfter.value = res;
       localStorage.setItem("token", loginAfter.value.token);
-      localStorage.setItem("mobile", formData.mobile);
-      localStorage.setItem("password", formData.password);
-      localStorage.setItem("uuid", loginAfter.value.uuid);
+      localStorage.setItem("isGuest", "true");
+      console.log(res);
       showSuccessToast("登录成功");
     })
     .catch(err => {

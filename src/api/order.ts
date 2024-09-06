@@ -1,12 +1,5 @@
 import { http } from "@/utils/http";
 
-type orderParams = {
-  id: number;
-};
-type renewBody = {
-  id: number;
-  duration: number;
-};
 export function getOrders() {
   return http.request({
     url: "/api/order",
@@ -14,7 +7,7 @@ export function getOrders() {
   });
 }
 
-export function getOrder(params?: orderParams) {
+export function getOrder(params?: any) {
   return http.request({
     url: `/api/order/${params.id}`,
     method: "get"
@@ -30,7 +23,7 @@ export function createOrder(data?: object) {
   });
 }
 
-export function endOrder(params?: orderParams) {
+export function endOrder(params?: any) {
   return http.request({
     url: `/api/order/${params.id}/end`,
     method: "post"
@@ -38,7 +31,7 @@ export function endOrder(params?: orderParams) {
 }
 
 //充值
-export function renewOrder(params?: renewBody) {
+export function renewOrder(params?: any) {
   return http.request({
     url: `/api/order/${params.id}/cancel`,
     method: "post",

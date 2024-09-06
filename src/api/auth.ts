@@ -12,7 +12,7 @@ type formDataResigister = {
 };
 export function Login(body: formDataLogin) {
   return http.request({
-    url: "/api/auth/login",
+    url: "/api/common/login",
     method: "post",
     data: body
   });
@@ -26,10 +26,9 @@ export function Register(body: formDataResigister) {
   });
 }
 
-export function guestUserLogin(body: any) {
+export function guestUserLogin() {
   return http.request({
-    url: "/api/auth/login_guest",
-    method: "post",
-    data: body
+    url: "/api/common/login_guest",
+    method: "post"
   });
 }

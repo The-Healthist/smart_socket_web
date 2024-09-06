@@ -29,11 +29,10 @@ type formDataResigister = {
   mobile: string;
   password: string;
   email?: string;
-  formData: string;
 };
 export function Login(body: formDataLogin) {
   return http.request({
-    url: "/api/auth/login",
+    url: "/api/common/login",
     method: "post",
     data: body
   });

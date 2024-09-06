@@ -177,7 +177,7 @@ import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { idText } from "typescript";
-import { getSocketInfo } from "@/api/info";
+import { getSocketInfo } from "@/api/socket";
 import axios from "axios";
 import { getListApi } from "@/api/mock";
 

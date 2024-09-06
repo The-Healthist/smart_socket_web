@@ -77,7 +77,7 @@
                 <span
                   class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
                 >
-                  返回上级
+                  返回登陆
                 </span>
               </div>
             </template>
@@ -191,6 +191,7 @@ async function handleRegister() {
       localStorage.setItem("mobile", formData.mobile);
       localStorage.setItem("password", formData.password);
       localStorage.setItem("uuid", loginAfter.value.uuid);
+      localStorage.setItem("isGuest", "true");
       if (formData.email) {
         localStorage.setItem("email", formData.email);
       }

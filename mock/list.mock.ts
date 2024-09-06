@@ -2,37 +2,14 @@ import { defineMock } from "vite-plugin-mock-dev-server";
 import Mock from "mockjs";
 
 export default defineMock([
+  // 插座信息获取paydetail
   {
-    url: "/api/list/get",
-    delay: 1000,
-    body: {
-      code: 0,
-      message: "OK",
-      result: Mock.mock({
-        "list|10": [
-          {
-            "id|+1": 1
-          }
-        ]
-      })
-    }
-  },
-  {
-    url: "/api/list/error",
-    delay: 1000,
-    body: {
-      code: 1,
-      message: "ERROR",
-      result: null
-    }
-  },
-  {
-    url: "/api/socket/:id",
+    url: "/api/socket/:socketId",
     delay: 1000,
     body: {
       code: 0,
       message: "SUCCESS",
-      result: Mock.mock({
+      data: Mock.mock({
         address: "XX路xxx號仁英大廈01A",
         name: "仁英大廈01A 空調插座",
         id: 1,
@@ -41,18 +18,14 @@ export default defineMock([
       })
     }
   },
-  // 游客登录接口
+  // 游客登录接口不带参数
   {
-    url: "/api/auth/login_guest",
+    url: "/api/common/login_guest",
     delay: 1000,
     body: {
-      code: 0,
-      message: "SUCCESS",
-      result: Mock.mock({
-        uuid: "324",
-        type: "游客",
-        token: "12345634sdfsdfsdfsdfsdfsdf"
-      })
+      message: "login success",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiYWM3MGNjYzUtYTk5NS00ZDk2LWIzYzUtZDUwNWViMjM4Njg2IiwiUm9sZSI6MiwiaXNzIjoiaVNtYXJ0IiwiZXhwIjoxNzI1ODY3MzAwLCJpYXQiOjE3MjU2MDgxMDB9.fIhFNiI77-SbSE0vsoA_mow4NFArnlbBE2NjSEqalhQ"
     }
   },
   // LOGIN
@@ -60,14 +33,9 @@ export default defineMock([
     url: "/api/auth/login",
     delay: 1000,
     body: {
-      code: 0,
-      message: "SUCCESS",
-      result: Mock.mock({
-        uuid: "3214234",
-        type: "用户",
-        token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjMuMTIzIiwiaXNBZG1pbiI6dHJ1ZSwiZXhwIjoxNzI0MzA5OTgxLCJpYXQiOjE3MjQxMzcxODEsImlzcyI6IkNsZXZlckRyZWFtIn0.z0bFUtuqKesT-trxVJnd2VZlPqwVjRFT844ESghGFIo"
-      })
+      message: "login success",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMTM1ODMzMjUwMzUiLCJSb2xlIjoyLCJpc3MiOiJpU21hcnQiLCJleHAiOjE3MjU4Njk4NDgsImlhdCI6MTcyNTYxMDY0OH0.-C8L5bbE7in47d0l6ZZ5effRZk-qH-oapJjh9n-f1uU"
     }
   },
   // 注册接口
@@ -208,15 +176,14 @@ export default defineMock([
   },
   // 获取订单详情
   {
-    url: "/api/order/:id",
+    url: "/api/order/:socketId",
     method: "GET",
     delay: 1000,
     body: ({ params }) => {
       if (params.id === "1")
         return {
-          code: 0,
           message: "SUCCESS",
-          result: Mock.mock({
+          data: Mock.mock({
             name: "仁英大廈01A 空調插座",
             address: "XX路xxx號仁英大廈01A",
             powerPurchased: "10kWh",
@@ -229,9 +196,8 @@ export default defineMock([
         };
       else
         return {
-          code: 0,
           message: "SUCCESS",
-          result: Mock.mock({
+          data: Mock.mock({
             name: "仁英大廈02B 空調插座",
             address: "XX路xxx號仁英大廈02B",
             powerPurchased: "5kWh",

@@ -4,7 +4,8 @@ import Axios, {
   type AxiosResponse, // 引入 Axios 响应类型
   type AxiosRequestConfig // 引入 Axios 请求配置类型
 } from "axios";
-import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
+// import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
+import { ContentTypeEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
 import NProgress from "../progress"; // 引入进度条插件
 import { showFailToast } from "vant"; // 引入 Vant 库中的提示函数
 import "vant/es/toast/style"; // 引入 Vant 库中的提示样式
@@ -12,11 +13,11 @@ import "vant/es/toast/style"; // 引入 Vant 库中的提示样式
 // 默认 axios 实例请求配置
 const configDefault = {
   headers: {
-    "Content-Type": ContentTypeEnum.FORM_URLENCODED // 设置默认的请求头 Content-Type
+    "Content-Type": ContentTypeEnum.JSON // 设置默认的请求头 Content-Type 数据请求格式
   },
   timeout: 5000, // 请求超时时间，0 表示不超时
-  baseURL: import.meta.env.VITE_BASE_API, // 基础 URL，通过环境变量配置
-  data: {} // 默认请求数据
+  baseURL: "/", // 基础 URL，通过环境变量配置
+  data: {}
 };
 
 class Http {
@@ -49,20 +50,21 @@ class Http {
       (response: AxiosResponse) => {
         NProgress.done(); // 结束进度条
         // 与后端协定的返回字段
-        const { code, result } = response.data;
-        // const { message } = response.data;
-        // 判断请求是否成功
-        const isSuccess =
-          result &&
-          Reflect.has(response.data, "code") &&
-          code === ResultEnum.SUCCESS;
-        if (isSuccess) {
-          return result; // 返回成功结果
-        } else {
-          // 处理请求错误
-          // showFailToast(message);
-          return Promise.reject(response.data); // 返回拒绝的 Promise
-        }
+        // const { code, result } = response.data;
+        // // const { message } = response.data;
+        // // 判断请求是否成功
+        // const isSuccess =
+        //   result &&
+        //   Reflect.has(response.data, "code") &&
+        //   code === ResultEnum.SUCCESS;
+        // if (isSuccess) {
+        //   return result; // 返回成功结果
+        // } else {
+        //   // 处理请求错误
+        //   // showFailToast(message);
+        //   return Promise.reject(response.data); // 返回拒绝的 Promise
+        // }
+        return response.data;
       },
       (error: AxiosError) => {
         NProgress.done(); // 结束进度条

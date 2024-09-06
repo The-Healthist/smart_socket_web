@@ -127,7 +127,7 @@ async function handleLogin() {
     console.error("Please fill all required fields correctly!");
     return;
   }
-  guestUserLogin({ mobile: formData.mobile })
+  guestUserLogin()
     .then(res => {
       loginAfter.value = res;
       localStorage.setItem("token", loginAfter.value.token);

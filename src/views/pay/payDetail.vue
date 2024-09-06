@@ -11,7 +11,7 @@
         class="bg-base rounded-button w-full flex flex-col gap-2. justify-center items-center h-[205px]"
       >
         <img class="w-[136px] h-[133.02px] shadow" :src="info?.imgUrl" />
-        <span class="text-baseC text-base">{{ info.address }}</span>
+        <span class="text-baseC text-base">{{ info?.address }}</span>
       </div>
 
       <!-- 付费框框 -->
@@ -135,12 +135,12 @@
         class="grow-x-1"
         @click="
           router.push({
-            name: 'OrderConfime',
+            name: 'OrderConfirm',
             query: {
-              id: info.id,
+              device_id: socketId,
               name: info.name,
               address: info.address,
-              duration: duration
+              quantity: duration
             }
           })
         "
@@ -167,19 +167,21 @@ import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { idText } from "typescript";
-import { getSocketInfo } from "@/api/info";
+import { getSocketInfo } from "@/api/socket";
 import axios from "axios";
 import { getListApi } from "@/api/mock";
 
 const info = ref<any>();
 const router = useRouter();
 //获取网址上的一个id
-const socketId = router.currentRoute.value.params.id;
+const socketId = router.currentRoute.value.params.socketId;
+console.log("socketId", socketId);
 // TODO:获取数据
 onBeforeMount(async () => {
   try {
-    const res = await getSocketInfo({ id: `${socketId}` });
-    info.value = res;
+    const res: any = await getSocketInfo({ id: `${socketId}` });
+    info.value = res.data;
+    console.log("info", info.value);
   } catch (error) {
     console.error("Error fetching list info", error);
   }
