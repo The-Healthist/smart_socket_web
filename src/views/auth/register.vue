@@ -115,7 +115,7 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { Register } from "@/api/mock";
+import { Register } from "@/api/auth";
 import { showSuccessToast, showFailToast } from "vant";
 import { decodeFormData, encodeFormData, validateField } from "@/typings/data";
 
@@ -128,25 +128,28 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
-const formData = reactive({
-  email: "",
-  mobile: "",
-  password: "",
-  confirmPassword: ""
+const formData = ref({
+  email: "2021632245@qq.com",
+  mobile: "15666823185",
+  password: "1090119",
+  confirmPassword: "1090119"
 });
 interface Factor {
   email?: string;
   mobile: string;
   password: string;
-  formData: string;
+  token?: string;
 }
 
-const isValidEmail = computed(() => validateField("email", formData.email));
-const isValidPhone = computed(() => validateField("mobile", formData.mobile));
-const isValidPassword = computed(() =>
-  validateField("password", formData.password)
+const isValidEmail = computed(() =>
+  validateField("email", formData.value.email)
 );
-// 应该返回 true 或 false 根据密码长度
+const isValidPhone = computed(() =>
+  validateField("mobile", formData.value.mobile)
+);
+const isValidPassword = computed(() =>
+  validateField("password", formData.value.password)
+);
 
 const isShowEmailSpan = ref(false);
 const isShowPhoneSpan = ref(false);
@@ -155,11 +158,11 @@ const isShowConfirmPasswordSpan = ref(false);
 const loginAfter = ref<any>();
 
 async function handleRegister() {
-  isShowEmailSpan.value = formData.email && !isValidEmail.value;
-  isShowPhoneSpan.value = !formData.mobile || !isValidPhone.value;
-  isShowPasswordSpan.value = !formData.password || !isValidPassword.value;
+  isShowEmailSpan.value = formData.value.email && !isValidEmail.value;
+  isShowPhoneSpan.value = !formData.value.mobile || !isValidPhone.value;
+  isShowPasswordSpan.value = !formData.value.password || !isValidPassword.value;
   isShowConfirmPasswordSpan.value =
-    formData.password !== formData.confirmPassword;
+    formData.value.password !== formData.value.confirmPassword;
 
   if (
     isShowEmailSpan.value ||
@@ -171,38 +174,36 @@ async function handleRegister() {
     console.error("Please fill all required fields correctly!");
     return;
   }
-  //base64加密
-  let baseFormData = !!formData.email
-    ? encodeFormData(formData.mobile, formData.password, formData.email)
-    : encodeFormData(formData.mobile, formData.password);
   let factor: Factor = {
-    mobile: formData.mobile,
-    password: formData.password,
-    formData: baseFormData
+    mobile: formData.value.mobile,
+    password: formData.value.password
   };
-  if (formData.email) {
-    factor = { ...factor, email: formData.email };
+  if (formData.value.email) {
+    factor = { ...factor, email: formData.value.email };
+  }
+  const isGuest = localStorage.getItem("isGuest") === "true";
+  const token = localStorage.getItem("token");
+  if (isGuest && token) {
+    factor = { ...factor, token };
   }
 
   Register(factor)
     .then(res => {
       loginAfter.value = res;
+      console.log(res);
       localStorage.setItem("token", loginAfter.value.token);
-      localStorage.setItem("mobile", formData.mobile);
-      localStorage.setItem("password", formData.password);
-      localStorage.setItem("uuid", loginAfter.value.uuid);
+      localStorage.setItem("mobile", formData.value.mobile);
+      localStorage.setItem("password", formData.value.password);
       localStorage.setItem("isGuest", "true");
-      if (formData.email) {
-        localStorage.setItem("email", formData.email);
+      if (formData.value.email) {
+        localStorage.setItem("email", formData.value.email);
       }
       showSuccessToast("注册成功");
+      router.push({ name: "Home" });
     })
     .catch(err => {
       console.log(err);
       showFailToast("注册失败");
-    })
-    .finally(() => {
-      router.push({ name: "Home" });
     });
 }
 </script>

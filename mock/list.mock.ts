@@ -39,19 +39,19 @@ export default defineMock([
     }
   },
   // 注册接口
-  {
-    url: "/api/auth/register",
-    delay: 1000,
-    body: {
-      code: 0,
-      message: "SUCCESS",
-      result: Mock.mock({
-        uuid: "321234",
-        type: "用户",
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjM"
-      })
-    }
-  },
+  // {
+  //   url: "/api/auth/register",
+  //   delay: 1000,
+  //   body: {
+  //     code: 0,
+  //     message: "SUCCESS",
+  //     result: Mock.mock({
+  //       uuid: "321234",
+  //       type: "用户",
+  //       token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjEyM0AxMjM"
+  //     })
+  //   }
+  // },
   // 确认订单信息
   {
     url: "/api/order",

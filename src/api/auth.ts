@@ -8,7 +8,8 @@ type formDataResigister = {
   mobile: string;
   password: string;
   email?: string;
-  formData: string;
+  formData?: string;
+  token?: string;
 };
 export function Login(body: formDataLogin) {
   return http.request({
@@ -20,7 +21,7 @@ export function Login(body: formDataLogin) {
 
 export function Register(body: formDataResigister) {
   return http.request({
-    url: "/api/auth/register",
+    url: "/api/common/register",
     method: "post",
     data: body
   });
