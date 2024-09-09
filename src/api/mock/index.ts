@@ -29,6 +29,8 @@ type formDataResigister = {
   mobile: string;
   password: string;
   email?: string;
+  formData?: string;
+  token?: string;
 };
 export function Login(body: formDataLogin) {
   return http.request({
@@ -40,7 +42,7 @@ export function Login(body: formDataLogin) {
 
 export function Register(body: formDataResigister) {
   return http.request({
-    url: "/api/auth/register",
+    url: "/api/common/register",
     method: "post",
     data: body
   });
@@ -48,7 +50,7 @@ export function Register(body: formDataResigister) {
 
 export function guestUserLogin() {
   return http.request({
-    url: "/api/auth/login_guest",
+    url: "/api/common/login_guest",
     method: "post"
   });
 }

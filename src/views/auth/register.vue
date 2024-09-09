@@ -182,7 +182,7 @@ async function handleRegister() {
     factor = { ...factor, email: formData.value.email };
   }
   const isGuest = localStorage.getItem("isGuest") === "true";
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("common_token");
   if (isGuest && token) {
     factor = { ...factor, token };
   }
@@ -191,7 +191,7 @@ async function handleRegister() {
     .then(res => {
       loginAfter.value = res;
       console.log(res);
-      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("mobile", formData.value.mobile);
       localStorage.setItem("password", formData.value.password);
       localStorage.setItem("isGuest", "true");

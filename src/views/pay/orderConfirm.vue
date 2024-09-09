@@ -182,7 +182,7 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter, useRoute } from "vue-router";
-import { createOrder, Register } from "@/api/mock";
+import { Register } from "@/api/auth";
 import { showSuccessToast, showFailToast } from "vant";
 import {
   decodeFormData,
@@ -193,6 +193,7 @@ import {
 } from "@/typings/data";
 import { info } from "node:console";
 import { getSocketInfo } from "@/api/socket";
+import { createOrder } from "@/api/mock";
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
 const roundedStore = useRoundedStore();
@@ -208,6 +209,7 @@ interface formdataAuth {
   email?: string;
   mobile: string;
   password: string;
+  formData?: string;
 }
 interface formdataOrder {
   name: string;
@@ -286,23 +288,25 @@ async function handleRegister() {
   //mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5 拼接成这样
 
   let queryString = new URLSearchParams(formDataOrder.value).toString();
-  console.log(queryString);
+  console.log("拼接成这样", queryString);
+  let decodedString = decodeURIComponent(queryString);
+  console.log("解码后的查询字符串", decodedString);
   // 手机号,密码,邮箱可选
   let formdataAuth: formdataAuth = {
     mobile: formDataAuth.value.mobile,
-    password: formDataAuth.value.password
+    password: formDataAuth.value.password,
+    formData: encodeOrderData(queryString)
   };
+  console.log("formdataAuth", formdataAuth);
+  console.log("解码以后", decodeFormData(encodeOrderData(queryString)));
   if (formDataAuth.value.email) {
     formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
   }
-
   Register(formdataAuth)
     .then(res => {
       loginAfter.value = res;
-      localStorage.setItem("token", loginAfter.value.token);
       localStorage.setItem("mobile", formDataAuth.value.mobile);
       localStorage.setItem("password", formDataAuth.value.password);
-      localStorage.setItem("uuid", loginAfter.value.uuid);
       if (formDataAuth.value.email) {
         localStorage.setItem("email", formDataAuth.value.email);
       }
@@ -318,6 +322,21 @@ async function handleRegister() {
 }
 
 const handlePayment = () => {
+  let queryString = new URLSearchParams(formDataOrder.value).toString();
+  console.log("拼接成这样", queryString);
+  let decodedString = decodeURIComponent(queryString);
+  console.log("解码后的查询字符串", encodeOrderData(decodedString));
+  // 手机号,密码,邮箱可选
+  let formdataAuth: formdataAuth = {
+    mobile: formDataAuth.value.mobile,
+    password: formDataAuth.value.password,
+    formData: encodeOrderData(queryString)
+  };
+  console.log("formdataAuth", formdataAuth);
+  console.log("解码以后", decodeFormData(encodeOrderData(decodedString)));
+  if (formDataAuth.value.email) {
+    formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
+  }
   // Handle payment logic here
   if (isRegistering.value) {
     handleRegister();
@@ -346,7 +365,7 @@ onBeforeMount(async () => {
   //由链接跳转而来
   if (infoQuery.token) {
     console.log("token", infoQuery.token);
-    localStorage.setItem("token", infoQuery.token as string);
+    localStorage.setItem("common_token", infoQuery.token as string);
     localStorage.setItem("mobile", infoQuery.mobile as string);
     formDataAuth.value.mobile = infoQuery.mobile as string;
     device_id.value = infoQuery.device_id as string; //设备id

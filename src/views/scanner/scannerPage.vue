@@ -128,72 +128,88 @@ const stop = () => {
   </div>
 </template>
 
-<script>
+<script setup>
 import Scaner from "@/components/Scanner/Scanner.vue";
+import router from "@/router";
+import { onMounted, ref } from "vue";
 
-export default {
-  name: "Scan",
-  components: {
-    Scaner
-  },
-  data() {
-    return {
-      errorMessage: "",
-      scanned: ""
-    };
-  },
-  mounted() {
-    var str = navigator.userAgent.toLowerCase();
-    var ver = str.match(/cpu iphone os (.*?) like mac os/);
-    if (ver && ver[1].replace(/_/g, ".") < "10.3.3") {
-      alert("相机调用失败");
-    }
-  },
-  methods: {
-    codeScanned(code) {
-      this.scanned = code;
-      console.log("code", code);
-      //判断是不是url
-      if (/^(http|https):\/\/[^ "]+$/.test(code)) {
-        window.location.href = code;
-      }
-      if (code.indexOf("http") !== 0) {
-        alert("请输入正确的网址");
-        return;
-      }
-      //
+var errorMessage = "";
+const scanned = ref("");
 
-      // setTimeout(() => {
-      //   alert(`扫码解析成功: ${code}`);
-      // }, 1000);
-    },
-    errorCaptured(error) {
-      switch (error.name) {
-        case "NotAllowedError":
-          this.errorMessage = "Camera permission denied.";
-          break;
-        case "NotFoundError":
-          this.errorMessage = "There is no connected camera.";
-          break;
-        case "NotSupportedError":
-          this.errorMessage =
-            "Seems like this page is served in non-secure context.";
-          break;
-        case "NotReadableError":
-          this.errorMessage =
-            "Couldn't access your camera. Is it already in use?";
-          break;
-        case "OverconstrainedError":
-          this.errorMessage = "Constraints don't match any installed camera.";
-          break;
-        default:
-          this.errorMessage = "UNKNOWN ERROR: " + error.message;
-      }
-      console.error(this.errorMessage);
-      alert("相机调用失败");
-    }
+function codeScanned(code) {
+  scanned.value = code;
+  console.log("code", code);
+  //判断是不是url
+  router.push({
+    name: "PayDetail",
+    params: { socketId: code.split("/")[5] }
+  });
+  // if (/^(http|https):\/\/[^ "]+$/.test(code)) {
+  //   window.location.href = code;
+  // }
+  if (code.indexOf("http") !== 0) {
+    alert("请输入正确的网址");
+    return;
   }
-};
+  //
+
+  // setTimeout(() => {
+  //   alert(`扫码解析成功: ${code}`);
+  // }, 1000);
+}
+function errorCaptured(error) {
+  switch (error.name) {
+    case "NotAllowedError":
+      this.errorMessage = "Camera permission denied.";
+      break;
+    case "NotFoundError":
+      this.errorMessage = "There is no connected camera.";
+      break;
+    case "NotSupportedError":
+      this.errorMessage =
+        "Seems like this page is served in non-secure context.";
+      break;
+    case "NotReadableError":
+      this.errorMessage = "Couldn't access your camera. Is it already in use?";
+      break;
+    case "OverconstrainedError":
+      this.errorMessage = "Constraints don't match any installed camera.";
+      break;
+    default:
+      this.errorMessage = "UNKNOWN ERROR: " + error.message;
+  }
+  console.error(this.errorMessage);
+  alert("相机调用失败");
+}
+
+onMounted(() => {
+  var str = navigator.userAgent.toLowerCase();
+  var ver = str.match(/cpu iphone os (.*?) like mac os/);
+  if (ver && ver[1].replace(/_/g, ".") < "10.3.3") {
+    alert("相机调用失败");
+  }
+});
+
+// export default {
+//   name: "Scan",
+//   components: {
+//     Scaner
+//   },
+//   data() {
+//     return {
+//       errorMessage: "",
+//       scanned: ""
+//     };
+//   },
+//   mounted() {
+//     var str = navigator.userAgent.toLowerCase();
+//     var ver = str.match(/cpu iphone os (.*?) like mac os/);
+//     if (ver && ver[1].replace(/_/g, ".") < "10.3.3") {
+//       alert("相机调用失败");
+//     }
+//   },
+//   methods: {}
+// };
 </script>
 
 <style lang="css" scoped>

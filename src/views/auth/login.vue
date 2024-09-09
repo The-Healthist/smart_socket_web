@@ -135,8 +135,9 @@ function handleLogin() {
   Login(formData.value)
     .then(res => {
       loginAfter.value = res;
-      console.log(res);
-      localStorage.setItem("token", loginAfter.value.token);
+      console.log("loginAfter", loginAfter.value);
+      localStorage.setItem("common_token", loginAfter.value.token);
+      console.log("common_token", localStorage.getItem("common_token"));
       localStorage.setItem("mobile", formData.value.mobile);
       localStorage.setItem("password", formData.value.password);
       localStorage.setItem("isGuest", "false");
@@ -154,7 +155,7 @@ async function handleLoginGuest() {
   guestUserLogin()
     .then(res => {
       loginAfter.value = res;
-      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("isGuest", "true");
       console.log(res);
       showSuccessToast("登录成功");

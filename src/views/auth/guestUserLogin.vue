@@ -130,7 +130,7 @@ async function handleLogin() {
   guestUserLogin()
     .then(res => {
       loginAfter.value = res;
-      localStorage.setItem("token", loginAfter.value.token);
+      localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("mobile", formData.mobile);
       localStorage.setItem("uuid", loginAfter.value.uuid);
       showSuccessToast("登录成功");

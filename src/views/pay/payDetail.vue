@@ -10,40 +10,20 @@
       <div
         class="bg-base rounded-button w-full flex flex-col gap-2. justify-center items-center h-[205px]"
       >
-        <img class="w-[136px] h-[133.02px] shadow" :src="info?.imgUrl" />
-        <span class="text-baseC text-base">{{ info?.address }}</span>
+        <img
+          class="w-[136px] h-[133.02px] shadow"
+          :src="info?.deviceType.pictureUrl"
+        />
+        <span class="text-baseC text-base">{{ info?.name }}</span>
+        <span class="text-baseC text-base"
+          >TYPE: {{ info?.deviceType.name }}</span
+        >
+        <span class="text-baseC text-base">LOCATION: {{ info?.location }}</span>
       </div>
 
       <!-- 付费框框 -->
 
       <div class="flex flex-col w-full">
-        <!-- 按量付費/按时间付費切换 -->
-        <!-- <div class="flex flex-row gap-0 w-full">
-         
-          <div
-            class="grow h-[42px] flex justify-center items-center relative overflow-hidden"
-            :class="
-              !isByTime
-                ? 'bg-primary rounded-t-button rounded-tr-button '
-                : 'bg-base  rounded-t-button rounded-tr-button'
-            "
-          >
-            <button
-              class="w-full h-full flex flex-row gap-2.5 justify-center items-center relative z-10"
-              :class="
-                !isByTime
-                  ? 'text-primary bg-base rounded-t-buttonrounded-tr-button  border-primary border-solid border-t-[1px] border-r-[1px]'
-                  : 'text-inverted bg-primary rounded-tr-button'
-              "
-              @click="isByTime = false"
-            >
-              <i-icon icon="tabler:clock" class="text-[20px]" />
-              <span class="text-base">按鐘付費</span>
-            </button>
-          </div>
-        </div> -->
-
-        <!--10/20 选项 -->
         <div
           class="border-primary rounded-t-button border-solid border-l-[1px] border-t-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 px-2.5 pt-2.5"
         >
@@ -62,11 +42,13 @@
                   >1H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg: 1HKD/H</span
+                  >Avg: {{ priceFormula(1) }}HKD/H</span
                 >
               </div>
               <div class="flex justify-center items-center">
-                <span class="text-red-500 text-base font-bold">10HKD</span>
+                <span class="text-red-500 text-base font-bold"
+                  >{{ priceFormula(1) }}HKD</span
+                >
               </div>
             </div>
           </button>
@@ -85,11 +67,13 @@
                   >2H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg: 1HKD/H</span
+                  >Avg: {{ priceFormula(1) }}HKD/H</span
                 >
               </div>
               <div class="flex justify-center items-center">
-                <span class="text-red-500 text-base font-bold">20HKD</span>
+                <span class="text-red-500 text-base font-bold"
+                  >{{ priceFormula(2) }}HKD</span
+                >
               </div>
             </div>
           </button>
@@ -121,10 +105,10 @@
             </div>
             <div class="flex flex-col justify-end items-end w-[25%]">
               <span class="text-red-500 text-base font-bold"
-                >{{ allPriceInput }}HKD</span
+                >{{ priceFormula(inputValue) }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
-                >Avg: 0.8 HKD</span
+                >Avg: {{ priceFormula(1) }}HKD/H</span
               >
             </div>
           </div>
@@ -137,10 +121,7 @@
           router.push({
             name: 'OrderConfirm',
             query: {
-              device_id: socketId,
-              name: info.name,
-              address: info.address,
-              quantity: duration
+              device_id: socketId
             }
           })
         "
@@ -169,7 +150,6 @@ import { useRouter } from "vue-router";
 import { idText } from "typescript";
 import { getSocketInfo } from "@/api/socket";
 import axios from "axios";
-import { getListApi } from "@/api/mock";
 
 const info = ref<any>();
 const router = useRouter();
@@ -177,18 +157,15 @@ const router = useRouter();
 const socketId = router.currentRoute.value.params.socketId;
 console.log("socketId", socketId);
 // TODO:获取数据
+const function_price = ref();
 onBeforeMount(async () => {
   try {
-    const res: any = await getSocketInfo({ id: `${socketId}` });
+    const res: any = await getSocketInfo({ socketId: `${socketId}` });
     info.value = res.data;
-    console.log("info", info.value);
+    function_price.value = parseInt(info.value.priceFormula.split("*")[1]);
   } catch (error) {
     console.error("Error fetching list info", error);
   }
-
-  // axios.get("/api/socket/1").then(res => {
-  //   console.log("axios res", res.data.result);
-  // });
 });
 
 const themeStore = useThemeStore();
@@ -202,29 +179,17 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
 
-const isByTime = ref(true);
 const optionsValue = ref(1);
 const inputValue = ref(4);
-const allPriceInput = computed(() => {
-  if (inputValue.value < 0) return 0;
-  else return inputValue.value * 0.8;
-});
-const duration = computed(() => {
-  return optionsValue.value == 0
-    ? 0
-    : optionsValue.value == 1
-      ? 1
-      : optionsValue.value == 2
-        ? 2
-        : inputValue.value * 0.8;
-});
-const allPower = computed(() => {
-  return optionsValue.value == 0
-    ? 10
-    : optionsValue.value == 1
-      ? 20
-      : optionsValue.value == 2
-        ? 40
-        : inputValue.value;
-});
+
+//function_price = "function calc(amount) return amount * 2;"
+
+function priceFormula(amount: number) {
+  if (function_price.value) {
+    return amount * function_price.value;
+  } else {
+    return amount * 2.1;
+  }
+}
+console.log("priceFormula", priceFormula(1));
 </script>

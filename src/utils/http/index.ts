@@ -1,83 +1,80 @@
 import Axios, {
-  type AxiosInstance, // 引入 Axios 实例类型
-  type AxiosError, // 引入 Axios 错误类型
-  type AxiosResponse, // 引入 Axios 响应类型
-  type AxiosRequestConfig // 引入 Axios 请求配置类型
+  type AxiosInstance, // Axios 实例的类型定义
+  type AxiosError, // Axios 错误的类型定义
+  type AxiosResponse, // Axios 响应的类型定义
+  type AxiosRequestConfig // Axios 请求配置的类型定义
 } from "axios";
-// import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
-import { ContentTypeEnum } from "@/enums/requestEnum"; // 引入请求相关的枚举
-import NProgress from "../progress"; // 引入进度条插件
-import { showFailToast } from "vant"; // 引入 Vant 库中的提示函数
-import "vant/es/toast/style"; // 引入 Vant 库中的提示样式
+import { ContentTypeEnum } from "@/enums/requestEnum"; // 导入内容类型枚举
+import NProgress from "../progress"; // 导入进度条组件
+import { showFailToast } from "vant"; // 导入 Vant 的错误提示组件
+import "vant/es/toast/style"; // 导入 Vant 提示组件的样式
+import { useRouter } from "vue-router";
 
-// 默认 axios 实例请求配置
+// 默认的 Axios 实例请求配置
 const configDefault = {
   headers: {
-    "Content-Type": ContentTypeEnum.JSON // 设置默认的请求头 Content-Type 数据请求格式
+    "Content-Type": ContentTypeEnum.JSON // 设置默认的请求头 Content-Type 为 JSON
   },
-  timeout: 5000, // 请求超时时间，0 表示不超时
-  baseURL: "/", // 基础 URL，通过环境变量配置
-  data: {}
+  timeout: 5000, // 请求超时时间，单位为毫秒
+  baseURL: "/", // 基础 URL，所有请求都会基于此 URL
+  data: {} // 默认的请求数据，通常为空对象
 };
 
-class Http {
-  // 当前实例
-  private static axiosInstance: AxiosInstance; // Axios 实例
-  // 请求配置
-  private static axiosConfigDefault: AxiosRequestConfig; // 默认请求配置
+const router = useRouter();
 
-  // 请求拦截
+class Http {
+  // 静态属性，用于存储 Axios 实例
+  private static axiosInstance: AxiosInstance;
+  // 静态属性，用于存储默认请求配置
+  private static axiosConfigDefault: AxiosRequestConfig;
+
+  // 请求拦截器方
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
       config => {
-        NProgress.start(); // 开始进度条
-        // 发送请求前，可在此携带 token
-        // if (token) {
-        //   config.headers['token'] = token
-        // }
+        NProgress.start(); // 开始显示进度条
+        // 从本地存储获取 token
+        const token = localStorage.getItem("common_token");
+        console.log("token_before", token); // 输出 token 到控制台，用于调试
+        if (token) {
+          // 如果 token 存在，将其添加到请求头的 Authorization 字段中
+          config.headers["Authorization"] = `Bearer ${token}`;
+          console.log("token_after", token); // 输出 token 到控制台，用于调试
+        }
         return config;
       },
       (error: AxiosError) => {
         showFailToast(error.message); // 显示错误提示
-        return Promise.reject(error); // 返回拒绝的 Promise
+        return Promise.reject(error); // 返回一个被拒绝的 Promise
       }
     );
   }
 
-  // 响应拦截
+  // 响应拦截器方法
   private httpInterceptorsResponse(): void {
     Http.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => {
-        NProgress.done(); // 结束进度条
-        // 与后端协定的返回字段
-        // const { code, result } = response.data;
-        // // const { message } = response.data;
-        // // 判断请求是否成功
-        // const isSuccess =
-        //   result &&
-        //   Reflect.has(response.data, "code") &&
-        //   code === ResultEnum.SUCCESS;
-        // if (isSuccess) {
-        //   return result; // 返回成功结果
-        // } else {
-        //   // 处理请求错误
-        //   // showFailToast(message);
-        //   return Promise.reject(response.data); // 返回拒绝的 Promise
-        // }
+        NProgress.done(); // 结束进度条显示
+        // 这里可以根据后端的响应结构进行自定义处理
+        // 目前直接返回响应的 data 部分
         return response.data;
       },
       (error: AxiosError) => {
-        NProgress.done(); // 结束进度条
+        NProgress.done(); // 结束进度条显示
         // 处理 HTTP 网络错误
         let message = "";
-        // HTTP 状态码
+        // 根据 HTTP 状态码设置错误信息
         const status = error.response?.status;
         switch (status) {
           case 400:
             message = "请求错误";
             break;
           case 401:
-            message = "未授权，请登录";
+            {
+              message = "未授权，请登录";
+              router.push({ name: "Login" });
+            }
+
             break;
           case 403:
             message = "拒绝访问";
@@ -111,11 +108,12 @@ class Http {
         }
 
         showFailToast(message); // 显示错误提示
-        return Promise.reject(error); // 返回拒绝的 Promise
+        return Promise.reject(error); // 返回一个被拒绝的 Promise
       }
     );
   }
 
+  // 构造函数
   constructor(config: AxiosRequestConfig) {
     Http.axiosConfigDefault = config; // 设置默认请求配置
     Http.axiosInstance = Axios.create(config); // 创建 Axios 实例
@@ -123,12 +121,13 @@ class Http {
     this.httpInterceptorsResponse(); // 配置响应拦截器
   }
 
-  // 通用请求函数
+  // 通用请求方法
   public request<T>(paramConfig: AxiosRequestConfig): Promise<T> {
-    const config = { ...Http.axiosConfigDefault, ...paramConfig }; // 合并默认配置和传入配置
+    // 合并默认配置和传入的配置
+    const config = { ...Http.axiosConfigDefault, ...paramConfig };
     return new Promise((resolve, reject) => {
       Http.axiosInstance
-        .request(config) // 发送请求
+        .request(config)
         .then((response: any) => {
           resolve(response); // 请求成功，返回结果
         })
@@ -139,4 +138,5 @@ class Http {
   }
 }
 
-export const http = new Http(configDefault); // 创建 Http 实例并导出
+// 创建 Http 实例并导出，使用默认配置
+export const http = new Http(configDefault);
