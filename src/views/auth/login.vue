@@ -96,7 +96,7 @@ import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { showFailToast, showSuccessToast } from "vant";
 import { validateField } from "@/typings/data";
-import { Login } from "@/api/mock";
+import { Login } from "@/api/auth";
 import { guestUserLogin } from "@/api/auth";
 
 const themeStore = useThemeStore();
@@ -145,7 +145,7 @@ function handleLogin() {
       router.push({ name: "Home" });
     })
     .catch(err => {
-      showFailToast("登录失败");
+      showFailToast(`登录失败:${err}`);
     });
 }
 
@@ -159,12 +159,10 @@ async function handleLoginGuest() {
       localStorage.setItem("isGuest", "true");
       console.log(res);
       showSuccessToast("登录成功");
+      router.push({ name: "Home" });
     })
     .catch(err => {
-      showFailToast("登录失败");
-    })
-    .finally(() => {
-      router.push({ name: "Home" });
+      showFailToast(`登录失败:${err}`);
     });
 }
 </script>

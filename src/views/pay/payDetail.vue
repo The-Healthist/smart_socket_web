@@ -121,7 +121,11 @@
           router.push({
             name: 'OrderConfirm',
             query: {
-              device_id: socketId
+              device_id: socketId,
+              location: info?.location,
+              quantity: duration,
+              amount: priceFormula(inputValue),
+              name: info?.name
             }
           })
         "
@@ -150,6 +154,7 @@ import { useRouter } from "vue-router";
 import { idText } from "typescript";
 import { getSocketInfo } from "@/api/socket";
 import axios from "axios";
+import { comma } from "postcss/lib/list";
 
 const info = ref<any>();
 const router = useRouter();
@@ -183,7 +188,15 @@ const optionsValue = ref(1);
 const inputValue = ref(4);
 
 //function_price = "function calc(amount) return amount * 2;"
-
+const duration = computed(() => {
+  if (optionsValue.value == 1) {
+    return 1;
+  } else if (optionsValue.value == 2) {
+    return 2;
+  } else {
+    return inputValue.value;
+  }
+});
 function priceFormula(amount: number) {
   if (function_price.value) {
     return amount * function_price.value;

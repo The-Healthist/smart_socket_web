@@ -194,7 +194,7 @@ async function handleRegister() {
       localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("mobile", formData.value.mobile);
       localStorage.setItem("password", formData.value.password);
-      localStorage.setItem("isGuest", "true");
+      localStorage.setItem("isGuest", "false");
       if (formData.value.email) {
         localStorage.setItem("email", formData.value.email);
       }

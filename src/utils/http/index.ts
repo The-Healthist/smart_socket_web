@@ -9,6 +9,7 @@ import NProgress from "../progress"; // 导入进度条组件
 import { showFailToast } from "vant"; // 导入 Vant 的错误提示组件
 import "vant/es/toast/style"; // 导入 Vant 提示组件的样式
 import { useRouter } from "vue-router";
+import { guestUserLogin } from "@/api/auth";
 
 // 默认的 Axios 实例请求配置
 const configDefault = {
@@ -35,11 +36,14 @@ class Http {
         NProgress.start(); // 开始显示进度条
         // 从本地存储获取 token
         const token = localStorage.getItem("common_token");
-        console.log("token_before", token); // 输出 token 到控制台，用于调试
+
         if (token) {
           // 如果 token 存在，将其添加到请求头的 Authorization 字段中
           config.headers["Authorization"] = `Bearer ${token}`;
-          console.log("token_after", token); // 输出 token 到控制台，用于调试
+        } else {
+          guestUserLogin().then((res: any) => {
+            localStorage.setItem("common_token", res.token);
+          });
         }
         return config;
       },

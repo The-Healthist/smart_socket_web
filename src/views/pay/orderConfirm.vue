@@ -21,7 +21,7 @@
           <span class="text-base text-baseC font-normal truncate"
             >插座地址 :</span
           >
-          <div class="text-larger">{{ formDataOrder?.address }}</div>
+          <div class="text-larger">{{ formDataOrder?.location }}</div>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-base text-baseC font-normal truncate"
@@ -36,7 +36,7 @@
             >支付金额 :</span
           >
           <div class="text-larger font-bold">
-            {{ formDataOrder?.quantity }}HKD
+            {{ formDataOrder?.amount }}HKD
           </div>
         </div>
 
@@ -213,7 +213,7 @@ interface formdataAuth {
 }
 interface formdataOrder {
   name: string;
-  address: string;
+  location: string;
   quantity: string;
   amount?: string;
 }
@@ -224,9 +224,10 @@ interface Factor {
 }
 const route = useRoute();
 const orderQuery = route.query;
+
 const formDataOrder = ref<formdataOrder>({
   name: "",
-  address: "",
+  location: "",
   quantity: "",
   amount: ""
 });
@@ -239,7 +240,7 @@ const formDataAuth = ref({
   confirmPassword: ""
 });
 const isRegistering = ref(false);
-const isShowRegister = ref(false);
+const isShowRegister = ref(true);
 //校验
 const isValidEmail = computed(() =>
   validateField("email", formDataAuth.value.email)
@@ -288,17 +289,16 @@ async function handleRegister() {
   //mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5 拼接成这样
 
   let queryString = new URLSearchParams(formDataOrder.value).toString();
-  console.log("拼接成这样", queryString);
   let decodedString = decodeURIComponent(queryString);
-  console.log("解码后的查询字符串", decodedString);
+  console.log("decodedString", decodedString);
   // 手机号,密码,邮箱可选
   let formdataAuth: formdataAuth = {
     mobile: formDataAuth.value.mobile,
     password: formDataAuth.value.password,
-    formData: encodeOrderData(queryString)
+    formData: encodeOrderData(decodedString)
   };
-  console.log("formdataAuth", formdataAuth);
-  console.log("解码以后", decodeFormData(encodeOrderData(queryString)));
+  console.log("如何", formdataAuth);
+  console.log("formDataAuth", decodeFormData(formdataAuth.formData));
   if (formDataAuth.value.email) {
     formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
   }
@@ -307,6 +307,7 @@ async function handleRegister() {
       loginAfter.value = res;
       localStorage.setItem("mobile", formDataAuth.value.mobile);
       localStorage.setItem("password", formDataAuth.value.password);
+      localStorage.setItem("isGuest", "false");
       if (formDataAuth.value.email) {
         localStorage.setItem("email", formDataAuth.value.email);
       }
@@ -323,17 +324,15 @@ async function handleRegister() {
 
 const handlePayment = () => {
   let queryString = new URLSearchParams(formDataOrder.value).toString();
-  console.log("拼接成这样", queryString);
   let decodedString = decodeURIComponent(queryString);
-  console.log("解码后的查询字符串", encodeOrderData(decodedString));
+  console.log("decodedString", decodedString);
   // 手机号,密码,邮箱可选
   let formdataAuth: formdataAuth = {
     mobile: formDataAuth.value.mobile,
     password: formDataAuth.value.password,
-    formData: encodeOrderData(queryString)
+    formData: encodeOrderData(decodedString)
   };
-  console.log("formdataAuth", formdataAuth);
-  console.log("解码以后", decodeFormData(encodeOrderData(decodedString)));
+  console.log("解码以后", decodeOrderData(encodeOrderData(decodedString)));
   if (formDataAuth.value.email) {
     formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
   }
@@ -358,27 +357,37 @@ const handlePayment = () => {
     router.push(after.url);
   });
 };
-// 1
+
+// 挂载前
 onBeforeMount(async () => {
   const infoQuery = route.query;
   console.log("query", infoQuery);
   //由链接跳转而来
   if (infoQuery.token) {
+    isShowRegister.value = false; //显示注册按钮
     console.log("token", infoQuery.token);
+    localStorage.removeItem("common_token");
+    localStorage.removeItem("mobile");
     localStorage.setItem("common_token", infoQuery.token as string);
     localStorage.setItem("mobile", infoQuery.mobile as string);
-    formDataAuth.value.mobile = infoQuery.mobile as string;
+    formDataAuth.value.mobile = infoQuery?.mobile as string;
     device_id.value = infoQuery.device_id as string; //设备id
-    formDataOrder.value.quantity = infoQuery.quantity as string;
+    formDataOrder.value.quantity = infoQuery?.quantity as string;
     if (infoQuery.email) {
       localStorage.setItem("email", infoQuery.email as string);
       formDataAuth.value.email = infoQuery.email as string;
     }
+    // 获取socket信息
+    console.log("device_id", device_id.value);
     getSocketInfo({ socketId: device_id.value })
       .then((res: any) => {
         // let data: any = res.data;
-        formDataOrder.value.address = res.data.address;
+        formDataOrder.value.location = res.data.location;
         formDataOrder.value.name = res.data.name;
+        function_price.value = parseInt(res.data.priceFormula.split("*")[1]);
+        formDataOrder.value.amount = priceFormula(
+          parseInt(formDataOrder.value.quantity)
+        ).toString();
       })
       .catch(err => {
         showFailToast(err);
@@ -386,8 +395,9 @@ onBeforeMount(async () => {
   }
   // 不是链接跳转过来的
   else {
+    device_id.value = infoQuery.device_id as string; //设备id
     device_id.value = orderQuery.device_id as string;
-    formDataOrder.value.address = orderQuery.address as string;
+    formDataOrder.value.location = orderQuery.location as string;
     formDataOrder.value.name = orderQuery.name as string;
     formDataOrder.value.quantity = orderQuery.quantity as string;
   }
@@ -396,9 +406,21 @@ onBeforeMount(async () => {
   let mobile = localStorage.getItem("mobile");
   let email = localStorage.getItem("email");
   let isGuest = localStorage.getItem("isGuest");
-  formDataAuth.value.mobile = formDataAuth.value.mobile ? "" : mobile;
-  formDataAuth.value.email = formDataAuth.value.email ? "" : email;
-  isShowRegister.value = isGuest === "true" ? true : false;
-  // localStorage.setItem("isGuest", "true");
+  console.log("isGuest", isGuest);
+  formDataAuth.value.mobile = formDataAuth.value.mobile
+    ? formDataAuth.value.mobile
+    : mobile;
+  formDataAuth.value.email = formDataAuth.value.email
+    ? formDataAuth.value.email
+    : email;
+  isShowRegister.value = isGuest === "true" ? true : false; //显示注册按钮
 });
+const function_price = ref();
+function priceFormula(amount: number) {
+  if (function_price.value) {
+    return amount * function_price.value;
+  } else {
+    return amount * 2.1;
+  }
+}
 </script>

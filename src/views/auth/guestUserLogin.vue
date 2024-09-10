@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize}`"
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[100vh] relative flex justify-center items-center"
@@ -10,7 +10,6 @@
         游客登陸
       </div>
 
-      <!-- 登录表单 -->
       <form class="flex flex-col" @submit.prevent="handleLogin">
         <div class="relative mt-2.5 ml-2.5">
           <input
@@ -81,9 +80,9 @@
       </div>
     </div>
   </div>
-</template>
+</template> -->
 
-<script setup lang="ts" name="GuestUserLogin">
+<!-- <script setup lang="ts" name="GuestUserLogin">
 import { reactive, computed, ref } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -130,17 +129,17 @@ async function handleLogin() {
   guestUserLogin()
     .then(res => {
       loginAfter.value = res;
+      console.log("登录成功", res);
       localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("mobile", formData.mobile);
-      localStorage.setItem("uuid", loginAfter.value.uuid);
-      showSuccessToast("登录成功");
+      localStorage.setItem("isGuest", "true");
+      // showSuccessToast("登录成功");
+
+      router.push({ name: "Home" });
     })
     .catch(err => {
       console.log("err", err);
       showSuccessToast("登录失败");
-    })
-    .finally(() => {
-      router.push({ name: "Home" });
     });
 }
-</script>
+</script> -->

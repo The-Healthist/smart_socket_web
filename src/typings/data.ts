@@ -16,6 +16,7 @@ export function decodeFormData(encodedData: string): any {
   const decodedData = atob(encodedData); // Base64 解码
   return JSON.parse(decodedData);
 }
+// 订单数据
 export function encodeOrderData(data: any): string {
   const jsonString = JSON.stringify(data);
 
