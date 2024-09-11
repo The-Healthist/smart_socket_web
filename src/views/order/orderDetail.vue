@@ -100,7 +100,7 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { getOrder } from "@/api/mock/index";
+import { getOrder } from "@/api/order";
 import { showFailToast } from "vant";
 
 const themeStore = useThemeStore();
@@ -113,12 +113,12 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
 //转换成字符串
-const orderId = router.currentRoute.value.query.id;
+const orderId = router.currentRoute.value.query.uuid;
 // console.log(orderId);
 const ordersH = ref();
 onBeforeMount(async () => {
   if (typeof orderId === "string")
-    getOrder({ id: orderId })
+    getOrder({ uuid: orderId })
       .then(res => {
         // console.log(res);
         let data: any = res;

@@ -135,7 +135,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="SettingPage">
 import { ref, computed } from "vue";
 import { useThemeStore } from "@/store/theme/themeStore";
 import { useTextStore } from "@/store/theme/textStore";

@@ -7,15 +7,15 @@
       class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[auto] mt-[40vh] absolute"
     >
       <div class="text-largest font-bold tracking-wide flex justify-center">
-        訂單確認
+        訂單支付失敗
       </div>
       <div
         class="text-larger font-normal flex flex-row justify-center items-center truncate"
       >
-        已經支付訂單 ? 開始享用
+        支付失败?请重新支付
       </div>
       <div class="flex flex-row justify-between gap-2.5 w-full mt-2.5">
-        <InvertedButton @click="router.go(-1)">
+        <!-- <InvertedButton @click="router.push({ name: 'OrderConfime' })">
           <template #default>
             <div
               class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
@@ -27,14 +27,14 @@
               </span>
             </div>
           </template>
-        </InvertedButton>
-        <PrimaryButton class="grow" @click="router.push({ name: 'Order' })">
+        </InvertedButton> -->
+        <PrimaryButton class="grow" @click="router.go(-1)">
           <template #default>
             <div
               class="h-[22px] flex flex-row justify-center items-center gap-2"
             >
               <span class="text-larger text-inverted font-bold tracking-wide"
-                >完成支付</span
+                >返回订单</span
               >
             </div>
           </template>
@@ -43,7 +43,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="PayedAfter">
+<script setup lang="ts" name="PayedFailed">
 import { reactive, computed, ref } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -56,8 +56,6 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const order = route.query;
-
-console.log(order);
 
 const themeStore = useThemeStore();
 const themes = themeStore.themes;

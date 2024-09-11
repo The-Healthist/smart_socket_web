@@ -1,23 +1,37 @@
 import { http } from "@/utils/http";
 
-export function getOrders() {
+export function getOrders(params: any) {
   return http.request({
-    url: "/api/order",
+    url: "/api/common/order",
+    method: "get",
+    params: params
+  });
+}
+
+export function payOrder(params?: any) {
+  return http.request({
+    url: `/api/common/order/${params.uuid}/pay`,
+    method: "post"
+  });
+}
+
+export function getOrderOnPayMent(params?: any) {
+  return http.request({
+    url: `/api/common/order/${params.uuid}/ongoing_payment`,
     method: "get"
   });
 }
 
 export function getOrder(params?: any) {
   return http.request({
-    url: `/api/order/${params.id}`,
+    url: `/api/common/order/${params.uuid}`,
     method: "get"
   });
 }
 
-// TODO: 订单创建以及获得支付二维码
-export function AddOrder(data?: object) {
+export function AddOrder(data?: any) {
   return http.request({
-    url: "/api/order",
+    url: "/api/common/order",
     method: "post",
     data
   });
@@ -25,7 +39,7 @@ export function AddOrder(data?: object) {
 
 export function endOrder(params?: any) {
   return http.request({
-    url: `/api/order/${params.id}/end`,
+    url: `/api/common/order/${params.uuid}/end`,
     method: "post"
   });
 }
@@ -33,7 +47,7 @@ export function endOrder(params?: any) {
 //充值
 export function renewOrder(params?: any) {
   return http.request({
-    url: `/api/order/${params.id}/cancel`,
+    url: `/api/common/order/${params.uuid}/renewal`,
     method: "post",
     data: {
       duration: params.duration

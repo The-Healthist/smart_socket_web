@@ -62,7 +62,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="Auth">
+<script setup lang="ts" name="AuthPage">
 import { reactive, computed } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";

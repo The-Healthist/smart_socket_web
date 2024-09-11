@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="Login">
 import { reactive, computed, ref } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -158,7 +158,7 @@ async function handleLoginGuest() {
       console.log("loginAfter", loginAfter.value);
       localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("isGuest", "true");
-      showSuccessToast("登录成功");
+      showSuccessToast("游客登录成功");
       router.push({ name: "Home" });
     })
     .catch(err => {

@@ -71,6 +71,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "PayedAfter",
     component: () => import("@/views/pay/payedAfter.vue")
   },
+  {
+    path: "/payedFailed",
+    name: "PayedFailed",
+    component: () => import("@/views/pay/payedFaied.vue")
+  },
   // https://192.168.1.11:5173/#/orderConfirm/? token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMTM1ODMzMjUwMzUiLCJSb2xlIjoyLCJpc3MiOiJpU21hcnQiLCJleHAiOjE3MjU4NzAwNTIsImlhdCI6MTcyNTYxMDg1Mn0.7TxP8_L3ew-3RwhZrn8KHfDTc3KGbAjyxqAlSAau21M& mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5
   {
     path: "/orderConfirm",

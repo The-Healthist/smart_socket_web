@@ -57,13 +57,16 @@
           <div v-if="isUse">
             <div
               v-for="order in displayedOrders"
-              :key="order.id"
+              :key="order.uuid"
               class="w-[95vw] p-2.5 flex flex-col gap-2"
             >
               <div
                 class="flex flex-col gap-2.5 hover:bg-primary/10"
                 @click="
-                  router.push({ name: 'OrderDetail', query: { id: order.id } })
+                  router.push({
+                    name: 'OrderDetail',
+                    query: { uuid: order.uuid }
+                  })
                 "
               >
                 <!-- 第一行 -->
@@ -71,28 +74,32 @@
                   <span class="text-base text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
-                  <div class="text-large">{{ order.name }}</div>
+                  <div v-if="order.device" class="text-large">
+                    {{ order.device.name }}
+                  </div>
                 </div>
                 <!-- 第二行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     插座地址 :
                   </span>
-                  <div class="text-large">{{ order.address }}</div>
+                  <div v-if="order.device" class="text-large">
+                    {{ order.device.location }}
+                  </div>
                 </div>
                 <!-- 第三行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     已使用 :
                   </span>
-                  <div class="text-large font-bold">{{ order.usage }}</div>
+                  <div class="text-large font-bold">{{ order.quantity }}H</div>
                 </div>
                 <!-- 第四行 -->
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
-                    剩餘 :
+                    支付金額 :
                   </span>
-                  <div class="text-large font-bold">{{ order.shenyu }}</div>
+                  <div class="text-large font-bold">{{ order.price }}HKD</div>
                 </div>
               </div>
 
@@ -103,7 +110,7 @@
                     <template #default>
                       <div
                         class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
-                        @click="endOrderU(order.id)"
+                        @click="endOrderU(order.uuid)"
                       >
                         <span
                           class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
@@ -113,7 +120,7 @@
                       </div>
                     </template>
                   </InvertedButton>
-                  <PrimaryButton class="grow" @click="RenewalOrder(order.id)">
+                  <PrimaryButton class="grow" @click="RenewalOrder(order.uuid)">
                     <template #default>
                       <div
                         class="grow h-[22px] flex flex-row justify-center items-center gap-2"
@@ -146,43 +153,58 @@
               <div
                 class="flex flex-col gap-2.5"
                 @click="
-                  router.push({ name: 'OrderDetail', query: { id: order.id } })
+                  router.push({
+                    name: 'OrderDetail',
+                    query: { uuid: order.uuid }
+                  })
                 "
               >
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     插座名稱 :
                   </span>
-                  <div class="text-large">{{ order.name }}</div>
+                  <div v-if="order.device" class="text-large">
+                    {{ order.device.name }}
+                  </div>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     插座地址 :
                   </span>
-                  <div class="text-large">{{ order.address }}</div>
+                  <div v-if="order.device" class="text-large">
+                    {{ order.device.location }}
+                  </div>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     購買電量 :
                   </span>
-                  <div class="text-large font-bold">
-                    {{ order.powerPurchased }}
-                  </div>
+                  <div class="text-large font-bold">{{ order.quantity }}H</div>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-base text-baseC font-normal truncate">
                     支付金額 :
                   </span>
                   <div class="text-large text-[#ff4400]">
-                    {{ order.amountPaid }}
+                    {{ order.price }}HKD
                   </div>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-base text-baseC font-normal truncate">
+                <!-- 订单编号 -->
+                <div class="flex flex-col w-full">
+                  <span class="text-base text-baseC font-normal">
                     訂單編號 :
                   </span>
-                  <div class="text-base">
-                    {{ order.orderNumber }}
+                  <div class="text-base break-words">
+                    {{ order.uuid }}
+                  </div>
+                </div>
+                <!-- 设备编号 -->
+                <div class="flex flex-col w-full">
+                  <span class="text-base text-baseC font-normal">
+                    设备編號:
+                  </span>
+                  <div class="text-base break-words">
+                    {{ order.deviceUuid }}
                   </div>
                 </div>
                 <div class="flex justify-between items-center">
@@ -191,14 +213,6 @@
                   </span>
                   <div class="text-base">
                     {{ order.paymentMethod }}
-                  </div>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-base text-baseC font-normal truncate">
-                    交易編號 :
-                  </span>
-                  <div class="text-base">
-                    {{ order.transactionNumber }}
                   </div>
                 </div>
               </div>
@@ -245,6 +259,7 @@
                 type="number"
                 placeholder="请输入充值时间"
                 class="w-[60vw] h-[24px] pl-2 rounded-button"
+                @input="validateDuration"
               />
               <span class="text-primary text-base mr-1.5">/小时</span>
             </div>
@@ -254,8 +269,8 @@
           <span class="flex flex-row justify-start text-baseC text-base w-full">
             总计金额</span
           >
-          <span class="text-primary text-base mr-[26px]"
-            >{{ duration }}HKD</span
+          <span v-if="function_price" class="text-primary text-base mr-[26px]"
+            >{{ totalPrice }}HKD</span
           >
         </div>
         <span
@@ -282,7 +297,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="OrderPage">
 import { reactive, computed, ref, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -291,10 +306,10 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { endOrder, getOrders, renewOrder } from "@/api/mock";
-import { status } from "nprogress";
+import { endOrder, getOrder, getOrders, renewOrder } from "@/api/order";
 import { showFailToast, showSuccessToast } from "vant";
 import { validateField } from "@/typings/data";
+import { executePriceFunction } from "@/typings/data";
 
 const router = useRouter();
 const themeStore = useThemeStore();
@@ -314,13 +329,16 @@ const ordersH = ref([]);
 
 const isShowDialog = ref(false);
 const renewOrderId = ref("");
-const duration = ref(0);
+const duration = ref(2);
+const totalPrice = computed(() =>
+  executePriceFunction(duration.value, function_price.value)
+);
 const isShowDurationSpan = ref(false);
 const isValidDuration = computed(() =>
   validateField("numberM", duration.value)
 );
 const endOrderU = async (id: string) => {
-  endOrder({ id: id })
+  endOrder({ uuid: id })
     .then(res => {
       console.log(res);
       let data: any = res;
@@ -333,35 +351,62 @@ const endOrderU = async (id: string) => {
       showFailToast("取消訂單失敗");
     });
 };
-const RenewalOrder = async (id: string) => {
-  renewOrderId.value = id;
+const function_price = ref();
+const RenewalOrder = async (uuid: string) => {
+  getOrder({ uuid: uuid })
+    .then((res: any) => {
+      console.log("lllldjaflksdjlfajdkf", res.data.device);
+      if (res.data.device.priceFormula) {
+        console.log(res.data.device.priceFormula);
+        function_price.value = res.data.device.priceFormula;
+      } else {
+        console.log("Price formula not found");
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("獲取訂單失敗");
+    });
+  renewOrderId.value = uuid;
   isShowDialog.value = true;
 };
 const handleRenewalOrder = async () => {
   if (!isValidDuration.value) isShowDurationSpan.value = true;
-  renewOrder({ id: renewOrderId.value, duration: duration.value }).then(res => {
-    console.log(res);
-    showSuccessToast("訂單已續費");
-    isShowDialog.value = false;
-  });
+  renewOrder({ uuid: renewOrderId.value, duration: duration.value }).then(
+    res => {
+      console.log(res);
+      showSuccessToast("訂單已續費");
+      isShowDialog.value = false;
+    }
+  );
 };
+
+const validateDuration = event => {
+  const value = event.target.value;
+  // 只允许输入正整数
+  if (!/^[1-9]\d*$/.test(value)) {
+    event.target.value = value.replace(/[^1-9]\d*/g, "");
+    duration.value = event.target.value;
+  }
+};
+
 onBeforeMount(async () => {
   let mobile = localStorage.getItem("mobile");
   getOrders({ mobile: mobile, status: 1 })
     .then(res => {
-      console.log(res);
       const after: any = res;
-      ordersH.value = after;
+      ordersH.value = after.data;
+      console.log(ordersH.value);
     })
     .catch(err => {
       console.log(err);
       showFailToast("獲取历史訂單失敗");
     });
   getOrders({ mobile: mobile, status: 0 })
-    .then(res => {
-      console.log(res);
-      const after: any = res;
+    .then((res: any) => {
+      const after: any = res.data;
       orders.value = after;
+      console.log(orders.value);
     })
     .catch(err => {
       console.log(err);

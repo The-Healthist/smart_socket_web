@@ -128,7 +128,7 @@ const stop = () => {
   </div>
 </template>
 
-<script setup>
+<script setup name="ScannerPage">
 import Scaner from "@/components/Scanner/Scanner.vue";
 import router from "@/router";
 import { onMounted, ref } from "vue";

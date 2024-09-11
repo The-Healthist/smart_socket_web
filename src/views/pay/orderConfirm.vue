@@ -172,7 +172,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="OrderConfirm">
 // 导入Vue相关功能和组件
 import { computed, ref, reactive, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
@@ -185,6 +185,7 @@ import { useTextStore } from "@/store/theme/textStore";
 import { useRouter, useRoute } from "vue-router";
 import { Register } from "@/api/auth";
 import { showSuccessToast, showFailToast } from "vant";
+import { showLoadingToast, closeToast } from "vant";
 import {
   decodeOrderData,
   encodeOrderData,
@@ -192,7 +193,7 @@ import {
   validateField
 } from "@/typings/data";
 import { getSocketInfo } from "@/api/socket";
-import { createOrder } from "@/api/mock";
+import { AddOrder, getOrderOnPayMent, payOrder } from "@/api/order";
 
 // 使用主题相关的store
 const themeStore = useThemeStore();
@@ -299,7 +300,9 @@ async function handleRegister() {
     return;
   }
   Register(formDataRegister.value)
-    .then(res => {
+    .then((res: any) => {
+      console.log("res", res);
+      localStorage.setItem("common_token", res.data.token);
       showSuccessToast("注册成功,请在手机上确认");
     })
     .catch(err => {
@@ -330,7 +333,64 @@ const handlePayment = () => {
   if (isRegistering.value) {
     handleRegister();
   }
-  // 注册成功后，跳转到支付页面
+  // 注册成功后添加订单
+  AddOrder({
+    quantity: parseInt(formDataOrder.value.quantity),
+    deviceUuid: device_id.value,
+    remark: formDataOrder.value.location
+  }).then((res: any) => {
+    //TODO: 支付订单
+    payOrder({
+      uuid: res.data.uuid
+    }).then((res2: any) => {
+      console.log("res2", res2.message);
+      getOrderOnPayMent({
+        uuid: res2.data.orderUuid
+      }).then((res3: any) => {
+        console.log("res3", res3.data);
+        if (res3.data.status === "failed") {
+          showFailToast("支付失败");
+          router.push({ name: "PayedFailed" });
+        } else if (res3.data.status === "success") {
+          showSuccessToast("支付成功");
+          router.push({ name: "PayedAfter" });
+        } else {
+          let second = 3;
+          const timer = setInterval(() => {
+            second--;
+            if (second) {
+              toast.message = `正在支付中(${second})`;
+            } else {
+              clearInterval(timer);
+              closeToast();
+            }
+          }, 1000);
+          const toast = showLoadingToast({
+            duration: 0,
+            forbidClick: true,
+            message: "正在支付中(3)"
+          });
+          setTimeout(() => {
+            getOrderOnPayMent({
+              uuid: res2.data.orderUuid
+            }).then((res3: any) => {
+              console.log("res3", res3.data);
+              if (res3.data.status === "failed") {
+                showFailToast("支付失败");
+                router.push({ name: "PayedFailed" });
+              } else if (res3.data.status === "success") {
+                showSuccessToast("支付成功");
+                router.push({ name: "PayedAfter" });
+              } else {
+                showFailToast("出错了");
+                router.push({ name: "PayedFailed" });
+              }
+            });
+          }, 3000);
+        }
+      });
+    });
+  });
 };
 
 // 组件挂载前的逻辑

@@ -8,7 +8,7 @@ import { ContentTypeEnum } from "@/enums/requestEnum"; // 导入内容类型枚�
 import NProgress from "../progress"; // 导入进度条组件
 import { showFailToast } from "vant"; // 导入 Vant 的错误提示组件
 import "vant/es/toast/style"; // 导入 Vant 提示组件的样式
-import { useRouter } from "vue-router";
+
 import { guestUserLogin } from "@/api/auth";
 
 // 默认的 Axios 实例请求配置
@@ -20,8 +20,6 @@ const configDefault = {
   baseURL: "/", // 基础 URL，所有请求都会基于此 URL
   data: {} // 默认的请求数据，通常为空对象
 };
-
-const router = useRouter();
 
 class Http {
   // 静态属性，用于存储 Axios 实例
@@ -76,7 +74,6 @@ class Http {
           case 401:
             {
               message = "未授权，请登录";
-              router.push({ name: "Login" });
             }
 
             break;

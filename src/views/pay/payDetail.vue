@@ -116,7 +116,10 @@
             <div class="flex flex-col justify-end items-end w-[25%]">
               <span class="text-red-500 text-base font-bold"
                 >{{
-                  executePriceFunction(1, formDataOrder.function_price)
+                  executePriceFunction(
+                    inputValue,
+                    formDataOrder.function_price
+                  )
                 }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
