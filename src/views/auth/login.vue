@@ -155,9 +155,9 @@ async function handleLoginGuest() {
   guestUserLogin()
     .then(res => {
       loginAfter.value = res;
+      console.log("loginAfter", loginAfter.value);
       localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("isGuest", "true");
-      console.log(res);
       showSuccessToast("登录成功");
       router.push({ name: "Home" });
     })

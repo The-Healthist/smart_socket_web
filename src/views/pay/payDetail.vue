@@ -42,12 +42,17 @@
                   >1H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg: {{ priceFormula(1) }}HKD/H</span
+                  >Avg:
+                  {{
+                    executePriceFunction(1, formDataOrder.function_price)
+                  }}HKD/H</span
                 >
               </div>
               <div class="flex justify-center items-center">
                 <span class="text-red-500 text-base font-bold"
-                  >{{ priceFormula(1) }}HKD</span
+                  >{{
+                    executePriceFunction(1, formDataOrder.function_price)
+                  }}HKD</span
                 >
               </div>
             </div>
@@ -67,12 +72,17 @@
                   >2H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg: {{ priceFormula(1) }}HKD/H</span
+                  >Avg:
+                  {{
+                    executePriceFunction(1, formDataOrder.function_price)
+                  }}HKD/H</span
                 >
               </div>
               <div class="flex justify-center items-center">
                 <span class="text-red-500 text-base font-bold"
-                  >{{ priceFormula(2) }}HKD</span
+                  >{{
+                    executePriceFunction(2, formDataOrder.function_price)
+                  }}HKD</span
                 >
               </div>
             </div>
@@ -105,10 +115,15 @@
             </div>
             <div class="flex flex-col justify-end items-end w-[25%]">
               <span class="text-red-500 text-base font-bold"
-                >{{ priceFormula(inputValue) }}HKD</span
+                >{{
+                  executePriceFunction(1, formDataOrder.function_price)
+                }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
-                >Avg: {{ priceFormula(1) }}HKD/H</span
+                >Avg:
+                {{
+                  executePriceFunction(1, formDataOrder.function_price)
+                }}HKD/H</span
               >
             </div>
           </div>
@@ -124,7 +139,10 @@
               device_id: socketId,
               location: info?.location,
               quantity: duration,
-              amount: priceFormula(inputValue),
+              amount: executePriceFunction(
+                duration,
+                formDataOrder.function_price
+              ),
               name: info?.name
             }
           })
@@ -153,21 +171,42 @@ import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { idText } from "typescript";
 import { getSocketInfo } from "@/api/socket";
-import axios from "axios";
-import { comma } from "postcss/lib/list";
+import { executePriceFunction } from "@/typings/data";
 
 const info = ref<any>();
 const router = useRouter();
 //获取网址上的一个id
 const socketId = router.currentRoute.value.params.socketId;
-console.log("socketId", socketId);
+// 初始化表单数据
+interface formdataOrder {
+  name: string;
+  location?: string;
+  quantity?: string;
+  amount?: string;
+  pictureUrl?: string;
+  function_price?: string;
+}
+const formDataOrder = ref<formdataOrder>({
+  name: "",
+  location: "",
+  quantity: "",
+  amount: "",
+  pictureUrl: "",
+  function_price: "function calc(amount) {return amount * 2.1}"
+});
 // TODO:获取数据
-const function_price = ref();
+
 onBeforeMount(async () => {
   try {
     const res: any = await getSocketInfo({ socketId: `${socketId}` });
     info.value = res.data;
-    function_price.value = parseInt(info.value.priceFormula.split("*")[1]);
+    console.log("info.value", info.value);
+    formDataOrder.value.name = res.data.name;
+    formDataOrder.value.location = res.data.location;
+    formDataOrder.value.quantity = res.data.quantity;
+    formDataOrder.value.pictureUrl = res.data.pictureUrl;
+    formDataOrder.value.function_price = res.data.priceFormula;
+    // 记下价格公式
   } catch (error) {
     console.error("Error fetching list info", error);
   }
@@ -187,7 +226,6 @@ const texts = computed(() => textStore.getTexts);
 const optionsValue = ref(1);
 const inputValue = ref(4);
 
-//function_price = "function calc(amount) return amount * 2;"
 const duration = computed(() => {
   if (optionsValue.value == 1) {
     return 1;
@@ -197,12 +235,4 @@ const duration = computed(() => {
     return inputValue.value;
   }
 });
-function priceFormula(amount: number) {
-  if (function_price.value) {
-    return amount * function_price.value;
-  } else {
-    return amount * 2.1;
-  }
-}
-console.log("priceFormula", priceFormula(1));
 </script>

@@ -62,3 +62,21 @@ export function validateField(field: string, value: any): boolean {
       return false;
   }
 }
+
+// "function calc(amount) {return amount * 2}"  参数是这个字符串,然后amount是传入的参数,返回值是计算后的结果
+export function executePriceFunction(amount: number, priceFunctionStr: string) {
+  if (typeof priceFunctionStr !== "string") {
+    throw new Error("Invalid price function string: Not a string");
+  }
+  const startIndex = priceFunctionStr.indexOf("{");
+  const endIndex = priceFunctionStr.lastIndexOf("}");
+
+  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+    throw new Error(
+      "Invalid price function string: Missing or misordered braces"
+    );
+  }
+  const functionBody = priceFunctionStr.slice(startIndex + 1, endIndex).trim();
+  const func = new Function("amount", functionBody);
+  return func(amount);
+}

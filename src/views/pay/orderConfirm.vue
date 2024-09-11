@@ -83,7 +83,6 @@
         </div>
 
         <!-- One-Click Register Checkbox -->
-        <!-- <div v-if="noToken" class="flex items-center mt-4"> -->
         <div v-if="isShowRegister" class="flex items-center mt-4">
           <input
             id="register-checkbox"
@@ -174,26 +173,28 @@
   </div>
 </template>
 <script setup lang="ts" name="Home">
+// 导入Vue相关功能和组件
 import { computed, ref, reactive, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
-import { useThemeStore } from "@/store/theme/themeStore";
+import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
+
 import { useRouter, useRoute } from "vue-router";
 import { Register } from "@/api/auth";
 import { showSuccessToast, showFailToast } from "vant";
 import {
-  decodeFormData,
   decodeOrderData,
-  encodeFormData,
   encodeOrderData,
+  executePriceFunction,
   validateField
 } from "@/typings/data";
-import { info } from "node:console";
 import { getSocketInfo } from "@/api/socket";
 import { createOrder } from "@/api/mock";
+
+// 使用主题相关的store
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
 const roundedStore = useRoundedStore();
@@ -202,9 +203,13 @@ const fontsizeStore = useFontSizeStore();
 const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
+
+// 使用Vue Router
 const router = useRouter();
+const route = useRoute();
 const device_id = ref("");
 
+// 定义表单数据类型
 interface formdataAuth {
   email?: string;
   mobile: string;
@@ -222,26 +227,41 @@ interface Factor {
   mobile: string;
   formDataAuth: string;
 }
-const route = useRoute();
+
+// 解析路由查询参数
 const orderQuery = route.query;
 
+// 初始化表单数据
 const formDataOrder = ref<formdataOrder>({
   name: "",
   location: "",
   quantity: "",
   amount: ""
 });
-
-//注册
 const formDataAuth = ref({
   email: "",
   mobile: "",
   password: "",
   confirmPassword: ""
 });
+interface formdataRegister {
+  email?: string;
+  mobile: string;
+  password: string;
+  token: string;
+  formData: string;
+}
+const formDataRegister = ref<formdataRegister>({
+  email: "",
+  mobile: "",
+  password: "",
+  token: "",
+  formData: ""
+});
 const isRegistering = ref(false);
 const isShowRegister = ref(true);
-//校验
+
+// 计算属性用于验证表单字段
 const isValidEmail = computed(() =>
   validateField("email", formDataAuth.value.email)
 );
@@ -251,15 +271,16 @@ const isValidPhone = computed(() =>
 const isValidPassword = computed(() =>
   validateField("password", formDataAuth.value.password)
 );
-// 应该返回 true 或 false 根据密码长度
 
+// 控制错误信息显示
 const isShowEmailSpan = ref(false);
 const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const isShowConfirmPasswordSpan = ref(false);
-const loginAfter = ref<any>();
 
+// 注册处理函数
 async function handleRegister() {
+  // 更新错误信息显示状态
   isShowEmailSpan.value = formDataAuth.value.email && !isValidEmail.value;
   isShowPhoneSpan.value = !formDataAuth.value.mobile || !isValidPhone.value;
   isShowPasswordSpan.value =
@@ -267,6 +288,7 @@ async function handleRegister() {
   isShowConfirmPasswordSpan.value =
     formDataAuth.value.password !== formDataAuth.value.confirmPassword;
 
+  // 验证表单数据
   if (
     isShowEmailSpan.value ||
     isShowPhoneSpan.value ||
@@ -274,153 +296,92 @@ async function handleRegister() {
     isShowConfirmPasswordSpan.value
   ) {
     showFailToast("请正确填写所有必填字段!");
-    console.error("Please fill all required fields correctly!");
     return;
   }
-  // //base64加密
-  // let baseFormDataAuth = !!formDataAuth.email
-  //   ? encodeFormData(
-  //       formDataAuth.mobile,
-  //       formDataAuth.password,
-  //       formDataAuth.email
-  //     )
-  //   : encodeFormData(formDataAuth.mobile, formDataAuth.password);
-  // 将formdataOrder 的值拼接成字符串,然后base64加密
-  //mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5 拼接成这样
-
-  let queryString = new URLSearchParams(formDataOrder.value).toString();
-  let decodedString = decodeURIComponent(queryString);
-  console.log("decodedString", decodedString);
-  // 手机号,密码,邮箱可选
-  let formdataAuth: formdataAuth = {
-    mobile: formDataAuth.value.mobile,
-    password: formDataAuth.value.password,
-    formData: encodeOrderData(decodedString)
-  };
-  console.log("如何", formdataAuth);
-  console.log("formDataAuth", decodeFormData(formdataAuth.formData));
-  if (formDataAuth.value.email) {
-    formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
-  }
-  Register(formdataAuth)
+  Register(formDataRegister.value)
     .then(res => {
-      loginAfter.value = res;
-      localStorage.setItem("mobile", formDataAuth.value.mobile);
-      localStorage.setItem("password", formDataAuth.value.password);
-      localStorage.setItem("isGuest", "false");
-      if (formDataAuth.value.email) {
-        localStorage.setItem("email", formDataAuth.value.email);
-      }
-      showSuccessToast("注册成功");
+      showSuccessToast("注册成功,请在手机上确认");
     })
     .catch(err => {
-      console.log(err);
       showFailToast("注册失败");
-    })
-    .finally(() => {
-      console.log("finally");
     });
 }
 
+// 支付处理函数
 const handlePayment = () => {
+  // 将formDataOrder的值编码为字符串
   let queryString = new URLSearchParams(formDataOrder.value).toString();
   let decodedString = decodeURIComponent(queryString);
-  console.log("decodedString", decodedString);
-  // 手机号,密码,邮箱可选
-  let formdataAuth: formdataAuth = {
+  // 换成需要的数据结构字符串了
+  formDataRegister.value = {
     mobile: formDataAuth.value.mobile,
     password: formDataAuth.value.password,
-    formData: encodeOrderData(decodedString)
+    formData: encodeOrderData(decodedString),
+    token: localStorage.getItem("common_token") as string
   };
-  console.log("解码以后", decodeOrderData(encodeOrderData(decodedString)));
+  // 添加邮箱
   if (formDataAuth.value.email) {
-    formdataAuth = { ...formdataAuth, email: formDataAuth.value.email };
+    formDataRegister.value = {
+      ...formDataRegister.value,
+      email: formDataAuth.value.email
+    };
   }
-  // Handle payment logic here
+
   if (isRegistering.value) {
     handleRegister();
   }
-
-  let baseFormDataAuth = encodeOrderData(orderQuery);
-  //表单数据,手机号,邮箱可选
-  let factor: Factor = {
-    mobile: formDataAuth.value.mobile,
-    formDataAuth: baseFormDataAuth
-  };
-  if (formDataAuth.value.email) {
-    factor = { ...factor, email: formDataAuth.value.email };
-  }
-
-  createOrder(factor).then(res => {
-    console.log(res);
-    const after: any = res;
-    router.push(after.url);
-  });
+  // 注册成功后，跳转到支付页面
 };
 
-// 挂载前
+// 组件挂载前的逻辑
 onBeforeMount(async () => {
   const infoQuery = route.query;
-  console.log("query", infoQuery);
-  //由链接跳转而来
+  // 如果token存在，则表示是链接由qq直接跳转过来的
   if (infoQuery.token) {
-    isShowRegister.value = false; //显示注册按钮
-    console.log("token", infoQuery.token);
-    localStorage.removeItem("common_token");
-    localStorage.removeItem("mobile");
+    isShowRegister.value = false; //不显示注册按钮
+    //设置token mobile 选填email 时间
     localStorage.setItem("common_token", infoQuery.token as string);
     localStorage.setItem("mobile", infoQuery.mobile as string);
-    formDataAuth.value.mobile = infoQuery?.mobile as string;
-    device_id.value = infoQuery.device_id as string; //设备id
-    formDataOrder.value.quantity = infoQuery?.quantity as string;
+    formDataAuth.value.mobile = infoQuery.mobile as string;
+    formDataOrder.value.quantity = infoQuery.quantity as string;
     if (infoQuery.email) {
       localStorage.setItem("email", infoQuery.email as string);
       formDataAuth.value.email = infoQuery.email as string;
     }
-    // 获取socket信息
-    console.log("device_id", device_id.value);
+    device_id.value = infoQuery.device_id as string;
+    // 获取设备详细信息
     getSocketInfo({ socketId: device_id.value })
       .then((res: any) => {
-        // let data: any = res.data;
         formDataOrder.value.location = res.data.location;
         formDataOrder.value.name = res.data.name;
-        function_price.value = parseInt(res.data.priceFormula.split("*")[1]);
-        formDataOrder.value.amount = priceFormula(
-          parseInt(formDataOrder.value.quantity)
+        formDataOrder.value.amount = executePriceFunction(
+          parseInt(formDataOrder.value.quantity),
+          res.data.priceFormula
         ).toString();
+        console.log("formDataOrder.value.amount", formDataOrder.value.amount);
       })
       .catch(err => {
         showFailToast(err);
       });
   }
-  // 不是链接跳转过来的
+  //不是由链接跳转,正常过来的
   else {
-    device_id.value = infoQuery.device_id as string; //设备id
-    device_id.value = orderQuery.device_id as string;
+    device_id.value = infoQuery.device_id as string;
     formDataOrder.value.location = orderQuery.location as string;
     formDataOrder.value.name = orderQuery.name as string;
     formDataOrder.value.quantity = orderQuery.quantity as string;
+    formDataOrder.value.amount = orderQuery.amount as string;
   }
 
-  // 是否需要注册
   let mobile = localStorage.getItem("mobile");
   let email = localStorage.getItem("email");
   let isGuest = localStorage.getItem("isGuest");
-  console.log("isGuest", isGuest);
   formDataAuth.value.mobile = formDataAuth.value.mobile
     ? formDataAuth.value.mobile
     : mobile;
   formDataAuth.value.email = formDataAuth.value.email
     ? formDataAuth.value.email
     : email;
-  isShowRegister.value = isGuest === "true" ? true : false; //显示注册按钮
+  isShowRegister.value = isGuest === "true";
 });
-const function_price = ref();
-function priceFormula(amount: number) {
-  if (function_price.value) {
-    return amount * function_price.value;
-  } else {
-    return amount * 2.1;
-  }
-}
 </script>

@@ -15,7 +15,7 @@ export function getOrder(params?: any) {
 }
 
 // TODO: 订单创建以及获得支付二维码
-export function createOrder(data?: object) {
+export function AddOrder(data?: object) {
   return http.request({
     url: "/api/order",
     method: "post",
