@@ -32,16 +32,21 @@ class Http {
     Http.axiosInstance.interceptors.request.use(
       config => {
         NProgress.start(); // 开始显示进度条
-        // 从本地存储获取 token
-        const token = localStorage.getItem("common_token");
-
-        if (token) {
-          // 如果 token 存在，将其添加到请求头的 Authorization 字段中
-          config.headers["Authorization"] = `Bearer ${token}`;
-        } else {
-          guestUserLogin().then((res: any) => {
-            localStorage.setItem("common_token", res.token);
-          });
+        // 检查 URL 是否为 login 或 guestUserLogin
+        if (
+          !config.url.includes("login") &&
+          !config.url.includes("guestUserLogin")
+        ) {
+          const token = localStorage.getItem("common_token");
+          if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+          } else {
+            guestUserLogin().then((res: any) => {
+              localStorage.setItem("common_token", res.token);
+              localStorage.setItem("isGuest", "true");
+              config.headers["Authorization"] = `Bearer ${res.token}`;
+            });
+          }
         }
         return config;
       },

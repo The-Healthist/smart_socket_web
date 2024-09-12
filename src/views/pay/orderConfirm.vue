@@ -222,11 +222,7 @@ interface formdataOrder {
   location: string;
   quantity: string;
   amount?: string;
-}
-interface Factor {
-  email?: string;
-  mobile: string;
-  formDataAuth: string;
+  device_id: string;
 }
 
 // 解析路由查询参数
@@ -237,7 +233,8 @@ const formDataOrder = ref<formdataOrder>({
   name: "",
   location: "",
   quantity: "",
-  amount: ""
+  amount: "",
+  device_id: device_id.value
 });
 const formDataAuth = ref({
   email: "",
@@ -260,7 +257,7 @@ const formDataRegister = ref<formdataRegister>({
   formData: ""
 });
 const isRegistering = ref(false);
-const isShowRegister = ref(true);
+const isShowRegister = ref(false);
 
 // 计算属性用于验证表单字段
 const isValidEmail = computed(() =>
@@ -298,23 +295,37 @@ async function handleRegister() {
   ) {
     showFailToast("请正确填写所有必填字段!");
     return;
+  } else {
+    Register(formDataRegister.value)
+      .then((res: any) => {
+        console.log("res", res);
+
+        if (res.token) {
+          localStorage.setItem("common_token", res.token);
+          localStorage.setItem("isGuest", "false");
+          showSuccessToast("注册成功,请在手机上确认");
+          router.push({ path: "/afterRegister" });
+        } else if (res.error) {
+          showFailToast(res.error);
+        }
+      })
+      .catch(err => {
+        showFailToast(`注册失败:${err}`);
+      });
   }
-  Register(formDataRegister.value)
-    .then((res: any) => {
-      console.log("res", res);
-      localStorage.setItem("common_token", res.data.token);
-      showSuccessToast("注册成功,请在手机上确认");
-    })
-    .catch(err => {
-      showFailToast("注册失败");
-    });
 }
 
 // 支付处理函数
 const handlePayment = () => {
-  // 将formDataOrder的值编码为字符串
-  let queryString = new URLSearchParams(formDataOrder.value).toString();
+  let queryString = new URLSearchParams({
+    mobile: formDataAuth.value.mobile,
+    email: formDataAuth.value.email,
+    quantity: formDataOrder.value.quantity,
+    amount: formDataOrder.value.amount,
+    device_id: device_id.value
+  }).toString();
   let decodedString = decodeURIComponent(queryString);
+
   // 换成需要的数据结构字符串了
   formDataRegister.value = {
     mobile: formDataAuth.value.mobile,
@@ -322,6 +333,7 @@ const handlePayment = () => {
     formData: encodeOrderData(decodedString),
     token: localStorage.getItem("common_token") as string
   };
+
   // 添加邮箱
   if (formDataAuth.value.email) {
     formDataRegister.value = {
@@ -330,8 +342,9 @@ const handlePayment = () => {
     };
   }
 
-  if (isRegistering.value) {
+  if (isShowRegister.value && isRegistering.value) {
     handleRegister();
+    return;
   }
   // 注册成功后添加订单
   AddOrder({
@@ -361,6 +374,8 @@ const handlePayment = () => {
 // 组件挂载前的逻辑
 onBeforeMount(async () => {
   const infoQuery = route.query;
+  let isGuest = localStorage.getItem("isGuest");
+  isShowRegister.value = isGuest === "true" ? true : false;
   // 如果token存在，则表示是链接由qq直接跳转过来的
   if (infoQuery.token) {
     isShowRegister.value = false; //不显示注册按钮
@@ -392,6 +407,7 @@ onBeforeMount(async () => {
   //不是由链接跳转,正常过来的
   else {
     device_id.value = infoQuery.device_id as string;
+    formDataOrder.value.device_id = device_id.value;
     formDataOrder.value.location = orderQuery.location as string;
     formDataOrder.value.name = orderQuery.name as string;
     formDataOrder.value.quantity = orderQuery.quantity as string;
@@ -400,13 +416,12 @@ onBeforeMount(async () => {
 
   let mobile = localStorage.getItem("mobile");
   let email = localStorage.getItem("email");
-  let isGuest = localStorage.getItem("isGuest");
+
   formDataAuth.value.mobile = formDataAuth.value.mobile
     ? formDataAuth.value.mobile
     : mobile;
   formDataAuth.value.email = formDataAuth.value.email
     ? formDataAuth.value.email
     : email;
-  isShowRegister.value = isGuest === "true";
 });
 </script>

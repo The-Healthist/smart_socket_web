@@ -194,6 +194,31 @@
                     {{ order.price }}HKD
                   </div>
                 </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-base text-baseC font-normal truncate">
+                    支付时间 :
+                  </span>
+                  <div class="text-large">
+                    {{ order.createdAt }}
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-base text-baseC font-normal truncate">
+                    开始时间 :
+                  </span>
+                  <div class="text-large">
+                    {{ order.startAt }}
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-base text-baseC font-normal truncate">
+                    结束时间 :
+                  </span>
+                  <div class="text-large">
+                    {{ order.endAt }}
+                  </div>
+                </div>
+
                 <!-- 订单编号 -->
                 <div class="flex flex-row justify-between w-full">
                   <span class="text-base text-baseC font-normal">
@@ -320,7 +345,7 @@ import {
 import { showFailToast, showSuccessToast } from "vant";
 import { validateField } from "@/typings/data";
 import { executePriceFunction } from "@/typings/data";
-
+import { OrderStatus } from "@/typings/order";
 const router = useRouter();
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
@@ -355,6 +380,7 @@ const endOrderU = async (id: string) => {
       orders.value = data;
       console.log(orders.value);
       showSuccessToast("訂單已取消");
+      fetchOrders();
     })
     .catch(err => {
       console.log(err);
@@ -365,10 +391,10 @@ const function_price = ref();
 const RenewalOrder = async (uuid: string) => {
   getOrder({ uuid: uuid })
     .then((res: any) => {
-      console.log("lllldjaflksdjlfajdkf", res.data.device);
       if (res.data.device.priceFormula) {
         console.log(res.data.device.priceFormula);
         function_price.value = res.data.device.priceFormula;
+        fetchOrders();
       } else {
         console.log("Price formula not found");
       }
@@ -411,9 +437,19 @@ const validateDuration = event => {
   }
 };
 
-onBeforeMount(async () => {
+const fetchOrders = async () => {
   let mobile = localStorage.getItem("mobile");
-  getOrders({ mobile: mobile, status: 1 })
+  getOrders({ mobile: mobile, status: OrderStatus.OrderStatusNoneFinished })
+    .then(res => {
+      const after: any = res;
+      orders.value = after.data;
+      console.log(orders.value);
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("獲取历史訂單失敗");
+    });
+  getOrders({ mobile: mobile, status: OrderStatus.OrderStatusFinished })
     .then(res => {
       const after: any = res;
       ordersH.value = after.data;
@@ -423,15 +459,9 @@ onBeforeMount(async () => {
       console.log(err);
       showFailToast("獲取历史訂單失敗");
     });
-  getOrders({ mobile: mobile, status: 0 })
-    .then((res: any) => {
-      const after: any = res.data;
-      orders.value = after;
-      console.log(orders.value);
-    })
-    .catch(err => {
-      console.log(err);
-      showFailToast("獲取訂單失敗");
-    });
+};
+
+onBeforeMount(async () => {
+  fetchOrders();
 });
 </script>

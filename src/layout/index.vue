@@ -9,7 +9,6 @@ const cachedViews = computed(() => {
   return useCachedViewStoreHook().cachedViewList;
 });
 </script>
-<!-- 主题切换 -->
 <template>
   <div class="app-wrapper flex flex-col h-full w-full">
     <van-config-provider :theme="useDarkMode() ? 'dark' : 'light'">

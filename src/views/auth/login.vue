@@ -124,7 +124,7 @@ const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const loginAfter = ref<any>();
 
-function handleLogin() {
+async function handleLogin() {
   isShowPhoneSpan.value = !formData.value.mobile || !isValidPhone.value;
   isShowPasswordSpan.value = !formData.value.password || !isValidPassword.value;
 
@@ -142,7 +142,7 @@ function handleLogin() {
       localStorage.setItem("password", formData.value.password);
       localStorage.setItem("isGuest", "false");
       showSuccessToast("登录成功");
-      router.push({ name: "Home" });
+      router.push({ path: "/home" });
     })
     .catch(err => {
       showFailToast(`登录失败:${err}`);

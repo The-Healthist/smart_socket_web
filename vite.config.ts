@@ -74,7 +74,15 @@ export default defineConfig(({ mode }) => {
         },
         secure: false
       },
-      https: true
+      https: {
+        // If you need to specify SSL/TLS certificates, you can do it here
+        // For example:
+        // cert: fs.readFileSync('/path/to/localhost.crt'),
+        // key: fs.readFileSync('/path/to/localhost.key'),
+        // Or simply set to true if you want Vite to handle it with a self-signed certificate
+        cert: true,
+        key: true
+      }
     },
 
     build: {

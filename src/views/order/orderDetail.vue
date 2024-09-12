@@ -78,6 +78,57 @@
                   {{ moment(order.endAt).format("yyyy/MM/DD HH:ss") }}
                 </div>
               </div>
+              <div
+                v-if="status !== '正在使用中'"
+                class="flex justify-between items-center"
+              >
+                <span class="text-base text-baseC font-normal truncate"
+                  >訂單狀態 :</span
+                >
+                <div class="text-large">{{ status }}</div>
+              </div>
+              <div
+                v-if="status === '正在使用中'"
+                class="flex justify-between items-center w-full"
+              >
+                <div class="w-full">
+                  <div class="flex flex-row gap-2.5 w-full">
+                    <InvertedButton>
+                      <template #default>
+                        <div
+                          class="w-[22vw] h-[22px] flex flex-row justify-center items-center"
+                          @click="endOrderU(order.uuid)"
+                        >
+                          <span
+                            class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
+                          >
+                            結束使用
+                          </span>
+                        </div>
+                      </template>
+                    </InvertedButton>
+                    <PrimaryButton
+                      class="grow w-full"
+                      @click="RenewalOrder(order.uuid)"
+                    >
+                      <template #default>
+                        <div
+                          class="grow h-[22px] flex flex-row justify-center items-center gap-2"
+                        >
+                          <i-icon
+                            icon="mingcute:flash-line"
+                            class="text-[20px]"
+                          />
+                          <span
+                            class="text-larger text-inverted font-bold tracking-wide"
+                            >充值續費</span
+                          >
+                        </div>
+                      </template>
+                    </PrimaryButton>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div>
@@ -92,6 +143,66 @@
         </div>
       </div>
     </div>
+    <van-dialog
+      v-model:show="isShowDialog"
+      :show-cancel-button="false"
+      :showConfirmButton="false"
+      :close-on-click-overlay="true"
+    >
+      <div
+        class="flex flex-col h-[40vh] bg-gradient-to-b from-skin-primary/10 to-skin-primary/30 items-center p-2.5 gap-2.5"
+      >
+        <h1 class="text-largest test-basec">充值續費</h1>
+        <span
+          class="flex flex-row justify-start text-baseC text-base w-full ml-2.5"
+          >充值时间</span
+        >
+        <div class="flex flex-row items-center w-full -ml-2.5">
+          <span class="text-primary text-base">*</span>
+          <div
+            class="-mt-2 w-full h-[38px] p-[5px] bg-base justify-center items-center rounded-button border-solid border-[2px]"
+          >
+            <div class="flex flex-row">
+              <input
+                id="number"
+                v-model="duration"
+                type="number"
+                placeholder="请输入充值时间"
+                class="w-[60vw] h-[24px] pl-2 rounded-button"
+              />
+              <span class="text-primary text-base mr-1.5">/小时</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-row w-full ml-2 justify-between">
+          <span class="flex flex-row justify-start text-baseC text-base w-full">
+            总计金额</span
+          >
+          <span v-if="function_price" class="text-primary text-base mr-[26px]"
+            >{{ totalPrice }}HKD</span
+          >
+        </div>
+        <span
+          v-if="isShowDurationSpan"
+          class="h-2.5 w-full -mt-2.5 text-small ml-[2px] text-red-500"
+        >
+          充值时间需要>0且为整数
+        </span>
+
+        <PrimaryButton class="w-[98%]" @click="handleRenewalOrder">
+          <template #default>
+            <div
+              class="h-[24px] flex flex-row justify-center items-center gap-2"
+            >
+              <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+              <span class="text-larger text-inverted font-bold tracking-wide"
+                >即刻支付</span
+              >
+            </div>
+          </template>
+        </PrimaryButton>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -102,9 +213,12 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { getOrder } from "@/api/order";
-import { showFailToast } from "vant";
+import { getOrder, payOrder } from "@/api/order";
+import { showFailToast, showSuccessToast } from "vant";
 import moment from "moment"; // Import moment
+import { OrderStatus } from "@/typings/order";
+import { endOrder, renewOrder } from "@/api/order";
+import { executePriceFunction, validateField } from "@/typings/data";
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -119,6 +233,7 @@ const router = useRouter();
 const orderId = router.currentRoute.value.query.uuid;
 // console.log(orderId);
 const ordersH = ref([]);
+const status = ref("");
 onBeforeMount(async () => {
   if (typeof orderId === "string")
     getOrder({ uuid: orderId })
@@ -126,11 +241,86 @@ onBeforeMount(async () => {
         console.log(res);
         let data = res.data;
         ordersH.value = [data];
+        // Handle different statuses
+        if (data.status === OrderStatus.Pending) {
+          status.value = "正在支付中";
+        } else if (data.status === OrderStatus.Ongoing) {
+          // Logic to show buttons for ending the order and renewing, similar to orderPage
+          status.value = "正在使用中";
+        } else if (data.status === OrderStatus.Ended) {
+          status.value = "已完成";
+        }
         // console.log(ordersH.value);
       })
-      .catch(err => {
-        console.log(err);
-        showFailToast("獲取訂單失敗");
+      .catch(error => {
+        console.error("Failed to fetch order details:", error);
       });
 });
+
+const isShowDialog = ref(false);
+const renewOrderId = ref("");
+const duration = ref(2);
+const totalPrice = computed(() =>
+  executePriceFunction(duration.value, function_price.value)
+);
+const isShowDurationSpan = ref(false);
+const isValidDuration = computed(() =>
+  validateField("numberM", duration.value)
+);
+const endOrderU = async (id: string) => {
+  endOrder({ uuid: id })
+    .then(res => {
+      console.log(res);
+      let data: any = res;
+      ordersH.value = data;
+      console.log(ordersH.value);
+      showSuccessToast("訂單已取消");
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("取消訂單失敗");
+    });
+};
+const function_price = ref();
+const RenewalOrder = async (uuid: string) => {
+  getOrder({ uuid: uuid })
+    .then((res: any) => {
+      if (res.data.device.priceFormula) {
+        console.log(res.data.device.priceFormula);
+        function_price.value = res.data.device.priceFormula;
+      } else {
+        console.log("Price formula not found");
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      showFailToast("獲取訂單失敗");
+    });
+  renewOrderId.value = uuid;
+  isShowDialog.value = true;
+};
+const handleRenewalOrder = async () => {
+  if (!isValidDuration.value) {
+    isShowDurationSpan.value = true;
+    return;
+  }
+  renewOrder({ uuid: renewOrderId.value, duration: duration.value }).then(
+    (res: any) => {
+      console.log(res);
+      payOrder({ uuid: res.data.uuid })
+        .then((res2: any) => {
+          console.log(res2);
+          router.push({
+            name: "PayedAfter",
+            query: { orderId: res.data.uuid }
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          showFailToast("支付失敗");
+        });
+      isShowDialog.value = false;
+    }
+  );
+};
 </script>

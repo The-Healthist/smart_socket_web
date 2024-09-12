@@ -19,10 +19,14 @@ export function decodeFormData(encodedData: string): any {
 // 订单数据
 export function encodeOrderData(data: any): string {
   const jsonString = JSON.stringify(data);
+  // console.log("jsonString", jsonString);
 
+  // 将jsonString中的外面的""去掉
+  const jsonStringWithoutQuotes = jsonString.replace(/"/g, "");
+  // console.log("jsonStringWithoutQuotes", jsonStringWithoutQuotes);
   // Convert JSON string to Uint8Array
   const encoder = new TextEncoder();
-  const uint8Array = encoder.encode(jsonString);
+  const uint8Array = encoder.encode(jsonStringWithoutQuotes);
 
   // Convert Uint8Array to Base64
   const base64String = btoa(String.fromCharCode(...uint8Array));
