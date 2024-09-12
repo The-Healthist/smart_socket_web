@@ -356,7 +356,7 @@ const fontsizeStore = useFontSizeStore();
 const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
-const texts = computed(() => textStore.getTexts);
+
 const isUse = ref(true);
 const orders = ref([]);
 const displayedOrders = computed(() => orders.value);
@@ -372,6 +372,7 @@ const isShowDurationSpan = ref(false);
 const isValidDuration = computed(() =>
   validateField("numberM", duration.value)
 );
+
 const endOrderU = async (id: string) => {
   endOrder({ uuid: id })
     .then(res => {

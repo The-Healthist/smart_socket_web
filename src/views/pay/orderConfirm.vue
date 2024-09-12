@@ -210,13 +210,6 @@ const router = useRouter();
 const route = useRoute();
 const device_id = ref("");
 
-// 定义表单数据类型
-interface formdataAuth {
-  email?: string;
-  mobile: string;
-  password: string;
-  formData?: string;
-}
 interface formdataOrder {
   name: string;
   location: string;

@@ -122,8 +122,8 @@ const isValidPassword = computed(() =>
 );
 const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
-const loginAfter = ref<any>();
 
+const loginAfter = ref<any>();
 async function handleLogin() {
   isShowPhoneSpan.value = !formData.value.mobile || !isValidPhone.value;
   isShowPasswordSpan.value = !formData.value.password || !isValidPassword.value;

@@ -30,7 +30,7 @@ class Http {
   // 请求拦截器方
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
-      config => {
+      async config => {
         NProgress.start(); // 开始显示进度条
         // 检查 URL 是否为 login 或 guestUserLogin
         if (
@@ -41,11 +41,10 @@ class Http {
           if (token) {
             config.headers["Authorization"] = `Bearer ${token}`;
           } else {
-            guestUserLogin().then((res: any) => {
-              localStorage.setItem("common_token", res.token);
-              localStorage.setItem("isGuest", "true");
-              config.headers["Authorization"] = `Bearer ${res.token}`;
-            });
+            let res: any = await guestUserLogin();
+            localStorage.setItem("common_token", res.token);
+            localStorage.setItem("isGuest", "true");
+            config.headers["Authorization"] = `Bearer ${res.token}`;
           }
         }
         return config;

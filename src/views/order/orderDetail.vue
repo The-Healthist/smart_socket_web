@@ -317,7 +317,7 @@ const handleRenewalOrder = async () => {
         })
         .catch(err => {
           console.log(err);
-          showFailToast("支付失敗");
+          showFailToast(`支付失败:${err.response.data.message}`);
         });
       isShowDialog.value = false;
     }

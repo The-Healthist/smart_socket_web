@@ -4,6 +4,6 @@ export enum OrderStatus {
   Ended = "ended",
   Closed = "closed",
 
-  OrderStatusNoneFinished = "none finished",
+  OrderStatusNoneFinished = "none_finished",
   OrderStatusFinished = "finished"
 }
