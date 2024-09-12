@@ -338,59 +338,24 @@ const handlePayment = () => {
     quantity: parseInt(formDataOrder.value.quantity),
     deviceUuid: device_id.value,
     remark: formDataOrder.value.location
-  }).then((res: any) => {
-    //TODO: 支付订单
-    payOrder({
-      uuid: res.data.uuid
-    }).then((res2: any) => {
-      console.log("res2", res2.message);
-      getOrderOnPayMent({
-        uuid: res2.data.orderUuid
-      }).then((res3: any) => {
-        console.log("res3", res3.data);
-        if (res3.data.status === "failed") {
-          showFailToast("支付失败");
-          router.push({ name: "PayedFailed" });
-        } else if (res3.data.status === "success") {
-          showSuccessToast("支付成功");
-          router.push({ name: "PayedAfter" });
-        } else {
-          let second = 3;
-          const timer = setInterval(() => {
-            second--;
-            if (second) {
-              toast.message = `正在支付中(${second})`;
-            } else {
-              clearInterval(timer);
-              closeToast();
-            }
-          }, 1000);
-          const toast = showLoadingToast({
-            duration: 0,
-            forbidClick: true,
-            message: "正在支付中(3)"
-          });
-          setTimeout(() => {
-            getOrderOnPayMent({
-              uuid: res2.data.orderUuid
-            }).then((res3: any) => {
-              console.log("res3", res3.data);
-              if (res3.data.status === "failed") {
-                showFailToast("支付失败");
-                router.push({ name: "PayedFailed" });
-              } else if (res3.data.status === "success") {
-                showSuccessToast("支付成功");
-                router.push({ name: "PayedAfter" });
-              } else {
-                showFailToast("出错了");
-                router.push({ name: "PayedFailed" });
-              }
-            });
-          }, 3000);
-        }
+  })
+    .then((res: any) => {
+      payOrder({
+        uuid: res.data.uuid
+      }).then((res2: any) => {
+        console.log("res2", res2);
+        router.push({
+          name: "PayedAfter",
+          query: {
+            orderId: res2.data.orderUuid
+          }
+        });
       });
+      //TODO: 支付订单
+    })
+    .catch(err => {
+      showFailToast(err);
     });
-  });
 };
 
 // 组件挂载前的逻辑

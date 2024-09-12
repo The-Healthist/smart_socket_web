@@ -34,7 +34,7 @@
               class="h-[22px] flex flex-row justify-center items-center gap-2"
             >
               <span class="text-larger text-inverted font-bold tracking-wide"
-                >返回订单</span
+                >返回上级</span
               >
             </div>
           </template>

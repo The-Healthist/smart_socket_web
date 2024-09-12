@@ -23,12 +23,12 @@
               <span
                 class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
               >
-                返回订单
+                返回上级
               </span>
             </div>
           </template>
         </InvertedButton>
-        <PrimaryButton class="grow" @click="router.push({ name: 'Order' })">
+        <PrimaryButton class="grow" @click="getOrderStatus">
           <template #default>
             <div
               class="h-[22px] flex flex-row justify-center items-center gap-2"
@@ -53,6 +53,13 @@ import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import { getOrderOnPayMent } from "@/api/order";
+import {
+  closeToast,
+  showFailToast,
+  showLoadingToast,
+  showSuccessToast
+} from "vant";
 
 const route = useRoute();
 const order = route.query;
@@ -70,4 +77,52 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
 const router = useRouter();
+
+const getOrderStatus = () => {
+  getOrderOnPayMent({
+    uuid: order.orderId
+  }).then((res: any) => {
+    console.log("res", res.data);
+    if (res.data.status === "failed") {
+      showFailToast("支付失败");
+      router.push({ name: "PayedFailed" });
+    } else if (res.data.status === "success") {
+      showSuccessToast("支付成功");
+      router.push({ name: "Order" });
+    } else {
+      let second = 5;
+      const timer = setInterval(() => {
+        second--;
+        if (second) {
+          toast.message = `正在支付中(${second})`;
+        } else {
+          clearInterval(timer);
+          closeToast();
+        }
+      }, 1000);
+      const toast = showLoadingToast({
+        duration: 0,
+        forbidClick: true,
+        message: "正在支付中(5)"
+      });
+      setTimeout(() => {
+        getOrderOnPayMent({
+          uuid: res.data.orderUuid
+        }).then((res3: any) => {
+          console.log("res3", res3.data);
+          if (res3.data.status === "failed") {
+            showFailToast("支付失败");
+            router.push({ name: "PayedFailed" });
+          } else if (res3.data.status === "success") {
+            showSuccessToast("支付成功");
+            router.push({ name: "Order" });
+          } else {
+            showFailToast("出错了");
+            router.push({ name: "PayedFailed" });
+          }
+        });
+      }, 3000);
+    }
+  });
+};
 </script>

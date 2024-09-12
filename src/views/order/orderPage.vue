@@ -47,13 +47,18 @@
         </div>
         <!-- 订单列表 -->
         <div
-          class="bg-base w-[95vw] h-[auto] flex flex-col overflow-y-scroll"
+          class="bg-base w-[95vw] h-[auto] min-h-[80vh] flex flex-col overflow-y-scroll"
           :class="
             isUse
               ? 'rounded-tr-bar rounded-b-card'
               : 'rounded-tl-bar rounded-b-card'
           "
         >
+          <div v-if="displayedOrders.length === 0 && ordersH.length === 0">
+            <div class="flex flex-col justify-center items-center h-[50vh]">
+              <span class="text-baseC">暫無數據</span>
+            </div>
+          </div>
           <div v-if="isUse">
             <div
               v-for="order in displayedOrders"
@@ -190,20 +195,20 @@
                   </div>
                 </div>
                 <!-- 订单编号 -->
-                <div class="flex flex-col w-full">
+                <div class="flex flex-row justify-between w-full">
                   <span class="text-base text-baseC font-normal">
                     訂單編號 :
                   </span>
-                  <div class="text-base break-words">
+                  <div class="text-small break-words">
                     {{ order.uuid }}
                   </div>
                 </div>
                 <!-- 设备编号 -->
-                <div class="flex flex-col w-full">
+                <div class="flex flex-row justify-between w-full">
                   <span class="text-base text-baseC font-normal">
                     设备編號:
                   </span>
-                  <div class="text-base break-words">
+                  <div class="text-small break-words">
                     {{ order.deviceUuid }}
                   </div>
                 </div>
@@ -259,7 +264,6 @@
                 type="number"
                 placeholder="请输入充值时间"
                 class="w-[60vw] h-[24px] pl-2 rounded-button"
-                @input="validateDuration"
               />
               <span class="text-primary text-base mr-1.5">/小时</span>
             </div>
@@ -306,7 +310,13 @@ import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { endOrder, getOrder, getOrders, renewOrder } from "@/api/order";
+import {
+  endOrder,
+  getOrder,
+  getOrders,
+  payOrder,
+  renewOrder
+} from "@/api/order";
 import { showFailToast, showSuccessToast } from "vant";
 import { validateField } from "@/typings/data";
 import { executePriceFunction } from "@/typings/data";
@@ -373,9 +383,20 @@ const RenewalOrder = async (uuid: string) => {
 const handleRenewalOrder = async () => {
   if (!isValidDuration.value) isShowDurationSpan.value = true;
   renewOrder({ uuid: renewOrderId.value, duration: duration.value }).then(
-    res => {
+    (res: any) => {
       console.log(res);
-      showSuccessToast("訂單已續費");
+      payOrder({ uuid: res.data.uuid })
+        .then((res2: any) => {
+          console.log(res2);
+          router.push({
+            name: "PayedAfter",
+            query: { orderId: res.data.uuid }
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          showFailToast("支付失敗");
+        });
       isShowDialog.value = false;
     }
   );

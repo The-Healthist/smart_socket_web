@@ -6,86 +6,88 @@
     <div
       class="flex flex-col w-full h-full justify-center items-center px-2.5 py-5"
     >
-      <div class="text-inverted text-largest flex justify-center items-center">
-        <!-- <i-icon icon="streamline:return-2" class="text-[20px] text-inverted" /> -->
-        订单详情
-      </div>
       <div class="w-[95vw] h-full flex flex-col">
         <!-- 订单详情 -->
+
         <div
-          class="bg-base w-[95vw] h-[80vh] flex flex-col overflow-y-scroll rounded-card mt-5"
+          class="bg-base w-[95vw] h-[auto] flex flex-col overflow-y-scroll rounded-card mt-[10vh]"
         >
           <div
+            class="text-primary text-largest flex justify-center items-center"
+          >
+            <!-- <i-icon icon="streamline:return-2" class="text-[20px] text-inverted" /> -->
+            订单详情
+          </div>
+          <div
             v-for="order in ordersH"
-            :key="order.transactionNumber"
-            class="w-[95vw] p-2.5 flex flex-col gap-2"
+            :key="order.uuid"
+            class="w-[95vw] p-2.5 flex flex-col gap-2 mt-2"
           >
             <div class="flex flex-col gap-2.5">
+              <!-- Existing order details -->
               <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
+                <span class="text-base text-baseC font-bold truncate"
                   >插座名稱 :</span
                 >
-                <div class="text-large">{{ order.name }}</div>
+                <div class="text-large font-bold">{{ order.device.name }}</div>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
+                <span class="text-base text-baseC font-bold truncate"
                   >插座地址 :</span
                 >
-                <div class="text-large">{{ order.address }}</div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
-                  >購買電量 :</span
-                >
                 <div class="text-large font-bold">
-                  {{ order.powerPurchased }}
+                  {{ order.device.location }}
                 </div>
               </div>
+
               <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
+                <span class="text-base text-baseC font-bold truncate"
+                  >購買時間 :</span
+                >
+                <div class="text-large font-bold">{{ order.quantity }}小时</div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-base text-baseC font-bold truncate"
                   >支付金額 :</span
                 >
-                <div class="text-large text-[#ff4400]">
-                  {{ order.amountPaid }}
+                <div class="text-large font-bold">{{ order.price }}HKD</div>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-large text-baseC font-normal truncate"
+                  >訂單創建時間 :</span
+                >
+                <div class="text-base">
+                  {{ moment(order.createdAt).format("yyyy/MM/DD HH:ss") }}
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-base text-baseC font-normal truncate"
+                  >服務開始時間 :</span
+                >
+                <div class="text-large">
+                  {{ moment(order.startAt).format("yyyy/MM/DD HH:ss") }}
                 </div>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
-                  >訂單編號 :</span
+                <span class="text-base text-baseC font-normal truncate"
+                  >服務結束時間 :</span
                 >
-                <div class="text-base">{{ order.orderNumber }}</div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
-                  >付款方式 :</span
-                >
-                <div class="text-base">{{ order.paymentMethod }}</div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
-                  >交易編號 :</span
-                >
-                <div class="text-base">{{ order.transactionNumber }}</div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-small text-baseC font-normal truncate"
-                  >訂單創建時間 :</span
-                >
-                <div class="text-base">{{ order.creationTime }}</div>
+                <div class="text-large">
+                  {{ moment(order.endAt).format("yyyy/MM/DD HH:ss") }}
+                </div>
               </div>
             </div>
-            <div>
-              <div
-                class="flex flex-row justify-center items-center gap-2.5 w-full"
-              >
-                <button class="text-primary text-base font-normal">
-                  有疑問？聯繫客服
-                </button>
-              </div>
-            </div>
+          </div>
+          <div>
             <div
-              class="bg-separator/30 flex flex-row justify-center w-full h-[1px]"
-            />
+              class="flex flex-row justify-center items-center gap-2.5 w-full m-5"
+            >
+              <button class="text-primary text-base font-normal">
+                有疑問？聯繫客服
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -102,6 +104,7 @@ import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 import { getOrder } from "@/api/order";
 import { showFailToast } from "vant";
+import moment from "moment"; // Import moment
 
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
@@ -115,13 +118,13 @@ const router = useRouter();
 //转换成字符串
 const orderId = router.currentRoute.value.query.uuid;
 // console.log(orderId);
-const ordersH = ref();
+const ordersH = ref([]);
 onBeforeMount(async () => {
   if (typeof orderId === "string")
     getOrder({ uuid: orderId })
-      .then(res => {
-        // console.log(res);
-        let data: any = res;
+      .then((res: any) => {
+        console.log(res);
+        let data = res.data;
         ordersH.value = [data];
         // console.log(ordersH.value);
       })
