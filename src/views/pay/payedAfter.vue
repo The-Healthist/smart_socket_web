@@ -23,7 +23,7 @@
               <span
                 class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
               >
-                返回上级
+                返回上級
               </span>
             </div>
           </template>
@@ -84,8 +84,11 @@ const getOrderStatus = () => {
   }).then((res: any) => {
     console.log("res", res.data);
     if (res.data.status === "failed") {
-      showFailToast("支付失败");
-      router.push({ name: "PayedFailed" });
+      showFailToast(`支付失敗:${res.data.message}`);
+      router.push({
+        name: "OrderDetail",
+        query: { uuid: order.orderId }
+      });
     } else if (res.data.status === "success") {
       showSuccessToast("支付成功");
       router.push({ name: "Order" });
@@ -111,14 +114,19 @@ const getOrderStatus = () => {
         }).then((res3: any) => {
           console.log("res3", res3.data);
           if (res3.data.status === "failed") {
-            showFailToast("支付失败");
-            router.push({ name: "PayedFailed" });
+            showFailToast(`支付失敗:${res3.data.message}`);
+            router.push({
+              name: "OrderDetail",
+              query: { uuid: order.orderId }
+            });
           } else if (res3.data.status === "success") {
-            showSuccessToast("支付成功");
             router.push({ name: "Order" });
           } else {
-            showFailToast("出错了");
-            router.push({ name: "PayedFailed" });
+            showFailToast(`出錯了:${res3.data.message}`);
+            router.push({
+              name: "OrderDetail",
+              query: { uuid: order.orderId }
+            });
           }
         });
       }, 3000);

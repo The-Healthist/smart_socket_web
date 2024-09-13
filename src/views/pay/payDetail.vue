@@ -6,7 +6,7 @@
     <div
       class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[auto] mt-[4vh] absolute"
     >
-      <!-- 图片 -->
+      <!-- 圖片 -->
       <div
         class="bg-base rounded-button w-full flex flex-col gap-2. justify-center items-center h-[205px]"
       >
@@ -16,12 +16,12 @@
         />
         <span class="text-baseC text-base">{{ info?.name }}</span>
         <span class="text-baseC text-base"
-          >TYPE: {{ info?.deviceType.name }}</span
+          >類型: {{ info?.deviceType.name }}</span
         >
-        <span class="text-baseC text-base">LOCATION: {{ info?.location }}</span>
+        <span class="text-baseC text-base">位置: {{ info?.location }}</span>
       </div>
 
-      <!-- 付费框框 -->
+      <!-- 付費框框 -->
 
       <div class="flex flex-col w-full">
         <div
@@ -30,7 +30,7 @@
           <button
             :class="
               optionsValue == 1
-                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10'
+                ? 'border-primary rounded-option border-solid border-[1.5px] bg-primary/20'
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="w-[50%] flex flex-row justify-center items-center"
@@ -38,11 +38,11 @@
           >
             <div class="flex flex-row w-full justify-between p-1.5">
               <div class="flex flex-col items-end">
-                <span class="text-baseC text-small font-bold tracking-wide"
+                <span class="text-baseC text-base font-bold tracking-wide"
                   >1H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg:
+                  >平均:
                   {{
                     executePriceFunction(1, formDataOrder.function_price)
                   }}HKD/H</span
@@ -60,7 +60,7 @@
           <button
             :class="
               optionsValue == 2
-                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10'
+                ? 'border-primary rounded-option border-solid border-[1.5px] bg-primary/20'
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="w-[50%] flex flex-row justify-center items-center"
@@ -68,11 +68,11 @@
           >
             <div class="flex flex-row w-full justify-between p-1.5">
               <div class="flex flex-col justify-start items-end">
-                <span class="text-baseC text-small font-bold tracking-wide"
+                <span class="text-baseC text-base font-bold tracking-wide"
                   >2H</span
                 >
                 <span class="text-small font-normal text-baseC/50"
-                  >Avg:
+                  >平均:
                   {{
                     executePriceFunction(1, formDataOrder.function_price)
                   }}HKD/H</span
@@ -89,14 +89,14 @@
           </button>
         </div>
 
-        <!-- 输入 -->
+        <!-- 輸入 -->
         <div
           class="border-primary rounded-b-card border-solid border-b-[1px] border-l-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 p-2.5"
         >
           <div
             :class="
               optionsValue == 3
-                ? 'border-primary rounded-option border-solid border-[1px] bg-primary/10 '
+                ? 'border-primary rounded-option border-solid border-[1.5px] bg-primary/20 '
                 : 'border-base/30 rounded-option border-solid border-[1px]'
             "
             class="flex flex-row w-full justify-center items-center p-2.5"
@@ -105,11 +105,11 @@
             <input
               v-model="inputValue"
               type="number"
-              class="w-[177px] h-[34px] text-center truncate py-[5px] rounded-[5px] shadow-inner"
+              class="w-[177px] h-[34px] text-center truncate py-[5px] rounded-[5px] shadow-inner text-base font-bold"
             />
 
             <div
-              class="text-baseC text-small font-bold w-[15%] flex flex-row justify-center items-center"
+              class="text-baseC text-base font-bold w-[15%] flex flex-row justify-center items-center"
             >
               H
             </div>
@@ -123,7 +123,7 @@
                 }}HKD</span
               >
               <span class="text-baseC/60 text-small truncate"
-                >Avg:
+                >平均:
                 {{
                   executePriceFunction(1, formDataOrder.function_price)
                 }}HKD/H</span
@@ -132,7 +132,7 @@
           </div>
         </div>
       </div>
-      <!-- TODO:修改支付成功逻辑 -->
+      <!-- TODO:修改支付成功邏輯 -->
       <PrimaryButton
         class="grow-x-1"
         @click="
@@ -178,9 +178,9 @@ import { executePriceFunction } from "@/typings/data";
 
 const info = ref<any>();
 const router = useRouter();
-//获取网址上的一个id
+//獲取網址上的一個id
 const socketId = router.currentRoute.value.params.socketId;
-// 初始化表单数据
+// 初始化表單數據
 interface formdataOrder {
   name: string;
   location?: string;
@@ -197,7 +197,7 @@ const formDataOrder = ref<formdataOrder>({
   pictureUrl: "",
   function_price: "function calc(amount) {return amount * 2.1}"
 });
-// TODO:获取数据
+// TODO:獲取數據
 
 onBeforeMount(async () => {
   try {
@@ -209,7 +209,7 @@ onBeforeMount(async () => {
     formDataOrder.value.quantity = res.data.quantity;
     formDataOrder.value.pictureUrl = res.data.pictureUrl;
     formDataOrder.value.function_price = res.data.priceFormula;
-    // 记下价格公式
+    // 記下價格公式
   } catch (error) {
     console.error("Error fetching list info", error);
   }

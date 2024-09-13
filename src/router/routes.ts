@@ -7,14 +7,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "root",
     component: Layout,
-    redirect: { name: "Login" },
+    redirect: { name: "Home" },
     children: [
       {
         path: "home",
         name: "Home",
         component: Home,
         meta: {
-          title: "首页"
+          title: "首頁"
         }
       },
       {
@@ -22,10 +22,10 @@ const routes: Array<RouteRecordRaw> = [
         name: "Order",
         component: () => import("@/views/order/orderPage.vue"),
         meta: {
-          title: "订单"
+          title: "訂單"
         }
       },
-      //订单详情
+      // 订单详情
       {
         path: "orderDetail",
         name: "OrderDetail",
@@ -45,7 +45,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Setting",
         component: () => import("@/views/setting/settingPage.vue"),
         meta: {
-          title: "设置"
+          title: "設置"
         }
       },
       {
@@ -53,7 +53,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Scanner",
         component: () => import("@/views/scanner/scannerPage.vue"),
         meta: {
-          title: "扫码"
+          title: "掃碼"
         }
       },
       {
@@ -61,7 +61,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "PayDetail",
         component: () => import("@/views/pay/payDetail.vue"),
         meta: {
-          title: "支付详情"
+          title: "支付詳情"
         }
       },
       {
@@ -77,25 +77,23 @@ const routes: Array<RouteRecordRaw> = [
         name: "PayedFailed",
         component: () => import("@/views/pay/payedFaied.vue"),
         meta: {
-          title: "支付失败"
+          title: "支付失敗"
         }
       },
-      // https://192.168.1.11:5173/#/orderConfirm/? token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiMTM1ODMzMjUwMzUiLCJSb2xlIjoyLCJpc3MiOiJpU21hcnQiLCJleHAiOjE3MjU4NzAwNTIsImlhdCI6MTcyNTYxMDg1Mn0.7TxP8_L3ew-3RwhZrn8KHfDTc3KGbAjyxqAlSAau21M& mobile=13849392993&device_id=644dd44e-67b3-485f-8f39-1c9ea49833d6& quantity=5
       {
         path: "/orderConfirm",
         name: "OrderConfirm",
         component: () => import("@/views/pay/orderConfirm.vue"),
         meta: {
-          title: "订单确认"
+          title: "訂單確認"
         }
       },
       {
-        // 登录
         path: "/login",
         name: "Login",
         component: () => import("@/views/auth/login.vue"),
         meta: {
-          title: "登录"
+          title: "登錄"
         }
       },
       {
@@ -103,7 +101,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Register",
         component: () => import("@/views/auth/register.vue"),
         meta: {
-          title: "注册"
+          title: "註冊"
         }
       },
       {
@@ -111,7 +109,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "AfterRegister",
         component: () => import("@/views/pay/afterRegister.vue"),
         meta: {
-          title: "注册成功"
+          title: "註冊成功"
         }
       }
     ]

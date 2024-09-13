@@ -7,7 +7,7 @@
       class="flex flex-col w-full h-full justify-center items-center px-2.5 py-5"
     >
       <div class="w-[95vw] h-full flex flex-col">
-        <!-- 订单详情 -->
+        <!-- 訂單詳情 -->
 
         <div
           class="bg-base w-[95vw] h-[auto] flex flex-col overflow-y-scroll rounded-card mt-[10vh]"
@@ -16,7 +16,7 @@
             class="text-primary text-largest flex justify-center items-center"
           >
             <!-- <i-icon icon="streamline:return-2" class="text-[20px] text-inverted" /> -->
-            订单详情
+            訂單詳情
           </div>
           <div
             v-for="order in ordersH"
@@ -44,7 +44,7 @@
                 <span class="text-base text-baseC font-bold truncate"
                   >購買時間 :</span
                 >
-                <div class="text-large font-bold">{{ order.quantity }}小时</div>
+                <div class="text-large font-bold">{{ order.quantity }}小時</div>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-base text-baseC font-bold truncate"
@@ -52,9 +52,17 @@
                 >
                 <div class="text-large font-bold">{{ order.price }}HKD</div>
               </div>
+              <div class="flex justify-between items-center">
+                <span class="text-base text-baseC font-bold truncate"
+                  >支付方式 :</span
+                >
+                <div class="text-large font-bold">
+                  {{ order.paymentMethod }}
+                </div>
+              </div>
 
               <div class="flex justify-between items-center">
-                <span class="text-large text-baseC font-normal truncate"
+                <span class="text-base text-baseC font-normal truncate"
                   >訂單創建時間 :</span
                 >
                 <div class="text-base">
@@ -66,7 +74,7 @@
                 <span class="text-base text-baseC font-normal truncate"
                   >服務開始時間 :</span
                 >
-                <div class="text-large">
+                <div class="text-base">
                   {{ moment(order.startAt).format("yyyy/MM/DD HH:ss") }}
                 </div>
               </div>
@@ -74,18 +82,64 @@
                 <span class="text-base text-baseC font-normal truncate"
                   >服務結束時間 :</span
                 >
-                <div class="text-large">
+                <div class="text-base">
                   {{ moment(order.endAt).format("yyyy/MM/DD HH:ss") }}
                 </div>
               </div>
-              <div
-                v-if="status !== '正在使用中'"
-                class="flex justify-between items-center"
-              >
+              <div class="flex justify-between items-center">
+                <span class="text-base text-baseC font-normal truncate"
+                  >訂單編號 :</span
+                >
+                <div class="text-small font-bold flex items-end justify-end">
+                  {{ order.uuid }}
+                </div>
+              </div>
+              <div class="flex justify-between items-end">
+                <span class="text-base text-baseC font-normal truncate"
+                  >設備編號 :</span
+                >
+                <div class="text-small font-bold flex items-end justify-end">
+                  {{ order.device.uuid }}
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center">
                 <span class="text-base text-baseC font-normal truncate"
                   >訂單狀態 :</span
                 >
-                <div class="text-large">{{ status }}</div>
+                <div
+                  :class="[
+                    'text-large font-bold',
+                    status == '已完成'
+                      ? 'text-baseC/40'
+                      : status == '待支付'
+                        ? 'text-primary/60'
+                        : 'text-text-[#00a5ff]'
+                  ]"
+                >
+                  {{ status }}
+                </div>
+              </div>
+              <div
+                v-if="status == '待支付'"
+                class="flex justify-between items-center"
+              >
+                <PrimaryButton
+                  class="grow w-full"
+                  @click="RenewalOrder(order.uuid)"
+                >
+                  <template #default>
+                    <div
+                      class="grow h-[22px] flex flex-row justify-center items-center gap-2"
+                    >
+                      <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+                      <span
+                        class="text-larger text-inverted font-bold tracking-wide"
+                        >繼續續費</span
+                      >
+                    </div>
+                  </template>
+                </PrimaryButton>
               </div>
               <div
                 v-if="status === '正在使用中'"
@@ -133,7 +187,7 @@
           </div>
           <div>
             <div
-              class="flex flex-row justify-center items-center gap-2.5 w-full m-5"
+              class="flex flex-row justify-center items-center gap-2.5 w-full mb-5 mt-2.5"
             >
               <button class="text-primary text-base font-normal">
                 有疑問？聯繫客服
@@ -150,12 +204,12 @@
       :close-on-click-overlay="true"
     >
       <div
-        class="flex flex-col h-[40vh] bg-gradient-to-b from-skin-primary/10 to-skin-primary/30 items-center p-2.5 gap-2.5"
+        class="flex flex-col h-[auto] bg-gradient-to-b from-skin-primary/10 to-skin-primary/30 items-center px-2.5 py-5 gap-2.5"
       >
         <h1 class="text-largest test-basec">充值續費</h1>
         <span
           class="flex flex-row justify-start text-baseC text-base w-full ml-2.5"
-          >充值时间</span
+          >充值時間</span
         >
         <div class="flex flex-row items-center w-full -ml-2.5">
           <span class="text-primary text-base">*</span>
@@ -167,18 +221,18 @@
                 id="number"
                 v-model="duration"
                 type="number"
-                placeholder="请输入充值时间"
+                placeholder="請輸入充值時間"
                 class="w-[60vw] h-[24px] pl-2 rounded-button"
               />
-              <span class="text-primary text-base mr-1.5">/小时</span>
+              <span class="text-primary text-large mr-1.5">/小時</span>
             </div>
           </div>
         </div>
         <div class="flex flex-row w-full ml-2 justify-between">
           <span class="flex flex-row justify-start text-baseC text-base w-full">
-            总计金额</span
+            總計金額</span
           >
-          <span v-if="function_price" class="text-primary text-base mr-[26px]"
+          <span v-if="function_price" class="text-primary text-large mr-[26px]"
             >{{ totalPrice }}HKD</span
           >
         </div>
@@ -186,7 +240,7 @@
           v-if="isShowDurationSpan"
           class="h-2.5 w-full -mt-2.5 text-small ml-[2px] text-red-500"
         >
-          充值时间需要>0且为整数
+          充值時間需要>0且為整數
         </span>
 
         <PrimaryButton class="w-[98%]" @click="handleRenewalOrder">
@@ -229,7 +283,7 @@ const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const router = useRouter();
-//转换成字符串
+//轉換成字符串
 const orderId = router.currentRoute.value.query.uuid;
 // console.log(orderId);
 const ordersH = ref([]);
@@ -241,14 +295,17 @@ onBeforeMount(async () => {
         console.log(res);
         let data = res.data;
         ordersH.value = [data];
+        duration.value = data.quantity;
         // Handle different statuses
         if (data.status === OrderStatus.Pending) {
-          status.value = "正在支付中";
+          status.value = "待支付";
         } else if (data.status === OrderStatus.Ongoing) {
           // Logic to show buttons for ending the order and renewing, similar to orderPage
           status.value = "正在使用中";
         } else if (data.status === OrderStatus.Ended) {
           status.value = "已完成";
+        } else if (data.status === OrderStatus.Closed) {
+          status.value = "已關閉";
         }
         // console.log(ordersH.value);
       })
@@ -278,7 +335,7 @@ const endOrderU = async (id: string) => {
     })
     .catch(err => {
       console.log(err);
-      showFailToast("取消訂單失敗");
+      showFailToast(`訂單取消失敗:${err.response.data.message}`);
     });
 };
 const function_price = ref();
@@ -294,7 +351,7 @@ const RenewalOrder = async (uuid: string) => {
     })
     .catch(err => {
       console.log(err);
-      showFailToast("獲取訂單失敗");
+      showFailToast(`獲取訂單失敗:${err.response.data.message}`);
     });
   renewOrderId.value = uuid;
   isShowDialog.value = true;
@@ -317,7 +374,7 @@ const handleRenewalOrder = async () => {
         })
         .catch(err => {
           console.log(err);
-          showFailToast(`支付失败:${err.response.data.message}`);
+          showFailToast(`支付失敗:${err.response.data.message}`);
         });
       isShowDialog.value = false;
     }

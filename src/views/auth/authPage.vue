@@ -3,15 +3,18 @@
     :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
     class="text-muted bg-gradient-to-b from-skin-primary/20 to-skin-primary h-[140vh]"
   >
+    <!-- 主容器 -->
     <div>
+      <!-- 內部佈局容器 -->
       <div class="flex flex-col w-full gap-[10px] p-2.5 absolute">
+        <!-- 卡片樣式容器 -->
         <div class="rounded-card w-full h-[128px] bg-base/90" />
         <div class="flex flex-row gap-2.5 w-full h-[100px]">
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
         </div>
         <div class="rounded-card w-full h-[128px] bg-base/90" />
-        <!-- TODO:设置登录按钮跳转页面 -->
+        <!-- 登錄按鈕容器 -->
         <div class="flex flex-row w-full p-2.5">
           <div class="flex flex-row gap-[15px]">
             <img
@@ -37,7 +40,7 @@
 
           <div />
         </div>
-        <!-- buttons -->
+        <!-- 功能按鈕區 -->
         <div
           class="rounded-card bg-base text-mutedC flex flex-row justify-between gap-2.5 w-full h-[77px] px-5 py-2.5"
         >
@@ -63,6 +66,7 @@
   </div>
 </template>
 <script setup lang="ts" name="AuthPage">
+// 引入Vue相關功能
 import { reactive, computed } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -72,6 +76,7 @@ import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
 
+// 使用主題相關的store
 const themeStore = useThemeStore();
 const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
@@ -84,6 +89,7 @@ const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
 const router = useRouter();
 
+// 導航到設置頁面的函數
 const navigateToSetting = () => {
   console.log("Navigating to Setting");
   router.push({ name: "Setting" }).catch(err => console.error(err));

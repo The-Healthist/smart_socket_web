@@ -8,13 +8,13 @@
         class="bg-primary text-white px-4 py-2 rounded shadow-md hover:bg-primary-dark transition"
         @click="router.push('login')"
       >
-        登录
+        登入
       </button>
     </div>
 
     <!-- Theme switcher -->
     <div class="mt-0">
-      <span class="text-primary">主题颜色</span>
+      <span class="text-primary">主題顏色</span>
       <div class="mt-5">
         <button
           v-for="t in themes"
@@ -28,7 +28,7 @@
     </div>
     <!-- Roundness Switcher -->
     <div :class="`theme-rounded-${rounded} mt-10`">
-      <span class="text-primary">圆角大小</span>
+      <span class="text-primary">圓角大小</span>
       <div class="mt-5">
         <button
           v-for="r in roundeds"
@@ -43,7 +43,7 @@
 
     <!-- Font Size Switcher -->
     <div :class="`text-base mt-10`">
-      <span class="text-primary">字体大小</span>
+      <span class="text-primary">字體大小</span>
       <div class="mt-5">
         <button
           v-for="size in currentFontSizes"
@@ -58,7 +58,7 @@
 
     <!-- Text Switcher -->
     <div class="mt-10">
-      <span class="text-primary">字体选择</span>
+      <span class="text-primary">字體選擇</span>
       <div class="mt-5 grid grid-cols-3 gap-4">
         <!-- NotoSansHK -->
         <button
@@ -112,7 +112,7 @@
 
     <!-- Color Palette -->
     <div class="mt-10">
-      <h3 class="font-bold text-[18px] my-[4px]">Color Palette</h3>
+      <h3 class="font-bold text-[18px] my-[4px]">顏色調色盤</h3>
       <div class="grid grid-cols-6 gap-4 mt-5">
         <div
           v-for="color in colorPalette"

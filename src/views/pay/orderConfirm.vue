@@ -33,7 +33,7 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-base text-baseC font-normal truncate"
-            >支付金额 :</span
+            >支付金額 :</span
           >
           <div class="text-larger font-bold">
             {{ formDataOrder?.amount }}HKD
@@ -41,21 +41,23 @@
         </div>
 
         <!-- Payment Details -->
-        <div class="flex flex-row gap-2.5 mt-2.5 justify-between items-center">
+        <div
+          class="flex flex-row gap-2.5 mt-[10px] justify-between items-center"
+        >
           <label for="email" class="w-[24vw] text-base text-baseC font-normal"
-            >邮箱地址 :</label
+            >郵箱 :</label
           >
           <input
             id="email"
             v-model="formDataAuth.email"
             type="email"
-            placeholder="请输入邮箱地址/选填"
-            class="border rounded p-1 grow"
+            placeholder="請輸入郵箱地址/選填"
+            class="border rounded grow text-base shadow-inner px-2.5 py-[5px]"
           />
         </div>
         <div class="flex h-2.5">
           <span v-if="isShowEmailSpan" class="text-red-500 text-base"
-            >邮箱格式不正确</span
+            >郵箱格式不正確</span
           >
         </div>
         <div
@@ -66,36 +68,20 @@
             class="w-[24vw] text-base text-baseC font-normal flex flex-row justify-start items-center"
           >
             <span class="text-red-500 text-base text-center w-2.5">*</span
-            >手机号:</label
+            >電話:</label
           >
           <input
             id="phone"
             v-model="formDataAuth.mobile"
             type="tel"
-            placeholder="请输入手机号/不可为空"
-            class="border rounded p-1 grow ml-2.5"
+            placeholder="請輸入手機號/不可為空"
+            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
           />
         </div>
         <div class="flex h-2.5">
           <span v-if="isShowPhoneSpan" class="text-red-500 text-base"
-            >手机号码不能位空且为6~12位数字</span
+            >手機號碼不能位空且為6~12位數字</span
           >
-        </div>
-
-        <!-- One-Click Register Checkbox -->
-        <div v-if="isShowRegister" class="flex items-center mt-4">
-          <input
-            id="register-checkbox"
-            v-model="isRegistering"
-            type="checkbox"
-            class="mr-2"
-          />
-          <label
-            for="register-checkbox"
-            class="text-base text-baseC font-normal"
-          >
-            一键注册
-          </label>
         </div>
 
         <!-- Conditional Password Inputs -->
@@ -106,20 +92,20 @@
           <label
             for="password"
             class="text-base text-baseC font-normal w-[24vw]"
-            ><span class="text-red-500 text-base text-center w-2.5">*</span>密码
+            ><span class="text-red-500 text-base text-center w-2.5">*</span>密碼
             :</label
           >
           <input
             id="password"
             v-model="formDataAuth.password"
             type="password"
-            placeholder="请输入密码"
-            class="border rounded p-1 grow ml-2.5"
+            placeholder="請輸入密碼"
+            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
           />
         </div>
         <div class="flex h-2.5">
           <span v-if="isShowPasswordSpan" class="text-red-500 text-small"
-            >密码不能为空且必须是6~16位</span
+            >密碼不能為空且必須是6~16位</span
           >
         </div>
         <div
@@ -130,14 +116,36 @@
             for="confirm-password"
             class="text-base text-baseC font-normal w-[24vw]"
             ><span class="text-red-500 text-base text-center w-2.5">*</span
-            >确认密码 :</label
+            >確認密碼 :</label
           >
           <input
             id="confirm-password"
             v-model="formDataAuth.confirmPassword"
             type="password"
-            placeholder="请确认密码"
-            class="border rounded p-1 grow ml-2.5"
+            placeholder="請確認密碼"
+            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
+          />
+        </div>
+
+        <!-- One-Click Register Checkbox -->
+        <div v-if="isShowRegister" class="flex items-center justify-end mt-4">
+          <label
+            for="register-checkbox"
+            class="text-base text-baseC font-normal"
+          >
+            同意
+            <a
+              href="/path/to/agreement"
+              target="_blank"
+              class="text-blue-500 text-base"
+              >《協議》</a
+            >並註冊
+          </label>
+          <input
+            id="register-checkbox"
+            v-model="isRegistering"
+            type="checkbox"
+            class="mr-2 ml-2 w-4 h-4"
           />
         </div>
 
@@ -150,7 +158,7 @@
                 <span
                   class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
                 >
-                  返回上级
+                  返回上級
                 </span>
               </div>
             </template>
@@ -161,8 +169,15 @@
                 class="h-[22px] flex flex-row justify-center items-center gap-2"
               >
                 <i-icon icon="mingcute:flash-line" class="text-[20px]" />
-                <span class="text-larger text-inverted font-bold tracking-wide"
+                <span
+                  v-if="!isShowRegister"
+                  class="text-larger text-inverted font-bold tracking-wide"
                   >即刻支付</span
+                >
+                <span
+                  v-else
+                  class="text-larger text-inverted font-bold tracking-wide"
+                  >註冊並支付</span
                 >
               </div>
             </template>
@@ -172,8 +187,9 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts" name="OrderConfirm">
-// 导入Vue相关功能和组件
+// 導入Vue相關功能和組件
 import { computed, ref, reactive, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -195,7 +211,7 @@ import {
 import { getSocketInfo } from "@/api/socket";
 import { AddOrder, getOrderOnPayMent, payOrder } from "@/api/order";
 
-// 使用主题相关的store
+// 使用主題相關的store
 const themeStore = useThemeStore();
 const currentTheme = computed(() => themeStore.getTheme);
 const roundedStore = useRoundedStore();
@@ -218,10 +234,10 @@ interface formdataOrder {
   device_id: string;
 }
 
-// 解析路由查询参数
+// 解析路由查詢參數
 const orderQuery = route.query;
 
-// 初始化表单数据
+// 初始化表單數據
 const formDataOrder = ref<formdataOrder>({
   name: "",
   location: "",
@@ -252,7 +268,7 @@ const formDataRegister = ref<formdataRegister>({
 const isRegistering = ref(false);
 const isShowRegister = ref(false);
 
-// 计算属性用于验证表单字段
+// 計算屬性用於驗證表單字段
 const isValidEmail = computed(() =>
   validateField("email", formDataAuth.value.email)
 );
@@ -263,15 +279,15 @@ const isValidPassword = computed(() =>
   validateField("password", formDataAuth.value.password)
 );
 
-// 控制错误信息显示
+// 控制錯誤信息顯示
 const isShowEmailSpan = ref(false);
 const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const isShowConfirmPasswordSpan = ref(false);
 
-// 注册处理函数
+// 註冊處理函數
 async function handleRegister() {
-  // 更新错误信息显示状态
+  // 更新錯誤信息顯示狀態
   isShowEmailSpan.value = formDataAuth.value.email && !isValidEmail.value;
   isShowPhoneSpan.value = !formDataAuth.value.mobile || !isValidPhone.value;
   isShowPasswordSpan.value =
@@ -279,14 +295,14 @@ async function handleRegister() {
   isShowConfirmPasswordSpan.value =
     formDataAuth.value.password !== formDataAuth.value.confirmPassword;
 
-  // 验证表单数据
+  // 驗證表單數據
   if (
     isShowEmailSpan.value ||
     isShowPhoneSpan.value ||
     isShowPasswordSpan.value ||
     isShowConfirmPasswordSpan.value
   ) {
-    showFailToast("请正确填写所有必填字段!");
+    showFailToast("請正確填寫所有必填字段!");
     return;
   } else {
     Register(formDataRegister.value)
@@ -296,19 +312,21 @@ async function handleRegister() {
         if (res.token) {
           localStorage.setItem("common_token", res.token);
           localStorage.setItem("isGuest", "false");
-          showSuccessToast("注册成功,请在手机上确认");
-          router.push({ path: "/afterRegister" });
+          localStorage.setItem("mobile", formDataAuth.value.mobile);
+          localStorage.setItem("email", formDataAuth.value.email);
+          showSuccessToast("註冊成功,請在手機上確認");
+          // router.push({ path: "/afterRegister" });
         } else if (res.error) {
-          showFailToast(res.error);
+          showFailToast(`註冊失敗:${res.error.response.data.message}`);
         }
       })
       .catch(err => {
-        showFailToast(`注册失败:${err}`);
+        showFailToast(`註冊失敗:${err.response.data.message}`);
       });
   }
 }
 
-// 支付处理函数
+// 支付處理函數
 const handlePayment = () => {
   let queryString = new URLSearchParams({
     mobile: formDataAuth.value.mobile,
@@ -319,7 +337,7 @@ const handlePayment = () => {
   }).toString();
   let decodedString = decodeURIComponent(queryString);
 
-  // 换成需要的数据结构字符串了
+  // 換成需要的數據結構字符串了
   formDataRegister.value = {
     mobile: formDataAuth.value.mobile,
     password: formDataAuth.value.password,
@@ -327,7 +345,7 @@ const handlePayment = () => {
     token: localStorage.getItem("common_token") as string
   };
 
-  // 添加邮箱
+  // 添加郵箱
   if (formDataAuth.value.email) {
     formDataRegister.value = {
       ...formDataRegister.value,
@@ -337,9 +355,8 @@ const handlePayment = () => {
 
   if (isShowRegister.value && isRegistering.value) {
     handleRegister();
-    return;
   }
-  // 注册成功后添加订单
+  // 註冊成功後添加訂單
   AddOrder({
     quantity: parseInt(formDataOrder.value.quantity),
     deviceUuid: device_id.value,
@@ -357,22 +374,22 @@ const handlePayment = () => {
           }
         });
       });
-      //TODO: 支付订单
+      //TODO: 支付訂單
     })
     .catch(err => {
-      showFailToast(err);
+      showFailToast(`支付失敗:${err.response.data.message}`);
     });
 };
 
-// 组件挂载前的逻辑
+// 組件掛載前的邏輯
 onBeforeMount(async () => {
   const infoQuery = route.query;
   let isGuest = localStorage.getItem("isGuest");
   isShowRegister.value = isGuest === "true" ? true : false;
-  // 如果token存在，则表示是链接由qq直接跳转过来的
+  // 如果token存在，則表示是鏈接由qq直接跳轉過來的
   if (infoQuery.token) {
-    isShowRegister.value = false; //不显示注册按钮
-    //设置token mobile 选填email 时间
+    isShowRegister.value = false; //不顯示註冊按鈕
+    //設置token mobile 選填email 時間
     localStorage.setItem("common_token", infoQuery.token as string);
     localStorage.setItem("mobile", infoQuery.mobile as string);
     formDataAuth.value.mobile = infoQuery.mobile as string;
@@ -382,7 +399,7 @@ onBeforeMount(async () => {
       formDataAuth.value.email = infoQuery.email as string;
     }
     device_id.value = infoQuery.device_id as string;
-    // 获取设备详细信息
+    // 獲取設備詳細信息
     getSocketInfo({ socketId: device_id.value })
       .then((res: any) => {
         formDataOrder.value.location = res.data.location;
@@ -391,13 +408,12 @@ onBeforeMount(async () => {
           parseInt(formDataOrder.value.quantity),
           res.data.priceFormula
         ).toString();
-        console.log("formDataOrder.value.amount", formDataOrder.value.amount);
       })
       .catch(err => {
-        showFailToast(err);
+        showFailToast(`獲取信息失敗:${err.response.data.message}`);
       });
   }
-  //不是由链接跳转,正常过来的
+  //不是由鏈接跳轉,正常過來的
   else {
     device_id.value = infoQuery.device_id as string;
     formDataOrder.value.device_id = device_id.value;
