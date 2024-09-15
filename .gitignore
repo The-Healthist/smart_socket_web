@@ -26,3 +26,5 @@ coverage
 *.sw?
 
 /src/typings/components.d.ts
+
+build_to_remote.sh
