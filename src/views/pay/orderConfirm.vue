@@ -6,150 +6,152 @@
     <div
       class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[auto] mt-[7vh] absolute"
     >
-      <div class="text-largest font-bold tracking-wide flex justify-center">
+      <div
+        class="text-largest font-bold tracking-wide flex justify-center text-common"
+      >
         訂單確認
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-4">
         <!-- Order Details -->
-        <div class="flex justify-between items-center">
-          <span class="text-base text-baseC font-normal truncate"
-            >插座名稱 :</span
-          >
-          <div class="text-larger">{{ formDataOrder?.name }}</div>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-base text-baseC font-normal truncate"
-            >插座地址 :</span
-          >
-          <div class="text-larger">{{ formDataOrder?.location }}</div>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-base text-baseC font-normal truncate"
-            >租用時間 :</span
-          >
-          <div class="text-large font-bold">
-            {{ formDataOrder?.quantity }}/H
+        <div class="flex flex-col gap-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-base text-common font-normal truncate"
+              >插座名稱 :</span
+            >
+            <div class="text-larger text-common leading-none">
+              {{ formDataOrder?.name }}
+            </div>
           </div>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-base text-baseC font-normal truncate"
-            >支付金額 :</span
-          >
-          <div class="text-larger font-bold">
-            {{ formDataOrder?.amount }}HKD
+          <div class="flex justify-between items-center">
+            <span class="text-base text-common font-normal truncate"
+              >插座地址 :</span
+            >
+            <div class="text-larger text-common leading-none">
+              {{ formDataOrder?.location }}
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-base text-common font-normal truncate"
+              >租用時間 :</span
+            >
+            <div class="text-larger text-common font-bold leading-none">
+              {{ formDataOrder?.quantity }}HKD/H
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-base text-common font-normal truncate"
+              >支付金額 :</span
+            >
+            <div class="text-larger font-bold leading-none text-red-500">
+              {{ formDataOrder?.amount }}HKD
+            </div>
           </div>
         </div>
 
         <!-- Payment Details -->
-        <div
-          class="flex flex-row gap-2.5 mt-[10px] justify-between items-center"
-        >
-          <label for="email" class="w-[24vw] text-base text-baseC font-normal"
-            >郵箱 :</label
+        <div class="flex flex-col gap-2.5">
+          <div class="flex flex-row justify-between items-center">
+            <div class="flex-none w-20 text-base text-common tracking-wider">
+              電郵
+            </div>
+            <input
+              id="email"
+              v-model="formDataAuth.email"
+              type="email"
+              class="flex-1 w-0 border rounded shadow-inner px-2 py-0.5 text-base text-common tracking-wide"
+              placeholder="請鍵入電郵"
+            />
+          </div>
+          <div v-if="isShowEmailSpan" class="flex h-2.5">
+            <span class="text-red-500 text-base">郵箱格式不正確</span>
+          </div>
+
+          <div class="flex flex-row justify-between items-center">
+            <div class="flex-none w-20 text-base text-common tracking-wider">
+              電話<span class="text-red-500 text-base text-center w-2.5"
+                >*</span
+              >
+            </div>
+            <input
+              id="phone"
+              v-model="formDataAuth.mobile"
+              type="tel"
+              class="flex-1 w-0 border rounded shadow-inner px-2 py-0.5 text-base text-common tracking-wide"
+              placeholder="請鍵入電話"
+            />
+          </div>
+          <div v-if="isShowPhoneSpan" class="flex h-2.5">
+            <span class="text-red-500 text-base"
+              >手機號碼不能位空且為6~12位數字</span
+            >
+          </div>
+
+          <div
+            v-if="isRegistering"
+            class="flex flex-row justify-between items-center"
           >
-          <input
-            id="email"
-            v-model="formDataAuth.email"
-            type="email"
-            placeholder="請輸入郵箱地址/選填"
-            class="border rounded grow text-base shadow-inner px-2.5 py-[5px]"
-          />
-        </div>
-        <div class="flex h-2.5">
-          <span v-if="isShowEmailSpan" class="text-red-500 text-base"
-            >郵箱格式不正確</span
+            <div class="flex-none w-20 text-base tracking-wider">
+              密碼<span
+                class="text-red-500 text-base text-common text-center w-2.5"
+                >*</span
+              >
+            </div>
+            <input
+              id="password"
+              v-model="formDataAuth.password"
+              type="password"
+              class="flex-1 w-0 border rounded shadow-inner px-2 py-0.5 text-base text-common tracking-wide"
+              placeholder="請鍵入密碼"
+            />
+          </div>
+          <div v-if="isShowPasswordSpan" class="flex h-2.5">
+            <span class="text-red-500 text-small"
+              >密碼不能為空且必須是6~16位</span
+            >
+          </div>
+
+          <div
+            v-if="isRegistering"
+            class="flex flex-row justify-between items-center"
           >
-        </div>
-        <div
-          class="flex flex-row gap-2.5 justify-between mt-2.5 ml-[-10px] items-center"
-        >
-          <label
-            for="phone"
-            class="w-[24vw] text-base text-baseC font-normal flex flex-row justify-start items-center"
-          >
-            <span class="text-red-500 text-base text-center w-2.5">*</span
-            >電話:</label
-          >
-          <input
-            id="phone"
-            v-model="formDataAuth.mobile"
-            type="tel"
-            placeholder="請輸入手機號/不可為空"
-            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
-          />
-        </div>
-        <div class="flex h-2.5">
-          <span v-if="isShowPhoneSpan" class="text-red-500 text-base"
-            >手機號碼不能位空且為6~12位數字</span
-          >
+            <div class="flex-none w-20 text-base tracking-wider">
+              確認密碼<span
+                class="text-red-500 text-base text-common text-center w-2.5"
+                >*</span
+              >
+            </div>
+            <input
+              id="confirm-password"
+              v-model="formDataAuth.confirmPassword"
+              type="password"
+              class="flex-1 w-0 border rounded shadow-inner px-2 py-0.5 text-base text-common tracking-wide"
+              placeholder="請再次鍵入密碼"
+            />
+          </div>
+
+          <div v-if="isShowRegister" class="flex items-center justify-end">
+            <label
+              for="register-checkbox"
+              class="text-base text-common font-normal"
+            >
+              同意
+              <a
+                href="/path/to/agreement"
+                target="_blank"
+                class="text-blue-500 text-base"
+                >《協議》</a
+              >並註冊
+            </label>
+            <input
+              id="register-checkbox"
+              v-model="isRegistering"
+              type="checkbox"
+              class="mr-2 ml-2 w-4 h-4"
+            />
+          </div>
         </div>
 
-        <!-- Conditional Password Inputs -->
-        <div
-          v-if="isRegistering"
-          class="flex flex-row gap-2.5 ml-[-10px] mt-2.5 justify-between items-center"
-        >
-          <label
-            for="password"
-            class="text-base text-baseC font-normal w-[24vw]"
-            ><span class="text-red-500 text-base text-center w-2.5">*</span>密碼
-            :</label
-          >
-          <input
-            id="password"
-            v-model="formDataAuth.password"
-            type="password"
-            placeholder="請輸入密碼"
-            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
-          />
-        </div>
-        <div class="flex h-2.5">
-          <span v-if="isShowPasswordSpan" class="text-red-500 text-small"
-            >密碼不能為空且必須是6~16位</span
-          >
-        </div>
-        <div
-          v-if="isRegistering"
-          class="flex flex-row gap-2.5 ml-[-10px] mt-2.5 justify-between items-center"
-        >
-          <label
-            for="confirm-password"
-            class="text-base text-baseC font-normal w-[24vw]"
-            ><span class="text-red-500 text-base text-center w-2.5">*</span
-            >確認密碼 :</label
-          >
-          <input
-            id="confirm-password"
-            v-model="formDataAuth.confirmPassword"
-            type="password"
-            placeholder="請確認密碼"
-            class="border rounded px-2.5 py-[5px] grow ml-2.5 shadow-inner text-base"
-          />
-        </div>
-
-        <!-- One-Click Register Checkbox -->
-        <div v-if="isShowRegister" class="flex items-center justify-end mt-4">
-          <label
-            for="register-checkbox"
-            class="text-base text-baseC font-normal"
-          >
-            同意
-            <a
-              href="/path/to/agreement"
-              target="_blank"
-              class="text-blue-500 text-base"
-              >《協議》</a
-            >並註冊
-          </label>
-          <input
-            id="register-checkbox"
-            v-model="isRegistering"
-            type="checkbox"
-            class="mr-2 ml-2 w-4 h-4"
-          />
-        </div>
-
-        <div class="flex flex-row justify-between gap-2.5 w-full mt-4">
+        <div class="flex flex-row justify-between gap-2.5 w-full">
           <InvertedButton @click="router.go(-1)">
             <template #default>
               <div

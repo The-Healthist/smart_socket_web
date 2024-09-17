@@ -11,6 +11,7 @@ export default {
         separator: "rgb(var(--color-separator) / <alpha-value>)" // 通用背景颜色，带有透明度
       },
       textColor: {
+        common: "rgb(var(--color-text-base) / <alpha-value>)", // 通用文本颜色，带有透明度
         baseC: "rgb(var(--color-text-base) / <alpha-value>)", // 通用文本颜色，带有透明度
         mutedC: "rgb(var(--color-text-muted) / <alpha-value>)", // 辅助文本颜色，带有透明度
         inverted: "rgb(var(--color-text-inverted) / <alpha-value>)", // 插入文本颜色，带有透明度

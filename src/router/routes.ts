@@ -1,18 +1,14 @@
-import Layout from "@/layout/index.vue";
-import type { RouteRecordRaw } from "vue-router";
-import Home from "@/views/home/homePage.vue";
-
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: "/",
     name: "root",
-    component: Layout,
+    component: import("@/layout/index.vue"),
     redirect: { name: "Home" },
     children: [
       {
         path: "home",
         name: "Home",
-        component: Home,
+        component: import("@/views/home/homePage.vue"),
         meta: {
           title: "首頁"
         }
