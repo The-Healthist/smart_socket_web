@@ -51,7 +51,7 @@
         <!-- Payment Details -->
         <div class="flex flex-col gap-2.5">
           <div class="flex flex-row justify-between items-center">
-            <div class="flex-none w-20 text-base text-common tracking-wider">
+            <div class="flex-none w-3/12 text-base text-common tracking-wider">
               電郵
             </div>
             <input
@@ -67,7 +67,7 @@
           </div>
 
           <div class="flex flex-row justify-between items-center">
-            <div class="flex-none w-20 text-base text-common tracking-wider">
+            <div class="flex-none w-3/12 text-base text-common tracking-wider">
               電話<span class="text-red-500 text-base text-center w-2.5"
                 >*</span
               >
@@ -90,9 +90,8 @@
             v-if="isRegistering"
             class="flex flex-row justify-between items-center"
           >
-            <div class="flex-none w-20 text-base tracking-wider">
-              密碼<span
-                class="text-red-500 text-base text-common text-center w-2.5"
+            <div class="flex-none w-3/12 text-base text-common tracking-wider">
+              密碼<span class="text-red-500 text-base text-center w-2.5"
                 >*</span
               >
             </div>
@@ -114,9 +113,8 @@
             v-if="isRegistering"
             class="flex flex-row justify-between items-center"
           >
-            <div class="flex-none w-20 text-base tracking-wider">
-              確認密碼<span
-                class="text-red-500 text-base text-common text-center w-2.5"
+            <div class="flex-none w-3/12 text-base text-common tracking-wider">
+              確認密碼<span class="text-red-500 text-base text-center w-2.5"
                 >*</span
               >
             </div>
