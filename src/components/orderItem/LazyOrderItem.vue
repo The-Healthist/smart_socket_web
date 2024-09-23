@@ -167,7 +167,7 @@
             >
               <i-icon icon="mingcute:flash-line" class="text-[20px]" />
               <span class="text-larger text-inverted font-bold tracking-wide"
-                >繼續續費</span
+                >支付訂單</span
               >
             </div>
           </template>
