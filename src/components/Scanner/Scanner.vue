@@ -38,14 +38,14 @@
           />
         </div>
       </div>
-      <div
+      <!-- <div
         class="top-[60%] absolute w-full h-[42px] flex justify-center items-center"
       >
         <span
           class="w-[187px] text-large rounded-button bg-primary opacity- text-inverted text-center p-2.5 z-10"
           >掃不到?手動輸入</span
         >
-      </div>
+      </div> -->
       <!-- 视频播放元素 -->
       <video
         v-show="showPlay"

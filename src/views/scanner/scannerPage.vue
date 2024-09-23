@@ -28,13 +28,13 @@ function codeScanned(code) {
   scanned.value = code;
   console.log("code", code);
   //判斷是不是url
-  router.push({
-    name: "PayDetail",
-    params: { socketId: code.split("/")[5] }
-  });
-  // if (/^(http|https):\/\/[^ "]+$/.test(code)) {
-  //   window.location.href = code;
-  // }
+  // router.push({
+  //   name: "PayDetail",
+  //   params: { socketId: code.split("/")[5] }
+  // });
+  if (/^(http|https):\/\/[^ "]+$/.test(code)) {
+    window.location.href = code;
+  }
   if (code.indexOf("http") !== 0) {
     alert("請輸入正確的網址");
     return;
