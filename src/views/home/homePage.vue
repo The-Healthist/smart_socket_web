@@ -6,9 +6,9 @@
   >
     <!-- 内容区域 -->
     <div>
-      <div class="flex flex-col w-full gap-[10px] p-2.5 absolute">
+      <div class="flex flex-col w-full space-y-4 p-2.5 absolute">
         <!-- 卡片区域 -->
-        <div class="flex flex-row gap-2.5 w-full h-[100px]">
+        <div class="flex flex-row space-x-4 w-full h-[100px]">
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
         </div>
@@ -39,9 +39,11 @@
           </div>
         </div>
         <!-- 按钮区 -->
-        <div class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 h-[287px]">
+        <div
+          class="rounded-card bg-base flex flex-col space-y-2.5 p-2.5 h-[287px]"
+        >
           <div class="rounded-button w-full h-[235px] bg-slate-200" />
-          <div class="flex flex-row justify-between gap-2.5 w-full">
+          <div class="flex flex-row justify-between space-x-2.5 w-full">
             <InvertedButton>
               <template #default>
                 <div
@@ -59,7 +61,7 @@
             >
               <template #default>
                 <div
-                  class="h-[22px] flex flex-row justify-center items-center gap-2"
+                  class="h-[22px] flex flex-row justify-center items-center space-x-2 ml-2.5"
                 >
                   <i-icon icon="mingcute:flash-line" class="text-[20px]" />
                   <span

@@ -6,23 +6,23 @@
     <!-- 主容器 -->
     <div>
       <!-- 內部佈局容器 -->
-      <div class="flex flex-col w-full gap-[10px] p-2.5 absolute">
+      <div class="flex flex-col w-full space-y-2.5 p-2.5 absolute">
         <!-- 卡片樣式容器 -->
         <div class="rounded-card w-full h-[128px] bg-base/90" />
-        <div class="flex flex-row gap-2.5 w-full h-[100px]">
+        <div class="flex flex-row space-x-2.5 w-full h-[100px]">
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
           <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
         </div>
         <div class="rounded-card w-full h-[128px] bg-base/90" />
         <!-- 登錄按鈕容器 -->
         <div class="flex flex-row w-full p-2.5">
-          <div class="flex flex-row gap-[15px]">
+          <div class="flex flex-row space-x-[15px]">
             <img
               class="rounded-full w-[15vw] h-[15vw]"
               src="/src/assets/ang.png"
               alt="ang"
             />
-            <div class="flex flex-col gap-[2.75px] w-[65vw]">
+            <div class="flex flex-col space-y-[2.75px] w-[65vw]">
               <span class="text-larger text-baseC font-medium">iSmart</span>
               <span class="text-inverted text-base font-normal"
                 >為你生活來電的第365天</span
@@ -42,21 +42,21 @@
         </div>
         <!-- 功能按鈕區 -->
         <div
-          class="rounded-card bg-base text-mutedC flex flex-row justify-between gap-2.5 w-full h-[77px] px-5 py-2.5"
+          class="rounded-card bg-base text-mutedC flex flex-row justify-between space-x-2.5 w-full h-[77px] px-5 py-2.5"
         >
-          <div class="flex flex-col gap-[4px] justify-center items-center">
+          <div class="flex flex-col space-y-[4px] justify-center items-center">
             <i-icon icon="bx:wallet" class="text-[36px]" />
             <div>我的錢包</div>
           </div>
-          <div class="flex flex-col gap-[4px] justify-center items-center">
+          <div class="flex flex-col space-y-[4px] justify-center items-center">
             <i-icon icon="cil:list" class="text-[36px]" />
             <div>我的訂單</div>
           </div>
-          <div class="flex flex-col gap-[4px] justify-center items-center">
+          <div class="flex flex-col space-y-[4px] justify-center items-center">
             <i-icon icon="icon-park-outline:woman" class="text-[36px]" />
             <div>客服中心</div>
           </div>
-          <div class="flex flex-col gap-[4px] justify-center items-center">
+          <div class="flex flex-col space-y-[4px] justify-center items-center">
             <i-icon icon="hugeicons:safari" class="text-[36px]" />
             <div>使用指南</div>
           </div>
