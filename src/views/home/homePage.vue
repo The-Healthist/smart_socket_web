@@ -2,17 +2,46 @@
   <!-- 主模板容器 -->
   <div
     :class="`font-${text} theme-color-${currentTheme} theme-rounded-${currrentRounded} theme-fontsize-${currentFontSize} font-${text} `"
-    class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[140vh]"
+    class="text-muted bg-gradient-to-b from-skin-primary/30 to-skin-primary h-[140vh]"
   >
     <!-- 内容区域 -->
     <div>
       <div class="flex flex-col w-full space-y-4 p-2.5 absolute">
         <!-- 卡片区域 -->
-        <div class="flex flex-row space-x-4 w-full h-[100px]">
-          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
-          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
+        <div class="rounded-card w-full h-[115px] bg-base/90">
+          <img
+            src="@/assets/homePage/Screenshot 2024-08-20 at 18.35.23 1.png"
+            alt="homePage"
+            class="w-full h-full fill-transparent opacity-80 rounded-card"
+          />
         </div>
-        <div class="rounded-card w-full h-[128px] bg-base/90" />
+        <div class="flex flex-row space-x-4 w-full h-[100px]">
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90">
+            <img
+              src="@/assets/homePage/Screenshot 2024-08-20 at 18.41.09 1.png"
+              alt="homePage"
+              class="w-full h-full fill-transparent opacity-80 rounded-card"
+            />
+          </div>
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90">
+            <div
+              class="h-[100px] pl-[78.50px] pt-[47px] bg-white rounded-xl justify-end items-center inline-flex"
+            >
+              <div
+                class="origin-top-left rotate-[-14.65deg] text-center text-[#8c4040] text-2xl font-bold font-['Inter'] tracking-wide"
+              >
+                誠招加盟
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-card w-full h-[115px] bg-base/90">
+          <img
+            src="@/assets/homePage/Screenshot 2024-08-20 at 18.35.23 1.png"
+            alt="homePage"
+            class="w-full h-full fill-transparent opacity-80 rounded-card"
+          />
+        </div>
         <!-- 功能选项区 -->
         <div
           class="rounded-card bg-base/90 text-mutedC flex flex-row justify-between gap-2.5 w-full h-[77px] px-5 py-2.5"
@@ -79,7 +108,7 @@
 </template>
 <script setup lang="ts" name="Home">
 // 引入Vue相关功能
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
 // 引入主题相关的存储库
@@ -105,4 +134,8 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const texts = computed(() => textStore.getTexts);
 // 使用Vue
+
+onMounted(() => {
+  window.scrollTo(0, window.innerHeight * 0.25);
+});
 </script>

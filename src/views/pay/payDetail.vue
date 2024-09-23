@@ -4,28 +4,37 @@
     class="text-muted bg-gradient-to-b from-skin-primary to-skin-secondary h-[100vh] relative flex justify-center items-center"
   >
     <div
-      class="rounded-card bg-base flex flex-col gap-2.5 p-2.5 w-[95vw] h-[auto] mt-[4vh] absolute"
+      class="rounded-card bg-base flex flex-col space-2.5 p-2.5 w-[95vw] h-[auto] mt-[4vh] absolute"
     >
       <!-- 圖片 -->
       <div
-        class="bg-base rounded-button w-full flex flex-col gap-2. justify-center items-center h-[205px]"
+        class="bg-base rounded-button w-full flex flex-col gap-2 justify-center items-center h-[205px]"
       >
         <img
+          v-if="info?.deviceType.pictureUrl"
           class="w-[136px] h-[133.02px] shadow"
           :src="info?.deviceType.pictureUrl"
         />
+        <img
+          v-else
+          class="w-[136px] h-[133.02px]"
+          src="@/assets/payDetail/Screenshot 2024-08-20 at 19.18.32 1.png"
+        />
         <span class="text-baseC text-base">{{ info?.name }}</span>
-        <span class="text-baseC text-base"
+        <!-- <span class="text-baseC text-base"
           >類型: {{ info?.deviceType.name }}</span
+        > -->
+        <span v-if="info?.location" class="text-baseC text-base"
+          >位置: {{ info?.location }}</span
         >
-        <span class="text-baseC text-base">位置: {{ info?.location }}</span>
+        <span v-else class="text-baseC text-base">位置获取失败</span>
       </div>
 
       <!-- 付費框框 -->
 
       <div class="flex flex-col w-full">
         <div
-          class="border-primary rounded-t-button border-solid border-l-[1px] border-t-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 px-2.5 pt-2.5"
+          class="border-primary rounded-t-button border-solid border-l-[1px] border-t-[1px] border-r-[1px] flex flex-row w-full justify-center items-center space-2.5 px-2.5 pt-2.5"
         >
           <button
             :class="
@@ -41,8 +50,8 @@
                 <span class="text-baseC text-base font-bold tracking-wide"
                   >1H</span
                 >
-                <span class="text-small font-normal text-baseC/50"
-                  >平均:
+                <span class="text-small font-normal text-baseC/50 truncate"
+                  >Avg:
                   {{
                     executePriceFunction(1, formDataOrder.function_price)
                   }}HKD/H</span
@@ -71,8 +80,8 @@
                 <span class="text-baseC text-base font-bold tracking-wide"
                   >2H</span
                 >
-                <span class="text-small font-normal text-baseC/50"
-                  >平均:
+                <span class="text-small font-normal text-baseC/50 truncate"
+                  >Avg:
                   {{
                     executePriceFunction(1, formDataOrder.function_price)
                   }}HKD/H</span
@@ -91,7 +100,7 @@
 
         <!-- 輸入 -->
         <div
-          class="border-primary rounded-b-card border-solid border-b-[1px] border-l-[1px] border-r-[1px] flex flex-row w-full justify-center items-center gap-2.5 p-2.5"
+          class="border-primary rounded-b-card border-solid border-b-[1px] border-l-[1px] border-r-[1px] flex flex-row w-full justify-center items-center space-2.5 p-2.5"
         >
           <div
             :class="
@@ -102,12 +111,24 @@
             class="flex flex-row w-full justify-center items-center p-2.5"
             @click="optionsValue = 3"
           >
-            <input
-              v-model="inputValue"
-              type="number"
-              class="w-[177px] h-[34px] text-center truncate py-[5px] rounded-[5px] shadow-inner text-base font-bold"
-            />
-
+            <div>
+              <input
+                v-model="inputValue"
+                type="number"
+                class="w-[177px] h-[34px] text-center truncate py-[5px] rounded-[5px] shadow-inner text-base font-bold"
+              />
+              <span
+                v-show="showInputError"
+                class="text-red-500 text-small truncate ml-0.5"
+                style="
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+                >值必須大於0且最多為一位小數</span
+              >
+              <!-- 繁體字提示 -->
+            </div>
             <div
               class="text-baseC text-base font-bold w-[15%] flex flex-row justify-center items-center"
             >
@@ -128,29 +149,13 @@
                   executePriceFunction(1, formDataOrder.function_price)
                 }}HKD/H</span
               >
+              <!-- 繁體字提示 -->
             </div>
           </div>
         </div>
       </div>
       <!-- TODO:修改支付成功邏輯 -->
-      <PrimaryButton
-        class="grow-x-1"
-        @click="
-          router.push({
-            name: 'OrderConfirm',
-            query: {
-              device_id: socketId,
-              location: info?.location,
-              quantity: duration,
-              amount: executePriceFunction(
-                duration,
-                formDataOrder.function_price
-              ),
-              name: info?.name
-            }
-          })
-        "
-      >
+      <PrimaryButton class="grow-x-1" @click="navigateToOrderConfirm">
         <template #default>
           <div class="h-[24px] flex flex-row justify-center items-center gap-2">
             <i-icon icon="mingcute:flash-line" class="text-[20px]" />
@@ -175,6 +180,7 @@ import { useRouter } from "vue-router";
 import { idText } from "typescript";
 import { getSocketInfo } from "@/api/socket";
 import { executePriceFunction } from "@/typings/data";
+import { watch } from "fs";
 
 const info = ref<any>();
 const router = useRouter();
@@ -238,4 +244,31 @@ const duration = computed(() => {
     return inputValue.value;
   }
 });
+const showInputError = ref(false);
+const durationValue = ref(4);
+const navigateToOrderConfirm = () => {
+  if (optionsValue.value == 3) {
+    if (inputValue.value <= 0) {
+      showInputError.value = true;
+      return;
+    }
+    if (inputValue.value.toString().split(".")[1]?.length > 1) {
+      showInputError.value = true;
+      return;
+    }
+  }
+  router.push({
+    name: "OrderConfirm",
+    query: {
+      device_id: socketId,
+      location: info.value?.location,
+      quantity: duration.value,
+      amount: executePriceFunction(
+        duration.value,
+        formDataOrder.value.function_price
+      ),
+      name: info.value?.name
+    }
+  });
+};
 </script>
