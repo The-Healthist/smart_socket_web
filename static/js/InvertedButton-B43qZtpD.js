@@ -1,0 +1,1 @@
+import{_ as e,a as o,Z as r,o as n}from"./index-D0pO9Tvl.js";const s={},a={class:"border-primary bg-base text-primary rounded-button border-[2px] hover:opacity-70 p-2.5 text-xl font-bold"};function c(t,d){return n(),o("button",a,[r(t.$slots,"default")])}const l=e(s,[["render",c]]);export{l as I};
