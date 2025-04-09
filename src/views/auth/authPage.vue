@@ -21,6 +21,7 @@
               class="rounded-full w-[15vw] h-[15vw]"
               src="/src/assets/ang.png"
               alt="ang"
+              @click="router.push({ name: 'Login' })"
             />
             <div class="flex flex-col space-y-[2.75px] w-[65vw]">
               <span class="text-larger text-baseC font-medium">iSmart</span>
@@ -92,6 +93,6 @@ const router = useRouter();
 // 導航到設置頁面的函數
 const navigateToSetting = () => {
   console.log("Navigating to Setting");
-  router.push({ name: "Setting" }).catch(err => console.error(err));
+  router.push({ name: "Setting" }).catch((err) => console.error(err));
 };
 </script>

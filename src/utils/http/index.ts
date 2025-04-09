@@ -14,11 +14,11 @@ import { guestUserLogin } from "@/api/auth";
 // 默认的 Axios 实例请求配置
 const configDefault = {
   headers: {
-    "Content-Type": ContentTypeEnum.JSON // 设置默认的请求头 Content-Type 为 JSON
+    "Content-Type": ContentTypeEnum.JSON
   },
-  timeout: 5000, // 请求超时时间，单位为毫秒
-  baseURL: "/", // 基础 URL，所有请求都会基于此 URL
-  data: {} // 默认的请求数据，通常为空对象
+  timeout: 5000,
+  baseURL: process.env.NODE_ENV === "production" ? "/" : "/api",
+  data: {}
 };
 
 class Http {

@@ -15,17 +15,21 @@
           <!-- 使用中按鈕 -->
           <div
             class="w-[47.5vw] h-[42px] flex justify-center items-center relative overflow-hidden"
-            :class="isUse ? 'bg-primary' : 'bg-base'"
+            :class="
+              orderStatus === OrderStatus.OrderStatusNoneFinished
+                ? 'bg-primary'
+                : 'bg-base'
+            "
           >
             <!-- 使用中狀態 -->
             <button
               class="w-full h-full flex flex-row gap-2.5 justify-center items-center relative z-10"
               :class="
-                isUse
+                orderStatus === OrderStatus.OrderStatusNoneFinished
                   ? 'text-primary bg-base rounded-t-bar'
                   : 'text-inverted bg-primary rounded-br-bar'
               "
-              @click="isUse = true"
+              @click="orderStatus = OrderStatus.OrderStatusNoneFinished"
             >
               <span class="text-large">使用中</span>
               <i-icon icon="mingcute:flash-line" class="text-[20px]" />
@@ -34,17 +38,21 @@
           <!-- 歷史訂單按鈕 -->
           <div
             class="w-[47.5vw] h-[42px] flex justify-center items-center relative overflow-hidden"
-            :class="!isUse ? 'bg-primary ' : 'bg-base '"
+            :class="
+              orderStatus === OrderStatus.OrderStatusFinished
+                ? 'bg-primary '
+                : 'bg-base '
+            "
           >
             <!-- 歷史訂單狀態 -->
             <button
               class="w-full h-full flex flex-row gap-2.5 justify-center items-center relative z-10"
               :class="
-                !isUse
+                orderStatus === OrderStatus.OrderStatusFinished
                   ? 'text-primary bg-base rounded-t-bar'
                   : 'text-inverted bg-primary rounded-bl-bar'
               "
-              @click="isUse = false"
+              @click="orderStatus = OrderStatus.OrderStatusFinished"
             >
               <i-icon icon="tabler:clock" class="text-[20px]" />
               <span class="text-base">歷史訂單</span>
@@ -55,7 +63,7 @@
         <div
           class="bg-base w-[95vw] h-[auto] min-h-[80vh] flex flex-col overflow-y-scroll pb-12"
           :class="
-            isUse
+            orderStatus === OrderStatus.OrderStatusNoneFinished
               ? 'rounded-tr-bar rounded-b-card'
               : 'rounded-tl-bar rounded-b-card'
           "
@@ -67,7 +75,7 @@
             </div>
           </div>
           <!-- 當前使用中的訂單 -->
-          <div v-if="isUse">
+          <div v-if="orderStatus === OrderStatus.OrderStatusNoneFinished">
             <lazy-component error-text="加載失敗" loading-text="加載中">
               <div v-for="order in orders" :key="order.uuid">
                 <LazyOrderItem
@@ -81,7 +89,7 @@
             </lazy-component>
           </div>
           <!-- 歷史訂單列表 -->
-          <div v-else>
+          <div v-else-if="orderStatus === OrderStatus.OrderStatusFinished">
             <lazy-component error-text="加載失敗" loading-text="加載中">
               <div v-for="order in ordersH" :key="order.uuid">
                 <LazyOrderItem
@@ -170,7 +178,8 @@ import {
   ref,
   onBeforeMount,
   onMounted,
-  onBeforeUnmount
+  onBeforeUnmount,
+  watch
 } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
 import InvertedButton from "@/components/Button/InvertedButton.vue";
@@ -193,6 +202,7 @@ import { OrderStatus } from "@/typings/order";
 import moment from "moment";
 import { useOrderStore } from "@/store/order/orderStore";
 import LazyOrderItem from "@/components/orderItem/LazyOrderItem.vue";
+
 // 初始化數據和計算屬性
 const router = useRouter();
 const themeStore = useThemeStore();
@@ -206,7 +216,8 @@ const textStore = useTextStore();
 const text = computed(() => textStore.getText);
 const orderStore = useOrderStore();
 
-const isUse = ref(true);
+// 將 isUse 替換為 orderStatus
+const orderStatus = ref<OrderStatus>(OrderStatus.OrderStatusNoneFinished);
 const orders = ref([]);
 const displayedOrders = computed(() => orders.value);
 const ordersH = ref([]);
@@ -233,6 +244,19 @@ const paginationH = ref({
 });
 const totalPageH = ref(10);
 
+// 監聽 orderStatus 變化
+watch(orderStatus, newStatus => {
+  // 當 orderStatus 變更時重置分頁並重新獲取訂單
+  if (newStatus === OrderStatus.OrderStatusNoneFinished) {
+    pagination.value.pageNum = 1;
+    orders.value = [];
+  } else if (newStatus === OrderStatus.OrderStatusFinished) {
+    paginationH.value.pageNum = 1;
+    ordersH.value = [];
+  }
+  fetchOrders();
+});
+
 // 結束訂單函數
 const endOrderU = async (id: string) => {
   endOrder({ uuid: id })
@@ -249,6 +273,7 @@ const endOrderU = async (id: string) => {
       showFailToast(`取消訂單失敗:${err.response.data.message}`);
     });
 };
+
 const function_price = ref();
 // 續費訂單函數
 const RenewalOrder = async (uuid: string) => {
@@ -269,6 +294,7 @@ const RenewalOrder = async (uuid: string) => {
   renewOrderId.value = uuid;
   isShowDialog.value = true;
 };
+
 // 處理續費訂單
 const handleRenewalOrder = async () => {
   if (!isValidDuration.value) isShowDurationSpan.value = true;
@@ -295,46 +321,47 @@ const handleRenewalOrder = async () => {
 // 獲取訂單數據
 const fetchOrders = async () => {
   let mobile = localStorage.getItem("mobile");
-  if (isUse.value) {
+
+  if (orderStatus.value === OrderStatus.OrderStatusNoneFinished) {
     getOrders({
       mobile: mobile,
       status: OrderStatus.OrderStatusNoneFinished,
       pageNum: pagination.value.pageNum,
       pageSize: pagination.value.pageSize
     })
-      .then(res => {
-        const after: any = res;
-        orders.value = [...orders.value, ...after.data];
-        orderStore.addOrder(after.data);
-        totalPage.value = after.pagination.total;
+      .then((res: any) => {
+        console.log(res);
+        orders.value =
+          pagination.value.pageNum === 1
+            ? res.data
+            : [...orders.value, ...res.data];
+        orderStore.addOrder(res.data);
+        totalPage.value = res.pagination.total;
       })
       .catch(err => {
         console.log(err);
-        showFailToast(`歷史訂單失敗:${err.response.data.message}`);
+        showFailToast(`獲取使用中訂單失敗:${err.response.data.message}`);
       });
-  } else {
+  } else if (orderStatus.value === OrderStatus.OrderStatusFinished) {
     getOrders({
       mobile: mobile,
       status: OrderStatus.OrderStatusFinished,
       pageNum: paginationH.value.pageNum,
       pageSize: paginationH.value.pageSize
     })
-      .then(res => {
-        const after: any = res;
-        ordersH.value = [...ordersH.value, ...after.data];
-        orderStore.addOrderH(after.data);
-        totalPageH.value = after.pagination.total;
+      .then((res: any) => {
+        ordersH.value =
+          paginationH.value.pageNum === 1
+            ? res.data
+            : [...ordersH.value, ...res.data];
+        orderStore.addOrderH(res.data);
+        totalPageH.value = res.pagination.total;
       })
       .catch(err => {
         console.log(err);
-        showFailToast(`歷史訂單失敗:${err.response.data.message}`);
+        showFailToast(`獲取歷史訂單失敗:${err.response.data.message}`);
       });
   }
-};
-
-// 格式化日期
-const formatDate = dateString => {
-  return moment(dateString).format("YYYY/MM/DD HH:mm");
 };
 
 // 組件掛載前執行
@@ -345,8 +372,11 @@ onBeforeMount(async () => {
   ) {
     fetchOrders();
   } else {
-    orders.value = orderStore.getOrderList;
-    ordersH.value = orderStore.getOrderListH;
+    if (orderStatus.value === OrderStatus.OrderStatusNoneFinished) {
+      orders.value = orderStore.getOrderList;
+    } else if (orderStatus.value === OrderStatus.OrderStatusFinished) {
+      ordersH.value = orderStore.getOrderListH;
+    }
   }
 });
 
@@ -358,14 +388,21 @@ const navigateToOrderDetail = uuid => {
   });
 };
 
+// 處理滾動加載更多
 const handleScroll = () => {
   const bottomOfWindow =
     window.innerHeight + window.scrollY >= document.body.offsetHeight;
   if (bottomOfWindow) {
-    if (isUse.value && pagination.value.pageNum < totalPage.value) {
+    if (
+      orderStatus.value === OrderStatus.OrderStatusNoneFinished &&
+      pagination.value.pageNum < totalPage.value
+    ) {
       pagination.value.pageNum += 1;
       fetchOrders();
-    } else if (!isUse.value && paginationH.value.pageNum < totalPageH.value) {
+    } else if (
+      orderStatus.value === OrderStatus.OrderStatusFinished &&
+      paginationH.value.pageNum < totalPageH.value
+    ) {
       paginationH.value.pageNum += 1;
       fetchOrders();
     }

@@ -80,6 +80,7 @@ export function executePriceFunction(amount: number, priceFunctionStr: string) {
       "Invalid price function string: Missing or misordered braces"
     );
   }
+
   const functionBody = priceFunctionStr.slice(startIndex + 1, endIndex).trim();
   const func = new Function("amount", functionBody);
   return func(amount);

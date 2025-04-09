@@ -14,7 +14,7 @@
       </div>
 
       <!-- 登錄表單 -->
-      <form class="flex flex-col">
+      <div class="flex flex-col">
         <!-- 手機號輸入字段 -->
         <div class="relative mt-2.5 flex flex-row justify-center items-center">
           <input
@@ -77,7 +77,7 @@
             </template>
           </PrimaryButton>
         </div>
-      </form>
+      </div>
 
       <!-- 註冊頁面鏈接 -->
       <div class="flex justify-center items-center p-2.4 mt-2.5">
@@ -119,7 +119,7 @@ const router = useRouter();
 // 表單數據和驗證狀態
 const formData = ref({
   mobile: "13583325035",
-  password: "test1234"
+  password: "test1234",
 });
 const isValidPhone = computed(() =>
   validateField("mobile", formData.value.mobile)
@@ -140,19 +140,19 @@ async function handleLogin() {
     console.error("請正確填寫所有必填字段！");
     return;
   }
-
+  console.log("formData", formData.value);
   Login(formData.value)
-    .then(res => {
+    .then((res) => {
       loginAfter.value = res;
-      localStorage.setItem("common_token", loginAfter.value.token);
       console.log("common_token", localStorage.getItem("common_token"));
+      localStorage.setItem("common_token", loginAfter.value.token);
       localStorage.setItem("mobile", formData.value.mobile);
-      localStorage.setItem("password", formData.value.password);
       localStorage.setItem("isGuest", "false");
-      router.push({ path: "/home" });
+
       showSuccessToast("登錄成功");
+      router.push({ name: "Home" });
     })
-    .catch(err => {
+    .catch((err) => {
       showFailToast(`登錄失敗:${err.response.data.message}`);
     });
 }
@@ -161,7 +161,7 @@ async function handleLoginGuest() {
   isShowPhoneSpan.value = false;
   isShowPasswordSpan.value = false;
   guestUserLogin()
-    .then(res => {
+    .then((res) => {
       loginAfter.value = res;
       console.log("loginAfter", loginAfter.value);
       localStorage.setItem("common_token", loginAfter.value.token);
@@ -169,7 +169,7 @@ async function handleLoginGuest() {
       showSuccessToast("遊客登錄成功");
       router.push({ name: "Home" });
     })
-    .catch(err => {
+    .catch((err) => {
       showFailToast(`登錄失敗:${err.response.data.message}`);
     });
 }

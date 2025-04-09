@@ -135,28 +135,29 @@
       <!-- TODO:修改支付成功邏輯 -->
       <PrimaryButton
         class="grow-x-1"
-        @click="
-          router.push({
-            name: 'OrderConfirm',
-            query: {
-              device_id: socketId,
-              location: info?.location,
-              quantity: duration,
-              amount: executePriceFunction(
-                duration,
-                formDataOrder.function_price
-              ),
-              name: info?.name
-            }
-          })
-        "
+        :disabled="runningOrder != null"
+        @click="onPay"
       >
         <template #default>
-          <div class="h-[24px] flex flex-row justify-center items-center gap-2">
+          <div
+            v-if="runningOrder == null"
+            class="h-[24px] flex flex-row justify-center items-center gap-2"
+          >
             <i-icon icon="mingcute:flash-line" class="text-[20px]" />
             <span class="text-larger text-inverted font-bold tracking-wide"
               >即刻支付</span
             >
+          </div>
+          <div
+            v-else
+            class="h-[24px] flex flex-col justify-center items-center"
+          >
+            <div class="flex flex-row justify-center items-center gap-2">
+              <i-icon icon="mingcute:lock-line" class="text-[20px]" />
+              <span class="text-larger text-inverted font-bold tracking-wide"
+                >使用中 ({{ remainingTimeFormatted }})</span
+              >
+            </div>
           </div>
         </template>
       </PrimaryButton>
@@ -166,13 +167,11 @@
 <script setup lang="ts" name="Home">
 import { reactive, computed, ref, onBeforeMount } from "vue";
 import PrimaryButton from "@/components/Button/PrimaryButton.vue";
-import InvertedButton from "@/components/Button/InvertedButton.vue";
 import { useThemeStore, type ThemeColor } from "@/store/theme/themeStore";
 import { useRoundedStore } from "@/store/theme/roundStore";
 import { useFontSizeStore } from "@/store/theme/fontsizeStore";
 import { useTextStore } from "@/store/theme/textStore";
 import { useRouter } from "vue-router";
-import { idText } from "typescript";
 import { getSocketInfo } from "@/api/socket";
 import { executePriceFunction } from "@/typings/data";
 
@@ -181,15 +180,14 @@ const router = useRouter();
 //獲取網址上的一個id
 const socketId = router.currentRoute.value.params.socketId;
 // 初始化表單數據
-interface formdataOrder {
+const formDataOrder = ref<{
   name: string;
   location?: string;
   quantity?: string;
   amount?: string;
   pictureUrl?: string;
   function_price?: string;
-}
-const formDataOrder = ref<formdataOrder>({
+}>({
   name: "",
   location: "",
   quantity: "",
@@ -197,26 +195,35 @@ const formDataOrder = ref<formdataOrder>({
   pictureUrl: "",
   function_price: "function calc(amount) {return amount * 2.1}"
 });
-// TODO:獲取數據
 
+const runningOrder = ref<{
+  startAt: string;
+  endAt: string;
+  quantity: number;
+  price: number;
+  remark: string;
+  orderPayment: null;
+  uuid: string;
+  status: string;
+  createdAt: string;
+  deletedAt: null;
+} | null>(null);
+
+// TODO:獲取數據
 onBeforeMount(async () => {
   try {
     const res: any = await getSocketInfo({ socketId: `${socketId}` });
-    info.value = res.data;
-    console.log("info.value", info.value);
-    formDataOrder.value.name = res.data.name;
-    formDataOrder.value.location = res.data.location;
-    formDataOrder.value.quantity = res.data.quantity;
-    formDataOrder.value.pictureUrl = res.data.pictureUrl;
-    formDataOrder.value.function_price = res.data.priceFormula;
-    // 記下價格公式
+    info.value = res.data.device;
+    formDataOrder.value = res.data.device;
+    formDataOrder.value.function_price = res.data.device.priceFormula;
+    runningOrder.value = res.data.currentOrder;
+    updateRemainingTime();
   } catch (error) {
     console.error("Error fetching list info", error);
   }
 });
 
 const themeStore = useThemeStore();
-const themes = themeStore.themes;
 const currentTheme = computed(() => themeStore.getTheme);
 const roundedStore = useRoundedStore();
 const currrentRounded = computed(() => roundedStore.getRounded);
@@ -224,18 +231,58 @@ const fontsizeStore = useFontSizeStore();
 const currentFontSize = computed(() => fontsizeStore.getFontSize);
 const textStore = useTextStore();
 const text = computed(() => textStore.getText);
-const texts = computed(() => textStore.getTexts);
 
 const optionsValue = ref(1);
 const inputValue = ref(4);
 
-const duration = computed(() => {
-  if (optionsValue.value == 1) {
-    return 1;
-  } else if (optionsValue.value == 2) {
-    return 2;
-  } else {
-    return inputValue.value;
-  }
+const onPay = () => {
+  let duration =
+    optionsValue.value === 3 ? inputValue.value : optionsValue.value;
+
+  let price = executePriceFunction(
+    duration,
+    formDataOrder.value.function_price
+  );
+  router.push({
+    name: "OrderConfirm",
+    query: {
+      device_id: socketId,
+      location: info.value?.location,
+      quantity: duration,
+      amount: price,
+      name: info.value?.name
+    }
+  });
+};
+
+// 添加计算剩余时间的逻辑
+const remainingTime = ref(0);
+const remainingTimeFormatted = computed(() => {
+  if (!remainingTime.value || remainingTime.value <= 0) return "0h0min";
+
+  const hours = Math.floor(remainingTime.value / (60 * 60 * 1000));
+  const minutes = Math.floor(
+    (remainingTime.value % (60 * 60 * 1000)) / (60 * 1000)
+  );
+
+  return `${hours}h${minutes}min`;
 });
+
+// 更新剩余时间的计时器
+let timer: number | null = null;
+
+const updateRemainingTime = () => {
+  if (runningOrder.value && runningOrder.value.endAt) {
+    const endTime = new Date(runningOrder.value.endAt).getTime();
+    const now = new Date().getTime();
+    remainingTime.value = Math.max(0, endTime - now);
+  } else {
+    remainingTime.value = 0;
+  }
+};
+
+if (timer !== null) {
+  clearInterval(timer);
+}
+timer = window.setInterval(updateRemainingTime, 10000); // 每分钟更新一次
 </script>

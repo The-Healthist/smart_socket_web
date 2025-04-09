@@ -35,7 +35,7 @@
               >租用時間 :</span
             >
             <div class="text-larger text-common font-bold leading-none">
-              {{ formDataOrder?.quantity }}HKD/H
+              {{ formDataOrder?.quantity }}H
             </div>
           </div>
           <div class="flex justify-between items-center">
@@ -149,7 +149,10 @@
           </div>
         </div>
 
-        <div class="flex flex-row justify-between gap-2.5 w-full">
+        <div
+          v-if="!payLink"
+          class="flex flex-row justify-between gap-2.5 w-full"
+        >
           <InvertedButton @click="router.go(-1)">
             <template #default>
               <div
@@ -158,31 +161,58 @@
                 <span
                   class="text-base text-primary font-bold font-CactusClassicalSerifHK text-center"
                 >
-                  返回上級
+                  退回上頁
                 </span>
               </div>
             </template>
           </InvertedButton>
-          <PrimaryButton class="grow" @click="handlePayment">
+          <PrimaryButton
+            class="grow"
+            :disabled="isLoading"
+            @click="handlePayment"
+          >
             <template #default>
               <div
                 class="h-[22px] flex flex-row justify-center items-center gap-2"
               >
-                <i-icon icon="mingcute:flash-line" class="text-[20px]" />
+                <i-icon
+                  v-if="!isLoading"
+                  icon="mingcute:flash-line"
+                  class="text-[20px]"
+                />
+                <i-icon
+                  v-else
+                  icon="line-md:loading-twotone-loo"
+                  class="text-[20px] animate-spin"
+                />
                 <span
                   v-if="!isShowRegister"
                   class="text-larger text-inverted font-bold tracking-wide"
-                  >即刻支付</span
+                  >{{ isLoading ? "處理中..." : "確認訂單" }}</span
+                >
+                <span
+                  v-else-if="!isRegistering"
+                  class="text-larger text-inverted font-bold tracking-wide"
+                  >{{ isLoading ? "處理中..." : "確認訂單" }}</span
                 >
                 <span
                   v-else
                   class="text-larger text-inverted font-bold tracking-wide"
-                  >註冊並支付</span
+                  >{{ isLoading ? "處理中..." : "註冊並支付" }}</span
                 >
               </div>
             </template>
           </PrimaryButton>
         </div>
+
+        <a
+          v-if="payLink"
+          :href="payLink"
+          target="_blank"
+          class="text-base text-center text-primary underline"
+          @click="onPay"
+          >去支付</a
+        >
       </div>
     </div>
   </div>
@@ -203,7 +233,6 @@ import { Register } from "@/api/auth";
 import { showSuccessToast, showFailToast } from "vant";
 import { showLoadingToast, closeToast } from "vant";
 import {
-  decodeOrderData,
   encodeOrderData,
   executePriceFunction,
   validateField
@@ -225,6 +254,10 @@ const text = computed(() => textStore.getText);
 const router = useRouter();
 const route = useRoute();
 const device_id = ref("");
+
+// pay link
+const payLink = ref("");
+const orderUuid = ref("");
 
 interface formdataOrder {
   name: string;
@@ -285,49 +318,63 @@ const isShowPhoneSpan = ref(false);
 const isShowPasswordSpan = ref(false);
 const isShowConfirmPasswordSpan = ref(false);
 
+// Add loading state
+const isLoading = ref(false);
+
 // 註冊處理函數
 async function handleRegister() {
-  // 更新錯誤信息顯示狀態
-  isShowEmailSpan.value = formDataAuth.value.email && !isValidEmail.value;
-  isShowPhoneSpan.value = !formDataAuth.value.mobile || !isValidPhone.value;
-  isShowPasswordSpan.value =
-    !formDataAuth.value.password || !isValidPassword.value;
-  isShowConfirmPasswordSpan.value =
-    formDataAuth.value.password !== formDataAuth.value.confirmPassword;
+  return new Promise((resolve, reject) => {
+    // 更新錯誤信息顯示狀態
+    isShowEmailSpan.value = formDataAuth.value.email && !isValidEmail.value;
+    isShowPhoneSpan.value = !formDataAuth.value.mobile || !isValidPhone.value;
+    isShowPasswordSpan.value =
+      !formDataAuth.value.password || !isValidPassword.value;
+    isShowConfirmPasswordSpan.value =
+      formDataAuth.value.password !== formDataAuth.value.confirmPassword;
 
-  // 驗證表單數據
-  if (
-    isShowEmailSpan.value ||
-    isShowPhoneSpan.value ||
-    isShowPasswordSpan.value ||
-    isShowConfirmPasswordSpan.value
-  ) {
-    showFailToast("請正確填寫所有必填字段!");
-    return;
-  } else {
+    // 驗證表單數據
+    if (
+      isShowEmailSpan.value ||
+      isShowPhoneSpan.value ||
+      isShowPasswordSpan.value ||
+      isShowConfirmPasswordSpan.value
+    ) {
+      showFailToast("請正確填寫所有必填字段!");
+      reject(new Error("驗證失敗"));
+      return;
+    }
+
     Register(formDataRegister.value)
       .then((res: any) => {
-        console.log("res", res);
-
         if (res.token) {
           localStorage.setItem("common_token", res.token);
           localStorage.setItem("isGuest", "false");
           localStorage.setItem("mobile", formDataAuth.value.mobile);
           localStorage.setItem("email", formDataAuth.value.email);
           showSuccessToast("註冊成功,請在手機上確認");
-          // router.push({ path: "/afterRegister" });
+          resolve(res);
         } else if (res.error) {
           showFailToast(`註冊失敗:${res.error.response.data.message}`);
+          reject(res.error);
         }
       })
       .catch(err => {
-        showFailToast(`註冊失敗:${err.response.data.message}`);
+        showFailToast(`註冊失敗:${err.response?.data?.message || err.message}`);
+        reject(err);
       });
-  }
+  });
 }
 
 // 支付處理函數
 const handlePayment = () => {
+  // Set loading state to true
+  isLoading.value = true;
+  showLoadingToast({
+    message: "請求處理中...",
+    forbidClick: true,
+    duration: 0
+  });
+
   let queryString = new URLSearchParams({
     mobile: formDataAuth.value.mobile,
     email: formDataAuth.value.email,
@@ -354,9 +401,21 @@ const handlePayment = () => {
   }
 
   if (isShowRegister.value && isRegistering.value) {
-    handleRegister();
+    handleRegister()
+      .then(() => {
+        processOrder();
+      })
+      .catch(() => {
+        isLoading.value = false;
+        closeToast();
+      });
+  } else {
+    processOrder();
   }
-  // 註冊成功後添加訂單
+};
+
+// Extract the order processing logic to a separate function
+const processOrder = () => {
   AddOrder({
     quantity: parseInt(formDataOrder.value.quantity),
     deviceUuid: device_id.value,
@@ -365,20 +424,45 @@ const handlePayment = () => {
     .then((res: any) => {
       payOrder({
         uuid: res.data.uuid
-      }).then((res2: any) => {
-        console.log("res2", res2);
-        router.push({
-          name: "PayedAfter",
-          query: {
-            orderId: res2.data.orderUuid
+      })
+        .then((res2: any) => {
+          // Reset loading state
+          isLoading.value = false;
+          closeToast();
+
+          // Open payment URL in new window
+          if (res2.data.wapUrl) {
+            const encodedWapUrl = encodeURIComponent(res2.data.wapUrl);
+            payLink.value = res2.data.redirectScriptPageURL + encodedWapUrl;
+            orderUuid.value = res2.data.orderUuid;
+          } else {
+            showFailToast("支付鏈接不存在");
           }
+        })
+        .catch(err => {
+          // Reset loading state on error
+          isLoading.value = false;
+          closeToast();
+          showFailToast(
+            `支付失敗:${err.response?.data?.message || err.message}`
+          );
         });
-      });
-      //TODO: 支付訂單
     })
     .catch(err => {
-      showFailToast(`支付失敗:${err.response.data.message}`);
+      // Reset loading state on error
+      isLoading.value = false;
+      closeToast();
+      showFailToast(`支付失敗:${err.response?.data?.message || err.message}`);
     });
+};
+
+const onPay = () => {
+  router.push({
+    name: "PayedAfter",
+    query: {
+      orderId: orderUuid.value
+    }
+  });
 };
 
 // 組件掛載前的邏輯

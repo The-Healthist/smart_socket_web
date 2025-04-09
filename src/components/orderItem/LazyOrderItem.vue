@@ -76,6 +76,7 @@
             >設備編號 :</span
           >
           <div
+            v-if="order.device"
             :class="[
               'text-small font-bold flex items-end justify-end',
               isHistory ? 'text-baseC/40' : ''

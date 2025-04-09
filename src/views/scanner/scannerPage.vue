@@ -28,22 +28,24 @@ function codeScanned(code) {
   scanned.value = code;
   console.log("code", code);
   //判斷是不是url
-  router.push({
-    name: "PayDetail",
-    params: { socketId: code.split("/")[5] }
-  });
-  // if (/^(http|https):\/\/[^ "]+$/.test(code)) {
-  //   window.location.href = code;
-  // }
-  if (code.indexOf("http") !== 0) {
-    alert("請輸入正確的網址");
-    return;
-  }
-  //
+  // https://localhost:5173/client/#/payDetail/c413ad2d-4da0-480a-bdb5-ec342555b73b
+  // Check if the scanned code is a URL (starts with http or https)
+  if (code.startsWith("http://") || code.startsWith("https://")) {
+    // If it's a URL, extract the socketId from the path
+    const pathParts = code.split("/");
+    const socketId = pathParts[pathParts.length - 1];
 
-  // setTimeout(() => {
-  //   alert(`掃碼解析成功: ${code}`);
-  // }, 1000);
+    router.push({
+      name: "PayDetail",
+      params: { socketId: socketId }
+    });
+  } else {
+    // If it's not a URL, use the code directly as socketId
+    router.push({
+      name: "PayDetail",
+      params: { socketId: code }
+    });
+  }
 }
 function errorCaptured(error) {
   switch (error.name) {
@@ -76,27 +78,6 @@ onMounted(() => {
     alert("相機調用失敗");
   }
 });
-
-// export default {
-//   name: "Scan",
-//   components: {
-//     Scaner
-//   },
-//   data() {
-//     return {
-//       errorMessage: "",
-//       scanned: ""
-//     };
-//   },
-//   mounted() {
-//     var str = navigator.userAgent.toLowerCase();
-//     var ver = str.match(/cpu iphone os (.*?) like mac os/);
-//     if (ver && ver[1].replace(/_/g, ".") < "10.3.3") {
-//       alert("相機調用失敗");
-//     }
-//   },
-//   methods: {}
-// };
 </script>
 
 <style lang="css" scoped>

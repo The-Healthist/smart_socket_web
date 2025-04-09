@@ -2,13 +2,13 @@ const routes = [
   {
     path: "/",
     name: "root",
-    component: import("@/layout/index.vue"),
+    component: () => import("@/layout/index.vue"),
     redirect: { name: "Home" },
     children: [
       {
         path: "home",
         name: "Home",
-        component: import("@/views/home/homePage.vue"),
+        component: () => import("@/views/home/homePage.vue"),
         meta: {
           title: "首頁"
         }
@@ -106,6 +106,31 @@ const routes = [
         component: () => import("@/views/pay/afterRegister.vue"),
         meta: {
           title: "註冊成功"
+        }
+      },
+      // Policy pages
+      {
+        path: "/policy/about",
+        name: "About",
+        component: () => import("@/views/policy/about.vue"),
+        meta: {
+          title: "關於我們"
+        }
+      },
+      {
+        path: "/policy/privacy",
+        name: "Privacy",
+        component: () => import("@/views/policy/privacy.vue"),
+        meta: {
+          title: "私隱政策"
+        }
+      },
+      {
+        path: "/policy/services",
+        name: "Services",
+        component: () => import("@/views/policy/services.vue"),
+        meta: {
+          title: "服務條款"
         }
       }
     ]
