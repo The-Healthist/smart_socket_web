@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-2.5 hover:bg-primary/10" @click="handleClick">
       <!-- 訂單信息展示 -->
       <div class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >插座名稱 :</span
         >
         <div v-if="order.device" class="text-large">
@@ -12,27 +12,28 @@
         </div>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >插座地址 :</span
         >
         <div v-if="order.device" class="text-large">
           {{ order.device.location }}
         </div>
       </div>
+      <!-- 歷史訂單 -->
       <div v-if="isHistory" class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >購買時間 :</span
         >
         <div class="text-large font-bold">{{ order.quantity }}H</div>
       </div>
       <div v-if="isHistory" class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >支付金額 :</span
         >
         <div class="text-large font-bold">{{ order.price }}HKD</div>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >開始時間 :</span
         >
         <div :class="['text-base font-bold', isHistory ? 'text-baseC/40' : '']">
@@ -40,7 +41,7 @@
         </div>
       </div>
       <div class="flex justify-between items-center">
-        <span class="text-base text-baseC font-normal truncate"
+        <span class="text-base text-baseC/60 font-normal truncate"
           >結束時間 :</span
         >
         <div :class="['text-base font-bold', isHistory ? 'text-baseC/40' : '']">

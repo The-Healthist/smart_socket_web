@@ -7,13 +7,41 @@
     <div>
       <!-- 內部佈局容器 -->
       <div class="flex flex-col w-full space-y-2.5 p-2.5 absolute">
-        <!-- 卡片樣式容器 -->
-        <div class="rounded-card w-full h-[128px] bg-base/90" />
-        <div class="flex flex-row space-x-2.5 w-full h-[100px]">
-          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
-          <div class="rounded-card w-[50vw] h-[100px] bg-base/90" />
+        <!-- 卡片区域 -->
+        <div class="rounded-card w-full h-[115px] bg-base/90">
+          <img
+            src="@/assets/homePage/Screenshot 2024-08-20 at 18.35.23 1.png"
+            alt="homePage"
+            class="w-full h-full fill-transparent opacity-80 rounded-card"
+          />
         </div>
-        <div class="rounded-card w-full h-[128px] bg-base/90" />
+        <div class="flex flex-row space-x-4 w-full h-[100px]">
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90">
+            <img
+              src="@/assets/homePage/Screenshot 2024-08-20 at 18.41.09 1.png"
+              alt="homePage"
+              class="w-full h-full fill-transparent opacity-80 rounded-card"
+            />
+          </div>
+          <div class="rounded-card w-[50vw] h-[100px] bg-base/90">
+            <div
+              class="h-[100px] pl-[78.50px] pt-[47px] bg-white rounded-xl justify-end items-center inline-flex"
+            >
+              <div
+                class="origin-top-left rotate-[-14.65deg] text-center text-[#8c4040] text-2xl font-bold font-['Inter'] tracking-wide"
+              >
+                誠招加盟
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-card w-full h-[115px] bg-base/90">
+          <img
+            src="@/assets/homePage/Screenshot 2024-08-20 at 18.35.23 1.png"
+            alt="homePage"
+            class="w-full h-full fill-transparent opacity-80 rounded-card"
+          />
+        </div>
         <!-- 登錄按鈕容器 -->
         <div class="flex flex-row w-full p-2.5">
           <div class="flex flex-row space-x-[15px]">

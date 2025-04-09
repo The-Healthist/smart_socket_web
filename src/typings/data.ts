@@ -68,7 +68,10 @@ export function validateField(field: string, value: any): boolean {
 }
 
 // "function calc(amount) {return amount * 2}"  参数是这个字符串,然后amount是传入的参数,返回值是计算后的结果
-export function executePriceFunction(amount: number, priceFunctionStr: string) {
+export function executePriceFunction(
+  amount: number,
+  priceFunctionStr: string
+): number {
   if (typeof priceFunctionStr !== "string") {
     throw new Error("Invalid price function string: Not a string");
   }
@@ -83,5 +86,8 @@ export function executePriceFunction(amount: number, priceFunctionStr: string) {
 
   const functionBody = priceFunctionStr.slice(startIndex + 1, endIndex).trim();
   const func = new Function("amount", functionBody);
-  return func(amount);
+  const result = func(amount);
+
+  // Round the result to two decimal places
+  return Math.round(Number(result) * 100) / 100;
 }
